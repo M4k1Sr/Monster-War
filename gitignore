@@ -1,0 +1,77 @@
+# ===== Visual Studio =====
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.VC.db
+*.VC.VC.opendb
+*.ipch
+*.aps
+ipch/
+.vscode/
+
+# ===== ビルド出力 =====
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+Win32/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# ===== ビルド生成物 =====
+*.obj
+*.o
+*.pdb
+*.ilk
+*.idb
+*.exp
+*.pch
+*.tlog
+*.log
+*.lastbuildstate
+*.iobj
+*.ipdb
+*.res
+*.exe
+*.manifest
+
+# 注意: *.lib / *.dll は無視していません
+# (DXLibやEffekseerのlib・dllがビルドに必要なため)
+# ビルド出力フォルダ内のものは上の [Dd]ebug/ 等で除外されます
+
+# ===== Visual Studio拡張・解析 =====
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+.vs/
+*.cache
+*.sdf
+*.opensdf
+*.db
+*.opendb
+
+# ===== OS =====
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
+# ===== 制作中の一時ファイル・元データ =====
+*.tmp
+*.bak
+*.swp
+~$*
+
+# 重い元データは必要に応じてコメントを外す
+# *.psd
+# *.blend
+# *.blend1
+# *.mp4
+# *.zip
