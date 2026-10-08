@@ -80,4 +80,7 @@ private:
 
 	// ˆÚ“®•ûŒü“ü—Íæ“¾
 	Vector3 InputVec(void)const;
+
+	// ˆÚ“®ó‘Ô‚ÌXV
+	void UpdateMove(void);
 };

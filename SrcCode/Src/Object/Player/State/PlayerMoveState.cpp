@@ -66,26 +66,8 @@ void PlayerMoveState::Update(void)
 		// 移動
 		moveAccel(inputVec);
 
-		// 全力ダッシュスタミナを更新 / アニメーションを更新
-		if (isFastDash) {
-
-			// 全力ダッシュしているときはスタミナを減らす
-			if (--dashStamina < 0) {
-				dashStamina = 0;
-
-				// 息切れ
-				isTired = true;
-				playAnimeWalk();
-				return;
-			}
-
-			// 全力ダッシュしているときは全力ダッシュアニメーションにする
-			playAnimeFastRun();
-		}
-		else {
-			// ダッシュしていないときは走るアニメーションにする
-			playAnimeRun();
-		}
+		// 移動状態の更新(スタミナにより状態変化)
+		UpdateMove();
 	}
 }
 
@@ -125,4 +107,35 @@ Vector3 PlayerMoveState::InputVec(void) const
 	}
 
 	return vec;
+}
+
+void PlayerMoveState::UpdateMove(void)
+{
+	// 全力ダッシュスタミナを更新 / アニメーションを更新
+	if (isFastDash) {
+
+		// 全力ダッシュしているときはスタミナを減らす
+		if (--dashStamina < 0) {
+			dashStamina = 0;
+
+			// 息切れ
+			isTired = true;
+		}
+
+		// 全力ダッシュしているときは全力ダッシュアニメーションにする
+		playAnimeFastRun();
+	}
+	else {
+
+		if (isTired) {
+
+			// 息切れしているときは歩くアニメーションにする
+			playAnimeWalk();
+			return;
+		}
+
+		// ダッシュしていないときは走るアニメーションにする
+		playAnimeRun();
+	}
+
 }
