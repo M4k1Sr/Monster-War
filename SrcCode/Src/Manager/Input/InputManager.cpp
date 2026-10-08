@@ -60,7 +60,8 @@ void InputManager::Init(void)
 	SET_KEYBOARD(KEY_TYPE::PlayerFastDash, KEY_INPUT_LSHIFT);
 	SET_C_BUTTON(KEY_TYPE::PlayerFastDash, XINPUT_BUTTON_A);
 
-	SET_MOUSE_BUTTON(KEY_TYPE::PlayerKickDownAttack, MOUSE_INPUT_LEFT);
+	// 攻撃(斬撃)
+	SET_MOUSE_BUTTON(KEY_TYPE::PlayerAttackSlash, MOUSE_INPUT_LEFT);
 
 #pragma endregion
 

@@ -59,6 +59,8 @@
     <ClCompile Include="Src\Scene\Common\PostEffect\FocusLinesPostEffect\FocusLinesPostEffect.cpp" />
     <ClCompile Include="Src\Common\Quaternion.cpp" />
     <ClCompile Include="Src\Object\Stage\Stage.cpp" />
+    <ClCompile Include="Src\Object\Player\Wepon\PlayerAttackSlashCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Player\State\PlayerAttackSlashState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\resource.h" />
@@ -143,6 +145,8 @@
     <ClInclude Include="Src\Scene\Common\PostEffect\FocusLinesPostEffect\FocusLinesPostEffect.h" />
     <ClInclude Include="Src\Common\Quaternion.h" />
     <ClInclude Include="Src\Object\Stage\Stage.h" />
+    <ClInclude Include="Src\Object\Player\Wepon\PlayerAttackSlashCollOperator.h" />
+    <ClInclude Include="Src\Object\Player\State\PlayerAttackSlashState.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Shader\Common\Pixel\ModelFog.hlsli" />

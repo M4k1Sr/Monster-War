@@ -148,6 +148,8 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Player\State\PlayerAttackSlashState.cpp" />
+    <ClCompile Include="Src\Object\Player\Wepon\PlayerAttackSlashCollOperator.cpp" />
     <ClCompile Include="Src\Application\Application.cpp" />
     <ClCompile Include="Src\Common\Quaternion.cpp" />
     <ClCompile Include="Src\Common\Vector2.cpp" />
@@ -208,6 +210,8 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Object\Stage\Stage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Player\State\PlayerAttackSlashState.h" />
+    <ClInclude Include="Src\Object\Player\Wepon\PlayerAttackSlashCollOperator.h" />
     <ClInclude Include="Src\Application\resource.h" />
     <ClInclude Include="Src\Application\Application.h" />
     <ClInclude Include="Src\Common\Quaternion.h" />

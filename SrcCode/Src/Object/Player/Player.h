@@ -25,6 +25,8 @@ private:
 		Move,
 		Jump,
 
+		AttackSlash,
+
 		Max
 	};
 
@@ -51,7 +53,7 @@ private:
 		WeaponIdle,
 		Slash_Down,
 		Slash_Up,
-		Slahs_End,
+		Slash_End,
 
 		Block,
 		BlockIdle,
@@ -70,7 +72,7 @@ private:
 
 		0.65f,	// Walk
 		0.65f,	// Run
-		1.0f,	// FastRun
+		0.65f,	// FastRun
 		0.65f,	// WalkBack
 		0.65f,	// StepRight
 		0.65f,	// StepLeft
@@ -104,7 +106,7 @@ private:
 		true,	// WalkBack
 		true,	// StepRight
 		true,	// StepLeft
-		false,	//InPlaceJump
+		false,	// InPlaceJump
 		false,	// BackFlip
 
 		false,	// DrawSword

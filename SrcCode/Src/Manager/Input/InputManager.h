@@ -55,6 +55,8 @@ public:
 		// 全力ダッシュ
 		PlayerFastDash,
 
+		// 攻撃
+		PlayerAttackSlash,
 		PlayerKickDownAttack,
 
 #pragma endregion

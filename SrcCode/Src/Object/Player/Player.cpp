@@ -10,11 +10,13 @@
 #include "../Common/Shader/RimLightShader.h"
 #include "../Common/Shader/WaterShader.h"
 
+#include "Wepon/PlayerAttackSlashCollOperator.h"
 #include "Wepon/PlayerKickDownAttackCollOperator.h"
 
 #include "State/PlayerIdleState.h"
 #include "State/PlayerMoveState.h"
 #include "State/PlayerJumpState.h"
+#include "State/PlayerAttackSlashState.h"
 #include "State/PlayerKickDownAttackState.h"
 
 Player::Player() : CharacterBase("Data/Parameter/Player/")
@@ -89,10 +91,17 @@ void Player::Load(void)
 #pragma region 下位アクターの生成
 
 	// 攻撃当たり判定管理クラス
-	PlayerKickDownAttackCollOperator* kickDownAttackCollOperator =
-		new PlayerKickDownAttackCollOperator(100.0f, Vector3(0, -100, 100), trans);
+	PlayerAttackSlashCollOperator* attackSlashCollOperator =
+		new PlayerAttackSlashCollOperator(100.0f, Vector3(0, 0, 100), trans);
 
-	AddChildActor(kickDownAttackCollOperator);
+	AddChildActor(attackSlashCollOperator);
+
+	//// 攻撃当たり判定管理クラス
+	//PlayerKickDownAttackCollOperator* kickDownAttackCollOperator =
+	//	new PlayerKickDownAttackCollOperator(100.0f, Vector3(0, -100, 100), trans);
+
+	//AddChildActor(kickDownAttackCollOperator);
+
 #pragma endregion
 
 
@@ -118,6 +127,7 @@ void Player::Load(void)
 	);
 
 	//// ジャンプ状態
+	//// 後回し
 	//AddState(
 	//	STATE::Jump,
 	//	new PlayerJumpState(
@@ -130,6 +140,20 @@ void Player::Load(void)
 	//		[&]() { ChangeState(STATE::Idle); }
 	//	)
 	//);
+
+	// 攻撃(斬撃)状態
+	AddState(
+		STATE::AttackSlash,
+		new PlayerAttackSlashState(
+			0.3f, 0.5f,
+			*attackSlashCollOperator,
+			[&]() {AnimePlay(ANIME_TYPE::Slash_Down); },
+			[&]() {AnimePlay(ANIME_TYPE::Slash_Up); },
+			[&]() {AnimePlay(ANIME_TYPE::Slash_End); },
+			[&]() {return GetAnimeRatio(); },
+			[&]() {ChangeState(STATE::Idle); }
+		)
+	);
 
 	//// 攻撃（踏みつけ）状態
 	//AddState(
@@ -152,6 +176,9 @@ void Player::Load(void)
 	//RegisterStateTransition(STATE::Idle, STATE::Jump);
 	//// 「移動状態」->「ジャンプ状態」の自動遷移登録
 	//RegisterStateTransition(STATE::Move, STATE::Jump);
+
+	// 「待機状態」->「攻撃（斬撃）状態」の自動遷移登録
+	RegisterStateTransition(STATE::Idle, STATE::AttackSlash);
 
 	//// 「待機状態」->「攻撃（踏みつけ）状態」の自動遷移登録
 	//RegisterStateTransition(STATE::Idle, STATE::KickDownAttack);
