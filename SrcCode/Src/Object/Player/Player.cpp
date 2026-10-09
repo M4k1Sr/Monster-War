@@ -145,12 +145,13 @@ void Player::Load(void)
 	AddState(
 		STATE::AttackSlash,
 		new PlayerAttackSlashState(
-			0.3f, 0.5f,
+			0.3f, 0.5f,0.6f,
 			*attackSlashCollOperator,
 			[&]() {AnimePlay(ANIME_TYPE::Slash_Down); },
 			[&]() {AnimePlay(ANIME_TYPE::Slash_Up); },
 			[&]() {AnimePlay(ANIME_TYPE::Slash_End); },
 			[&]() {return GetAnimeRatio(); },
+			[&]() {return IsAnimeEnd(); },
 			[&]() {ChangeState(STATE::Idle); }
 		)
 	);
@@ -179,6 +180,8 @@ void Player::Load(void)
 
 	// 「待機状態」->「攻撃（斬撃）状態」の自動遷移登録
 	RegisterStateTransition(STATE::Idle, STATE::AttackSlash);
+	// 「移動状態」->「攻撃（斬撃）状態」の自動遷移登録
+	RegisterStateTransition(STATE::Move, STATE::AttackSlash);
 
 	//// 「待機状態」->「攻撃（踏みつけ）状態」の自動遷移登録
 	//RegisterStateTransition(STATE::Idle, STATE::KickDownAttack);

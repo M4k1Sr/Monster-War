@@ -22,17 +22,21 @@ public:
 	/// <param name="playAnimeAttackSlash_Up"></param>
 	/// <param name="playAnimeAttackSlash_End"></param>
 	/// <param name="getAnimeRatio"></param>
+	/// <param name="isAnimeEnd"></param>
 	/// <param name="changeStateIdle"></param>
 	PlayerAttackSlashState(
 		float COLL_START_TIME,
 		float COLL_END_TIME,
+		float COMBO_ACCEPT_TIME,
 
 		PlayerAttackSlashCollOperator& collOperator,
 
 		std::function<void(void)> playAnimeAttackSlash_Down,
 		std::function<void(void)> playAnimeAttackSlash_Up,
 		std::function<void(void)> playAnimeAttackSlash_End,
+
 		std::function<float(void)> getAnimeRatio,
+		std::function<void(void)> isAnimeEnd,
 
 		std::function<void(void)> changeStateIdle
 	);
@@ -82,6 +86,9 @@ private:
 	// 攻撃の判定を発生させ終わるアニメーション再生割合
 	const float COLL_END_TIME;
 
+	// コンボ受付時間
+	const float COMBO_ACCEPT_TIME;
+
 #pragma endregion
 
 #pragma region 受け取る参照変数・関数
@@ -97,6 +104,9 @@ private:
 	// アニメーションの再生割合を取得する関数のポインタ
 	const std::function<float(void)> getAnimeRatio;
 
+	// アニメーションが終了したかどうかを取得する関数のポインタ
+	const std::function<void(void)> isAnimeEnd;
+
 	// 待機状態に戻る関数のポインタ
 	const std::function<void(void)> changeStateIdle;
 
@@ -107,4 +117,9 @@ private:
 
 	// コンボステップ
 	COMBO_STEP comboStep;
+
+	// コンボキー受付
+	bool comboKeyInput;
+
+	void StartComboNext(void);
 };
