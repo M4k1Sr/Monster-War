@@ -10,13 +10,15 @@
 #include "../Common/Shader/RimLightShader.h"
 #include "../Common/Shader/WaterShader.h"
 
-#include "Wepon/PlayerAttackSlashCollOperator.h"
-#include "Wepon/PlayerKickDownAttackCollOperator.h"
+#include "Weapon/PlayerAttackSlashCollOperator.h"
+#include "Weapon/PlayerRollingSlashCollOperator.h"
+#include "Weapon/PlayerKickDownAttackCollOperator.h"
 
 #include "State/PlayerIdleState.h"
 #include "State/PlayerMoveState.h"
 #include "State/PlayerJumpState.h"
 #include "State/PlayerAttackSlashState.h"
+#include "State/PlayerRollingSlashState.h"
 #include "State/PlayerKickDownAttackState.h"
 
 Player::Player() : CharacterBase("Data/Parameter/Player/")
@@ -96,6 +98,10 @@ void Player::Load(void)
 
 	AddChildActor(attackSlashCollOperator);
 
+	// 回転攻撃当たり判定管理クラス
+	PlayerRollingSlashCollOperator* rollingSlashCollOperator =
+		new PlayerRollingSlashCollOperator(100.0f, Vector3(0, 0, 100), trans);
+
 	//// 攻撃当たり判定管理クラス
 	//PlayerKickDownAttackCollOperator* kickDownAttackCollOperator =
 	//	new PlayerKickDownAttackCollOperator(100.0f, Vector3(0, -100, 100), trans);
@@ -126,20 +132,20 @@ void Player::Load(void)
 		)
 	);
 
-	//// ジャンプ状態
-	//// 後回し
-	//AddState(
-	//	STATE::Jump,
-	//	new PlayerJumpState(
-	//		20.0f, velocity.y, isGround,
-	//		std::bind(&Player::MoveAccel, this, std::placeholders::_1),
-	//		[&]() { AnimePlay(ANIME_TYPE::JumpStart); },
-	//		[&]() { AnimePlay(ANIME_TYPE::JumpLoop); },
-	//		[&]() { AnimePlay(ANIME_TYPE::Stamp); },
-	//		std::bind(&Player::IsAnimeEnd, this),
-	//		[&]() { ChangeState(STATE::Idle); }
-	//	)
-	//);
+	// ジャンプ状態
+	// 後回し
+	AddState(
+		STATE::Jump,
+		new PlayerJumpState(
+			20.0f, velocity.y, isGround,
+			std::bind(&Player::MoveAccel, this, std::placeholders::_1),
+			[&]() { AnimePlay(ANIME_TYPE::JumpStart); },
+			[&]() { AnimePlay(ANIME_TYPE::Jumping); },
+			[&]() { AnimePlay(ANIME_TYPE::JumpEnd); },
+			std::bind(&Player::IsAnimeEnd, this),
+			[&]() { ChangeState(STATE::Idle); }
+		)
+	);
 
 	// 攻撃(斬撃)状態
 	AddState(
@@ -173,10 +179,10 @@ void Player::Load(void)
 	// 「移動状態」->「待機状態」の自動遷移登録
 	RegisterStateTransition(STATE::Move, STATE::Idle);
 
-	//// 「待機状態」->「ジャンプ状態」の自動遷移登録
-	//RegisterStateTransition(STATE::Idle, STATE::Jump);
-	//// 「移動状態」->「ジャンプ状態」の自動遷移登録
-	//RegisterStateTransition(STATE::Move, STATE::Jump);
+	// 「待機状態」->「ジャンプ状態」の自動遷移登録
+	RegisterStateTransition(STATE::Idle, STATE::Jump);
+	// 「移動状態」->「ジャンプ状態」の自動遷移登録
+	RegisterStateTransition(STATE::Move, STATE::Jump);
 
 	// 「待機状態」->「攻撃（斬撃）状態」の自動遷移登録
 	RegisterStateTransition(STATE::Idle, STATE::AttackSlash);
