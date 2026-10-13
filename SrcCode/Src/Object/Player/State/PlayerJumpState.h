@@ -17,8 +17,8 @@ public:
 		std::function<void(const Vector3&)> moveAccel,
 
 		std::function<void(void)> PlayAnimeJumpStart,
-		std::function<void(void)> PlayAnimeJumpLoop,
-		std::function<void(void)> PlayAnimeStamp,
+		std::function<void(void)> PlayAnimeJuming,
+		std::function<void(void)> PlayAnimeJumpEnd,
 
 		std::function<bool(void)> isAnimeEnd,
 
@@ -58,9 +58,9 @@ private:
 	// ジャンプ開始アニメーションの再生関数のポインタ
 	const std::function<void(void)> playAnimeJumpStart;
 	// ジャンプ滞空アニメーションの再生関数のポインタ
-	const std::function<void(void)> playAnimeJumpLoop;
+	const std::function<void(void)> playAnimeJumping;
 	// 着地アニメーションの再生関数のポインタ
-	const std::function<void(void)> playAnimeStamp;
+	const std::function<void(void)> playAnimeJumpEnd;
 
 	// アニメーション終了取得関数のポインタ
 	const std::function<bool(void)> isAnimeEnd;
@@ -77,10 +77,10 @@ private:
 		Start,
 
 		// 滞空
-		Loop,
+		Jumping,
 
 		// 着地
-		Stamp,
+		JumpEnd,
 	};
 
 	// 現在ステップ

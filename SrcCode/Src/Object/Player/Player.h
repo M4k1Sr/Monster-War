@@ -54,6 +54,8 @@ private:
 		Slash_Down,
 		Slash_Up,
 		Slash_End,
+		Charge,
+		RollingSlash,
 
 		Block,
 		BlockIdle,
@@ -61,6 +63,10 @@ private:
 
 		Flying,
 		GetUp,
+
+		JumpStart,
+		Jumping,
+		JumpEnd,
 
 		Max
 	};
@@ -85,6 +91,8 @@ private:
 		0.65f,	// Slash_Down
 		0.65f,	// Slash_Up
 		0.65f,	// Slahs_End
+		0.65f,	// Charge
+		0.65f,	// RollingSlash
 
 		0.65f,	// Block
 		0.65f,	// BlockIdle
@@ -92,6 +100,10 @@ private:
 
 		0.65f,	// Flying
 		0.65f,	// GetUp
+
+		0.65f,	// JumpStart
+		0.65f,	// Jumping
+		0.65f,	// JumpEnd
 
 	};
 
@@ -114,12 +126,18 @@ private:
 		false,	// Slash_Down
 		false,	// Slash_Up
 		false,	// Slahs_End
+		true,	// Charge
+		false,	// RollingSlash
 
 		false,	// Block
 		true,	// BlockIdle
 		false,	// BlockHit
 		false,	// Flying
 		false,	// GetUp
+
+		false,	// JumpStart
+		true,	// Jumping
+		false,	// JumpEnd
 
 	};
 

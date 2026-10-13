@@ -14,8 +14,8 @@ PlayerJumpState::PlayerJumpState(
 	std::function<void(const Vector3&)> moveAccel,
 
 	std::function<void(void)> playAnimeJumpStart,
-	std::function<void(void)> playAnimeJumpLoop,
-	std::function<void(void)> playAnimeStamp,
+	std::function<void(void)> playAnimeJumping,
+	std::function<void(void)> playAnimeJumpEnd,
 
 	std::function<bool(void)> isAnimeEnd,
 
@@ -29,8 +29,8 @@ PlayerJumpState::PlayerJumpState(
 	moveAccel(moveAccel),
 
 	playAnimeJumpStart(playAnimeJumpStart),
-	playAnimeJumpLoop(playAnimeJumpLoop),
-	playAnimeStamp(playAnimeStamp),
+	playAnimeJumping(playAnimeJumping),
+	playAnimeJumpEnd(playAnimeJumpEnd),
 
 	isAnimeEnd(isAnimeEnd),
 
@@ -69,16 +69,16 @@ void PlayerJumpState::Update(void)
 			velocityY = JUMP_POWER;
 
 			// 滞空アニメーションを再生
-			playAnimeJumpLoop();
+			playAnimeJumping();
 
 			// 次のステップへ
-			step = STEP::Loop;
+			step = STEP::Jumping;
 		}
 
 		break;
 	}
 
-	case PlayerJumpState::STEP::Loop: {
+	case PlayerJumpState::STEP::Jumping: {
 		// 滞空
 
 		// コントローラーの入力を取得
@@ -107,16 +107,16 @@ void PlayerJumpState::Update(void)
 		if (isGround) {
 
 			// 着地のアニメーションを再生
-			playAnimeStamp();
+			playAnimeJumpEnd();
 
 			// 次のステップへ
-			step = STEP::Stamp;
+			step = STEP::JumpEnd;
 		}
 
 		break;
 	}
 
-	case PlayerJumpState::STEP::Stamp: {
+	case PlayerJumpState::STEP::JumpEnd: {
 		// 着地
 
 		// この時点から入力によって再度ジャンプが可能にしておく

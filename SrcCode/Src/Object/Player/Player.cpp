@@ -126,20 +126,20 @@ void Player::Load(void)
 		)
 	);
 
-	//// ジャンプ状態
-	//// 後回し
-	//AddState(
-	//	STATE::Jump,
-	//	new PlayerJumpState(
-	//		20.0f, velocity.y, isGround,
-	//		std::bind(&Player::MoveAccel, this, std::placeholders::_1),
-	//		[&]() { AnimePlay(ANIME_TYPE::JumpStart); },
-	//		[&]() { AnimePlay(ANIME_TYPE::JumpLoop); },
-	//		[&]() { AnimePlay(ANIME_TYPE::Stamp); },
-	//		std::bind(&Player::IsAnimeEnd, this),
-	//		[&]() { ChangeState(STATE::Idle); }
-	//	)
-	//);
+	// ジャンプ状態
+	// 後回し
+	AddState(
+		STATE::Jump,
+		new PlayerJumpState(
+			20.0f, velocity.y, isGround,
+			std::bind(&Player::MoveAccel, this, std::placeholders::_1),
+			[&]() { AnimePlay(ANIME_TYPE::JumpStart); },
+			[&]() { AnimePlay(ANIME_TYPE::Jumping); },
+			[&]() { AnimePlay(ANIME_TYPE::JumpEnd); },
+			std::bind(&Player::IsAnimeEnd, this),
+			[&]() { ChangeState(STATE::Idle); }
+		)
+	);
 
 	// 攻撃(斬撃)状態
 	AddState(
@@ -173,10 +173,10 @@ void Player::Load(void)
 	// 「移動状態」->「待機状態」の自動遷移登録
 	RegisterStateTransition(STATE::Move, STATE::Idle);
 
-	//// 「待機状態」->「ジャンプ状態」の自動遷移登録
-	//RegisterStateTransition(STATE::Idle, STATE::Jump);
-	//// 「移動状態」->「ジャンプ状態」の自動遷移登録
-	//RegisterStateTransition(STATE::Move, STATE::Jump);
+	// 「待機状態」->「ジャンプ状態」の自動遷移登録
+	RegisterStateTransition(STATE::Idle, STATE::Jump);
+	// 「移動状態」->「ジャンプ状態」の自動遷移登録
+	RegisterStateTransition(STATE::Move, STATE::Jump);
 
 	// 「待機状態」->「攻撃（斬撃）状態」の自動遷移登録
 	RegisterStateTransition(STATE::Idle, STATE::AttackSlash);
