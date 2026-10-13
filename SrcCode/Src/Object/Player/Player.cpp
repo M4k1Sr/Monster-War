@@ -10,13 +10,15 @@
 #include "../Common/Shader/RimLightShader.h"
 #include "../Common/Shader/WaterShader.h"
 
-#include "Wepon/PlayerAttackSlashCollOperator.h"
-#include "Wepon/PlayerKickDownAttackCollOperator.h"
+#include "Weapon/PlayerAttackSlashCollOperator.h"
+#include "Weapon/PlayerRollingSlashCollOperator.h"
+#include "Weapon/PlayerKickDownAttackCollOperator.h"
 
 #include "State/PlayerIdleState.h"
 #include "State/PlayerMoveState.h"
 #include "State/PlayerJumpState.h"
 #include "State/PlayerAttackSlashState.h"
+#include "State/PlayerRollingSlashState.h"
 #include "State/PlayerKickDownAttackState.h"
 
 Player::Player() : CharacterBase("Data/Parameter/Player/")
@@ -95,6 +97,10 @@ void Player::Load(void)
 		new PlayerAttackSlashCollOperator(100.0f, Vector3(0, 0, 100), trans);
 
 	AddChildActor(attackSlashCollOperator);
+
+	// ‰ñ“]UŒ‚“–‚½‚è”»’èŠÇ—ƒNƒ‰ƒX
+	PlayerRollingSlashCollOperator* rollingSlashCollOperator =
+		new PlayerRollingSlashCollOperator(100.0f, Vector3(0, 0, 100), trans);
 
 	//// UŒ‚“–‚½‚è”»’èŠÇ—ƒNƒ‰ƒX
 	//PlayerKickDownAttackCollOperator* kickDownAttackCollOperator =

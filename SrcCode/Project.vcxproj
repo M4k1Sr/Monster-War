@@ -148,8 +148,10 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Player\Weapon\PlayerRollingSlashCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Player\State\PlayerRollingSlashState.cpp" />
     <ClCompile Include="Src\Object\Player\State\PlayerAttackSlashState.cpp" />
-    <ClCompile Include="Src\Object\Player\Wepon\PlayerAttackSlashCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Player\Weapon\PlayerAttackSlashCollOperator.cpp" />
     <ClCompile Include="Src\Application\Application.cpp" />
     <ClCompile Include="Src\Common\Quaternion.cpp" />
     <ClCompile Include="Src\Common\Vector2.cpp" />
@@ -194,7 +196,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Object\Player\State\PlayerJumpState.cpp" />
     <ClCompile Include="Src\Object\Player\State\PlayerKickDownAttackState.cpp" />
     <ClCompile Include="Src\Object\Player\State\PlayerMoveState.cpp" />
-    <ClCompile Include="Src\Object\Player\Wepon\PlayerKickDownAttackCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Player\Weapon\PlayerKickDownAttackCollOperator.cpp" />
     <ClCompile Include="Src\Scene\Common\PostEffect\CRTPostEffect\CRTPostEffect.cpp" />
     <ClCompile Include="Src\Scene\Common\PostEffect\FocusLinesPostEffect\FocusLinesPostEffect.cpp" />
     <ClCompile Include="Src\Scene\Common\PostEffect\GrayScalePostEffect\GrayScalePostEffect.cpp" />
@@ -210,8 +212,10 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Object\Stage\Stage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Player\Weapon\PlayerRollingSlashCollOperator.h" />
+    <ClInclude Include="Src\Object\Player\State\PlayerRollingSlashState.h" />
     <ClInclude Include="Src\Object\Player\State\PlayerAttackSlashState.h" />
-    <ClInclude Include="Src\Object\Player\Wepon\PlayerAttackSlashCollOperator.h" />
+    <ClInclude Include="Src\Object\Player\Weapon\PlayerAttackSlashCollOperator.h" />
     <ClInclude Include="Src\Application\resource.h" />
     <ClInclude Include="Src\Application\Application.h" />
     <ClInclude Include="Src\Common\Quaternion.h" />
@@ -273,7 +277,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Object\Player\State\PlayerJumpState.h" />
     <ClInclude Include="Src\Object\Player\State\PlayerKickDownAttackState.h" />
     <ClInclude Include="Src\Object\Player\State\PlayerMoveState.h" />
-    <ClInclude Include="Src\Object\Player\Wepon\PlayerKickDownAttackCollOperator.h" />
+    <ClInclude Include="Src\Object\Player\Weapon\PlayerKickDownAttackCollOperator.h" />
     <ClInclude Include="Src\Object\Water.h" />
     <ClInclude Include="Src\pch.h" />
     <ClInclude Include="Src\Scene\Common\PostEffect\CRTPostEffect\CRTPostEffect.h" />

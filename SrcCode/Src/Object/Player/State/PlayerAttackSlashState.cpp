@@ -4,7 +4,7 @@
 
 #include "../../../Manager/Input/InputManager.h"
 
-#include "../Wepon/PlayerAttackSlashCollOperator.h"
+#include "../Weapon/PlayerAttackSlashCollOperator.h"
 
 PlayerAttackSlashState::PlayerAttackSlashState(
 	float COLL_START_TIME,

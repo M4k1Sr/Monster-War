@@ -4,7 +4,7 @@
 
 #include "../../../Manager/Input/InputManager.h"
 
-#include "../Wepon/PlayerKickDownAttackCollOperator.h"
+#include "../Weapon/PlayerKickDownAttackCollOperator.h"
 
 PlayerKickDownAttackState::PlayerKickDownAttackState(
 	float COLL_START_TIME,
