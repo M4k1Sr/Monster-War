@@ -247,6 +247,10 @@ void InputManager::KeyUpdate(void)
 
 		keyInfo[i].up = (keyInfo[i].prev && !keyInfo[i].now);
 		keyInfo[i].down = (!keyInfo[i].prev && keyInfo[i].now);
+
+		// 長押し用のカウント
+		keyInfo[i].prevHoldFrame = keyInfo[i].holdFrame;
+		keyInfo[i].holdFrame = keyInfo[i].now ? keyInfo[i].holdFrame + 1 : 0;
 	}
 }
 

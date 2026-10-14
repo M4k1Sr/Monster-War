@@ -39,8 +39,11 @@ PlayerRollingSlashState::PlayerRollingSlashState(
 
 void PlayerRollingSlashState::OwnStateConditionUpdate(void)
 {
+	// 長押しに必要なフレーム数
+	constexpr int HOLD_FRAME = 60;
+
 	// 自分の状態に遷移する条件関数(斬撃)
-	if (Input::GetIns().GetInfo(KEY_TYPE::PlayerAttackSlash).down) {
+	if (Input::GetIns().IsHoldTrigger(KEY_TYPE::PlayerAttackSlash, HOLD_FRAME)) {
 		OwnChangeState();
 	}
 }

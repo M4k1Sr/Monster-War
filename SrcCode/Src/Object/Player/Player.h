@@ -26,6 +26,7 @@ private:
 		Jump,
 
 		AttackSlash,
+		AttackRollingSlash,
 
 		Max
 	};
