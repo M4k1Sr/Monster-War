@@ -122,6 +122,7 @@ void InputManager::Init(void)
 	SET_KEYBOARD(KEY_TYPE::Enter, KEY_INPUT_SPACE);
 	SET_KEYBOARD(KEY_TYPE::Enter, KEY_INPUT_RETURN);
 	SET_C_BUTTON(KEY_TYPE::Enter, XINPUT_BUTTON_B);
+	SET_MOUSE_BUTTON(KEY_TYPE::Enter, MOUSE_INPUT_LEFT);
 
 	// 汎用キャンセルキー
 	SET_KEYBOARD(KEY_TYPE::Cancel, KEY_INPUT_ESCAPE);
@@ -247,6 +248,10 @@ void InputManager::KeyUpdate(void)
 
 		keyInfo[i].up = (keyInfo[i].prev && !keyInfo[i].now);
 		keyInfo[i].down = (!keyInfo[i].prev && keyInfo[i].now);
+
+		// 長押し用のカウント
+		keyInfo[i].prevHoldFrame = keyInfo[i].holdFrame;
+		keyInfo[i].holdFrame = keyInfo[i].now ? keyInfo[i].holdFrame + 1 : 0;
 	}
 }
 

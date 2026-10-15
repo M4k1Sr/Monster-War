@@ -57,7 +57,10 @@ private:
 	// 攻撃ステップ
 	enum class STEP
 	{
-		// 前隙(チャージ)
+		// チャージ
+		Charge,
+
+		// 前隙(回転攻撃開始)
 		Startup,
 
 		// 攻撃判定発生中
@@ -72,6 +75,11 @@ private:
 	// 攻撃の判定を発生させ終わるアニメーション再生割合
 	const float COLL_END_TIME;
 
+	// 回転攻撃入力に必要なフレーム数
+	const int HOLD_FRAME;
+	// 回転攻撃のチャージ完了に必要なフレーム数
+	const int CHARGE_COMPLETE_FRAME;
+	
 #pragma endregion
 
 #pragma region 受け取る参照変数・関数
@@ -97,4 +105,9 @@ private:
 	// 攻撃ステップ
 	STEP step;
 
+	// チャージ入力フレーム数
+	float chargeFrame;
+
+	// チャージ完了フラグ
+	bool chargeCompleteFlg;
 };

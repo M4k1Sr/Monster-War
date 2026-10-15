@@ -151,11 +151,25 @@ void Player::Load(void)
 	AddState(
 		STATE::AttackSlash,
 		new PlayerAttackSlashState(
-			0.3f, 0.5f,0.6f,
+			0.3f, 0.5f, 0.6f,
 			*attackSlashCollOperator,
 			[&]() {AnimePlay(ANIME_TYPE::Slash_Down); },
 			[&]() {AnimePlay(ANIME_TYPE::Slash_Up); },
 			[&]() {AnimePlay(ANIME_TYPE::Slash_End); },
+			[&]() {return GetAnimeRatio(); },
+			[&]() {return IsAnimeEnd(); },
+			[&]() {ChangeState(STATE::Idle); }
+		)
+	);
+
+	// 回転攻撃状態
+	AddState(
+		STATE::AttackRollingSlash,
+		new PlayerRollingSlashState(
+			0.3f, 0.5f,
+			*rollingSlashCollOperator,
+			[&]() {AnimePlay(ANIME_TYPE::Charge); },
+			[&]() {AnimePlay(ANIME_TYPE::RollingSlash); },
 			[&]() {return GetAnimeRatio(); },
 			[&]() {return IsAnimeEnd(); },
 			[&]() {ChangeState(STATE::Idle); }
@@ -176,6 +190,11 @@ void Player::Load(void)
 
 	// 「待機状態」->「移動状態」の自動遷移登録
 	RegisterStateTransition(STATE::Idle, STATE::Move);
+	////	「攻撃状態」->「移動状態」の自動遷移登録
+	//RegisterStateTransition(STATE::AttackSlash, STATE::Move);
+	// 「回転攻撃状態」->「移動状態」の自動遷移登録
+	RegisterStateTransition(STATE::AttackRollingSlash, STATE::Move);
+
 	// 「移動状態」->「待機状態」の自動遷移登録
 	RegisterStateTransition(STATE::Move, STATE::Idle);
 
@@ -183,11 +202,19 @@ void Player::Load(void)
 	RegisterStateTransition(STATE::Idle, STATE::Jump);
 	// 「移動状態」->「ジャンプ状態」の自動遷移登録
 	RegisterStateTransition(STATE::Move, STATE::Jump);
+	// 「回転攻撃状態」->「ジャンプ状態」の自動遷移登録
+	RegisterStateTransition(STATE::AttackRollingSlash, STATE::Jump);
 
 	// 「待機状態」->「攻撃（斬撃）状態」の自動遷移登録
 	RegisterStateTransition(STATE::Idle, STATE::AttackSlash);
 	// 「移動状態」->「攻撃（斬撃）状態」の自動遷移登録
 	RegisterStateTransition(STATE::Move, STATE::AttackSlash);
+	// 「待機状態」->「回転攻撃状態」の自動遷移登録
+	RegisterStateTransition(STATE::Idle, STATE::AttackRollingSlash);
+	// 「移動状態」->「回転攻撃状態」の自動遷移登録
+	RegisterStateTransition(STATE::Move, STATE::AttackRollingSlash);
+	// 「攻撃（斬撃）状態」->「回転攻撃状態」の自動遷移登録
+	RegisterStateTransition(STATE::AttackSlash, STATE::AttackRollingSlash);
 
 	//// 「待機状態」->「攻撃（踏みつけ）状態」の自動遷移登録
 	//RegisterStateTransition(STATE::Idle, STATE::KickDownAttack);

@@ -135,16 +135,35 @@ public:
 	};
 
 	// キーの状態保存構造体
-	struct KEY_INFO { bool prev = false, now = false, up = false, down = false; };
+	struct KEY_INFO { 
+
+		bool prev = false, now = false, up = false, down = false;
+
+		// 押しっぱなし時間(フレーム間)
+		int holdFrame = 0;
+		// 1フレーム前のholdFrame(しきい値を超えた瞬間の判定用)
+		int prevHoldFrame = 0;
+
+	};
 
 	// キーの状態取得
 	const KEY_INFO GetInfo(KEY_TYPE k) { return keyInfo[(int)k]; }
+
+	// 指定フレーム以上押し続けているか（押している間ずっとtrue）
+	bool IsHold(KEY_TYPE k, int frame) const { return keyInfo[(int)k].holdFrame >= frame; }
+
+	// 指定フレームを超えた「その瞬間」だけtrue（溜め開始・長押し攻撃の発動などに便利）
+	bool IsHoldTrigger(KEY_TYPE k, int frame) const
+	{
+		const KEY_INFO& info = keyInfo[(int)k];
+		return info.prevHoldFrame < frame && info.holdFrame >= frame;
+	}
 
 	// コントローラーが接続されているかどうか（true = 接続されている、false = 接続されていない）
 	bool GetControllerConnect(void) const;
 
 	/// <summary>
-	/// コントローラーの右スティックの入力ベクトルを取得（接続されていない場合はゼロベクトルが返る）
+	/// コントローラーの左スティックの入力ベクトルを取得（接続されていない場合はゼロベクトルが返る）
 	/// </summary>
 	/// <param name="normalize">true = 戻り値を正規化する、false = 戻り値を正規化しない</param>
 	Vector2 GetLeftStickVec(bool normalize = true) const;

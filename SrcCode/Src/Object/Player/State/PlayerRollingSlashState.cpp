@@ -22,6 +22,8 @@ PlayerRollingSlashState::PlayerRollingSlashState(
 ) :
 	COLL_START_TIME(COLL_START_TIME),
 	COLL_END_TIME(COLL_END_TIME),
+	HOLD_FRAME(30),
+	CHARGE_COMPLETE_FRAME(130),
 
 	collOperator(collOperator),
 
@@ -33,37 +35,76 @@ PlayerRollingSlashState::PlayerRollingSlashState(
 
 	changeStateIdle(changeStateIdle),
 
-	step()
+	step(),
+
+	chargeCompleteFlg(false)
 {
 }
 
 void PlayerRollingSlashState::OwnStateConditionUpdate(void)
 {
-	// 自分の状態に遷移する条件関数(斬撃)
-	if (Input::GetIns().GetInfo(KEY_TYPE::PlayerAttackSlash).down) {
+	// 自分の状態に遷移する条件関数(回転攻撃)
+	if (Input::GetIns().IsHoldTrigger(KEY_TYPE::PlayerAttackSlash, HOLD_FRAME)) {
 		OwnChangeState();
 	}
 }
 
 void PlayerRollingSlashState::Enter(void)
 {
-	// ステップを「前隙(チャージ)」へ
-	step = STEP::Startup;
+	// ステップを「溜め」に
+	step = STEP::Charge;
+
+	// チャージ完了フラグ・チャージ入力フレームをリセット
+	chargeCompleteFlg = false;
+	chargeFrame = 0.0f;
+
+	// チャージアニメーション再生
+	playAnimeCharge();
 
 	// 当たり判定を消去
 	collOperator.Off();
 
-	// チャージアニメーション再生
-	playAnimeCharge();
 }
 
 void PlayerRollingSlashState::Update(void)
 {
+
 	// アニメーションの再生割合を取得
 	const float animeRatio = getAnimeRatio();
 
 	// ステップ別更新
 	switch (step) {
+
+	case PlayerRollingSlashState::STEP::Charge: {
+		// 溜め中
+		chargeFrame++;
+
+		// チャージ完了判定
+		if (!chargeCompleteFlg && chargeFrame >= CHARGE_COMPLETE_FRAME) {
+			chargeCompleteFlg = true;
+		}
+
+		// 離した判定（毎フレーム見る）
+		if (!Input::GetIns().GetInfo(KEY_TYPE::PlayerAttackSlash).now) {
+
+			if (chargeCompleteFlg) {
+				// 回転斬りのアニメに切り替え
+				playAnimeRollingSlash();
+
+				// ステップを「前隙」に
+				step = STEP::Startup;
+
+			}
+			else {
+				// チャージ不足なら待機状態へ遷移
+				changeStateIdle();
+
+			}
+
+		}
+
+		break;
+	}
 
 	case PlayerRollingSlashState::STEP::Startup: {
 		// 前隙
