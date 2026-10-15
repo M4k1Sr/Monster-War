@@ -127,7 +127,7 @@ private:
 		false,	// Slash_Down
 		false,	// Slash_Up
 		false,	// Slahs_End
-		true,	// Charge
+		false,	// Charge
 		false,	// RollingSlash
 
 		false,	// Block

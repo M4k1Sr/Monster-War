@@ -190,6 +190,11 @@ void Player::Load(void)
 
 	// 「待機状態」->「移動状態」の自動遷移登録
 	RegisterStateTransition(STATE::Idle, STATE::Move);
+	////	「攻撃状態」->「移動状態」の自動遷移登録
+	//RegisterStateTransition(STATE::AttackSlash, STATE::Move);
+	// 「回転攻撃状態」->「移動状態」の自動遷移登録
+	RegisterStateTransition(STATE::AttackRollingSlash, STATE::Move);
+
 	// 「移動状態」->「待機状態」の自動遷移登録
 	RegisterStateTransition(STATE::Move, STATE::Idle);
 
@@ -197,6 +202,8 @@ void Player::Load(void)
 	RegisterStateTransition(STATE::Idle, STATE::Jump);
 	// 「移動状態」->「ジャンプ状態」の自動遷移登録
 	RegisterStateTransition(STATE::Move, STATE::Jump);
+	// 「回転攻撃状態」->「ジャンプ状態」の自動遷移登録
+	RegisterStateTransition(STATE::AttackRollingSlash, STATE::Jump);
 
 	// 「待機状態」->「攻撃（斬撃）状態」の自動遷移登録
 	RegisterStateTransition(STATE::Idle, STATE::AttackSlash);
