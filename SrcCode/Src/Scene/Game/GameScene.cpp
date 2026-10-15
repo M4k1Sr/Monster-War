@@ -25,6 +25,8 @@
 
 #include "../../Object/Player/Player.h"
 
+#include "../../Object/Enemy/GobKing.h"
+
 #include "../../Object/Stage/Stage.h"
 
 #include "../../Object/Water.h"
@@ -37,11 +39,13 @@ void GameScene::SubPostLoad(void)
 {
 	Snd::GetIns().ChangeScene("Game");
 
-	AddActor(new BoxDebugObject(Vector3(20000, 1000, 20000), Vector3::Yonly(-500), false));
+	AddActor(new BoxDebugObject(Vector3(20000, 0, 20000), Vector3::Yonly(-500), false));
 
 	//AddActor(new CapsuleDebugObject(Vector3(50, 0, 0), Vector3(-50, 0, 0), 50.0f, Vector3(), true, true, true, 50, true));
 	
 	AddActor(new Player);
+
+	AddActor(new GobKing);
 
 	//AddActor(new Stage);
 

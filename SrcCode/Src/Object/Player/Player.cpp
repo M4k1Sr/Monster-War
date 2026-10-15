@@ -54,7 +54,7 @@ void Player::Load(void)
 	trans.scale = 1;
 
 	// モデルの中心点のズレの補正
-	trans.centerDiff = Vector3(0.0f, -102.81f, 0.0f) * trans.scale;
+	trans.centerDiff = Vector3(0.0f, -90.0f, 0.0f) * trans.scale;
 
 	// モデルの角度のズレの補正
 	trans.SetLocalRotation(Quaternion::FromRotationY(Deg2Rad(180.0f)));
@@ -81,7 +81,7 @@ void Player::Load(void)
 	AddCollider(
 		new CapsuleCollider(
 			COLLIDER_TAG::Player,
-			Vector3::Yonly(-30.0f) * trans.scale,
+			Vector3::Yonly(0.0f) * trans.scale,
 			Vector3::Yonly(-60.0f) * trans.scale,
 			30.0f * trans.scale.MaxElementF()
 		)
