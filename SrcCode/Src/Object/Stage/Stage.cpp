@@ -17,19 +17,16 @@ void Stage::Load(void)
 #pragma region オブジェクト設定
 
 	// 動的オブジェクトとしての処理を有効にする
-	SetDynamicFlg(true);
+	SetDynamicFlg(false);
 
 	// 重力を有効にする
-	SetGravityFlg(true);
+	SetGravityFlg(false);
 
 	// 当たり判定による押し出しを有効にする
 	SetPushFlg(true);
 
 	// 押し出しだしによる重みを設定
 	SetPushWeight(50);
-
-	// シェーダー登録
-	CreateShader(new DefaultShader());
 
 #pragma endregion
 
@@ -40,28 +37,19 @@ void Stage::Load(void)
 	trans.LoadModel("Stage/Stage");
 
 	// モデルのスケール設定
-	trans.scale = 10;
+	trans.scale = 1.0f;
 
 	// モデルの中心点のズレの補正
-	trans.centerDiff = Vector3(0.0f, -102.81f, 0.0f) * trans.scale;
+	trans.centerDiff = Vector3(0.0f, -688.0f, 0.0f) * trans.scale;
 
 	// モデルの角度のズレの補正
 	trans.SetLocalRotation(Quaternion::FromRotationY(Deg2Rad(180.0f)));
-
-	// シェーダー登録
-	CreateShader(new DefaultShader());
 
 #pragma endregion
 
 #pragma region コライダーの生成
 
-	//AddCollider(
-	//	new BoxCollider(
-	//		COLLIDER_TAG::Stage,
-	//		Vector3(0.0f, 0.0f,0.0f),
-	//		500.0f * trans.scale.MaxElementF()
-	//	)
-	//);
+	AddCollider(new BoxCollider(COLLIDER_TAG::Stage,Vector3(20000, 0, 20000), Vector3::Yonly(-648.0f)));
 
 #pragma endregion
 

@@ -21,6 +21,5 @@ private:
 
 	// XV
 	void SubUpdate(void)override;
-
 };
 
