@@ -56,26 +56,6 @@ void Stage::Load(void)
 
 }
 
-void Stage::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
-{
-}
-
 void Stage::SubUpdate(void)
 {
-	static char type = 0;
-	static bool prev = false, now = false;
-
-	prev = now;
-	now = CheckHitKey(KEY_INPUT_SPACE) == 1;
-
-	if (!prev && now) {
-
-		if (++type > 1) { type = 0; }
-
-		switch (type) {
-		case 0: { CreateShader(new DefaultShader()); break; }
-		case 1: { CreateShader(new RimLightShader()); break; }
-		}
-	}
-
 }

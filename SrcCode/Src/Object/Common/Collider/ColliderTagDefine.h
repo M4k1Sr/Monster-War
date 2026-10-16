@@ -23,6 +23,8 @@ enum class COLLIDER_TAG
 	PlayerRollingSlash,
 	PlayerKickDownAttack,
 
+	PlayerWeaponItem,
+
 	Enemy,
 
 	Stage,

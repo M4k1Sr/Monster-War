@@ -10,9 +10,11 @@
 #include "../Common/Shader/RimLightShader.h"
 #include "../Common/Shader/WaterShader.h"
 
-#include "Weapon/PlayerAttackSlashCollOperator.h"
-#include "Weapon/PlayerRollingSlashCollOperator.h"
-#include "Weapon/PlayerKickDownAttackCollOperator.h"
+#include "Weapon/CollOperator/PlayerAttackSlashCollOperator.h"
+#include "Weapon/CollOperator/PlayerRollingSlashCollOperator.h"
+#include "Weapon/CollOperator/PlayerKickDownAttackCollOperator.h"
+
+#include "Weapon/Item/King_Sword.h"
 
 #include "State/PlayerIdleState.h"
 #include "State/PlayerMoveState.h"
@@ -90,7 +92,7 @@ void Player::Load(void)
 #pragma endregion
 
 
-#pragma region 下位アクターの生成
+#pragma region 下位アクターの生成(CollOperator)
 
 	// 攻撃当たり判定管理クラス
 	PlayerAttackSlashCollOperator* attackSlashCollOperator =
@@ -102,11 +104,23 @@ void Player::Load(void)
 	PlayerRollingSlashCollOperator* rollingSlashCollOperator =
 		new PlayerRollingSlashCollOperator(100.0f, Vector3(0, 0, 100), trans);
 
+	AddChildActor(rollingSlashCollOperator);
+
 	//// 攻撃当たり判定管理クラス
 	//PlayerKickDownAttackCollOperator* kickDownAttackCollOperator =
 	//	new PlayerKickDownAttackCollOperator(100.0f, Vector3(0, -100, 100), trans);
 
 	//AddChildActor(kickDownAttackCollOperator);
+
+#pragma endregion
+
+#pragma region 下位アクターの生成(武器)
+
+	// 武器クラス
+	King_Sword* king_Sword = 
+		new King_Sword(-20.0f, trans);
+
+	AddChildActor(king_Sword);
 
 #pragma endregion
 
