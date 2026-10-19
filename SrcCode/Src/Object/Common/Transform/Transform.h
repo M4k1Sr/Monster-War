@@ -32,6 +32,11 @@ struct Transform
 	// false = 静的オブジェクト
 	bool dynamicFlg;
 
+	// 行列直指定判定
+	bool useMatrix;
+
+	// 行列直指定時に使う行列
+	MATRIX matrix;
 
 	/// <summary>
 	/// 生成
@@ -49,7 +54,10 @@ struct Transform
 
 		scale(1),
 
-		dynamicFlg(true)
+		dynamicFlg(true),
+
+		useMatrix(false),
+		matrix(MGetIdent())
 	{
 	}
 

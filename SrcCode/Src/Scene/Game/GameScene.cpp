@@ -25,7 +25,7 @@
 
 #include "../../Object/Player/Player.h"
 
-#include "../../Object/Enemy/GobKing.h"
+#include "../../Object/Enemy/Enemymanager.h"
 
 #include "../../Object/Stage/Stage.h"
 
@@ -45,7 +45,10 @@ void GameScene::SubPostLoad(void)
 	
 	AddActor(new Player);
 
-	AddActor(new GobKing);
+	//敵の生成
+	AddActor(new EnemyManager);
+	//プレイヤー座標渡し
+	ActorSerch<EnemyManager>(actors)->SetPlayerPos(&operatorObject->GetTrans().pos);
 
 	AddActor(new Stage);
 

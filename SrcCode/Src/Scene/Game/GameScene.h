@@ -27,4 +27,8 @@ private:
 #pragma endregion
 
 	void CreateCamera(void)override;
+
+	// ‘€ì‘ÎÛ
+	ActorBase* operatorObject;
+
 };

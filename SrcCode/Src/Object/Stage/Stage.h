@@ -14,9 +14,6 @@ public:
 	// “Ç‚İ‚İˆ—
 	void Load(void)override;
 
-	// “–‚½‚è”»’è‚Ì’Ê’m
-	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)override;
-
 private:
 
 	// XV
