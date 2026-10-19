@@ -60,25 +60,33 @@ void GobKingMoveState::OwnStateConditionUpdate(void)
 
 void GobKingMoveState::Enter(void)
 {
-	playAnimeWalk();
+	//playAnimeWalk();
 }
 
 void GobKingMoveState::Update(void)
 {
-	//// 移動方向入力を取得
-	//Vector3 inputVec = InputVec();
+	// プレイヤーがいなければ何もしない
+	if (playerPos == nullptr) { return; }
 
-	//// 移動量の最大値を更新する
-	//accelMax = ACCEL_MAX * inputVec.Length();
+	// プレイヤーへの方向ベクトル（高さは無視して水平だけ）
+	Vector3 dir = *playerPos - gobPos;
+	dir.y = 0.0f;
 
-	//// 移動方向をカメラで回転させる
-	//inputVec.TransMatOwn(MGetRotY(CurrentCamera::Get().GetAngle().y));
+	// ほぼ重なってるときは正規化で0割りになるので何もしない
+	float lenSq = dir.x * dir.x + dir.z * dir.z;
+	if (lenSq < 0.0001f) { return; }
 
-	//// 移動
-	//moveAccel(inputVec);
+	// 正規化（単位ベクトルにする）
+	dir = dir.Normalized();   // 関数名は自分のVector3に合わせて
 
-	//// 移動状態の更新(スタミナにより状態変化)
-	//UpdateMove();
+	// 移動量の最大値を設定
+	accelMax = ACCEL_MAX;
+
+	// その方向に加速
+	moveAccel(dir);
+
+	// 移動状態の更新(スタミナにより状態変化)
+	UpdateMove();
 
 }
 
@@ -95,8 +103,8 @@ void GobKingMoveState::AlwaysUpdate(void)
 
 void GobKingMoveState::UpdateMove(void)
 {
-	//// 息切れしているときは歩くアニメーションにする
-	//playAnimeWalk();
+	// 歩くアニメーションにする
+	playAnimeWalk();
 
 	//// ダッシュしていないときは走るアニメーションにする
 	//playAnimeRun();

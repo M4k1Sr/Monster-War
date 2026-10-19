@@ -28,6 +28,15 @@ public:
 
 private:
 
+#pragma region 定数
+
+	// 索敵範囲
+	const float SEARCH_RANGE = 1000.0f;
+	// 攻撃可能範囲
+	const float ATTACK_RANGE = 100.0f;
+
+#pragma endregion
+
 	// 状態定義
 	enum class STATE
 	{
@@ -58,21 +67,23 @@ private:
 
 		Idle,
 
-		Walk,
-		Run,
-
 		Roar,
 
-		DrawSword,
-		WeaponIdle,
+		Walk,
 		Swing,
 
-		ThrowRock,
+		Run,
 
-		HitReact,
 
-		Flying,
-		GetUp,
+		//DrawSword,
+		//WeaponIdle,
+
+		//ThrowRock,
+
+		//HitReact,
+
+		//Flying,
+		//GetUp,
 
 		Max
 	};
@@ -80,23 +91,23 @@ private:
 	// アニメーション再生速度テーブル
 	float ANIME_SPEED_TABLE[(int)ANIME_TYPE::Max] =
 	{
-		1.0f,	// Idle
+		0.5f,	// Idle
+	
+		0.5f,	// Roar
 
-		1.0f,	// Walk
-		1.0f,	// Run
+		0.5f,	// Walk
+		0.5f,	// Run
 
-		1.0f,	// Roar
-		
-		1.0f,	// DrawSword
-		1.0f,	// WeaponIdle
-		1.0f,	// Swing
+		0.5f,	// DrawSword
+		//0.5f,	// WeaponIdle
+		//0.5f,	// Swing
 
-		1.0f,	// ThrowRock
+		//0.5f,	// ThrowRock
 
-		1.0f,	// HitReact
+		//0.5f,	// HitReact
 
-		1.0f,	// Flying
-		1.0f,	// GetUp
+		//0.5f,	// Flying
+		//0.5f,	// GetUp
 	};
 
 	// アニメーションループ再生フラグテーブル
@@ -104,21 +115,22 @@ private:
 	{
 		true,	// Idle
 
+		false,	// Roar
+
 		true,	// Walk
 		true,	// Run
 
-		false,	// Roar
 
-		false,	// DrawSword
-		true,	// WeaponIdle
+		//false,	// DrawSword
+		//true,	// WeaponIdle
 		false,	// Swing
 
-		false,	// TThrowRock
+		//false,	// TThrowRock
 
-		false,	// HitReact
+		//false,	// HitReact
 
-		false,	// Flying
-		false,	// GetUp
+		//false,	// Flying
+		//false,	// GetUp
 
 	};
 

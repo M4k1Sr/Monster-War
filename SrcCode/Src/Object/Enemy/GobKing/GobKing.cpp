@@ -112,7 +112,7 @@ void GobKing::Load(void)
 	AddState(
 		STATE::Idle,
 		new GobKingIdleState(
-			2000.0f,300.0f,
+			SEARCH_RANGE, ATTACK_RANGE,
 			trans.pos,
 			playerPos,
 			[&]() { AnimePlay(ANIME_TYPE::Idle); }
@@ -123,7 +123,7 @@ void GobKing::Load(void)
 	AddState(
 		STATE::Move,
 		new GobKingMoveState(
-			10.0f,2000.0f,300.0f,
+			1.0f,SEARCH_RANGE,ATTACK_RANGE,
 			std::bind(&GobKing::MoveAccel, this, std::placeholders::_1),
 			ACCEL_MAX,
 			trans.pos,
