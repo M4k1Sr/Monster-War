@@ -1,19 +1,19 @@
 #pragma once
 
-#include "../../Common/ActorBase/ActorBase.h"
+#include "../../../../Common/ActorBase/ActorBase.h"
 
 class SphereCollider;
 
-class PlayerAttackSlashCollOperator : public ActorBase
+class GobSwingCollOperator : public ActorBase
 {
 public:
-	PlayerAttackSlashCollOperator(
+	GobSwingCollOperator(
 		float COLL_RADIUS,
 		const Vector3& COLL_LOCAL_POS,
 
 		const Transform& playerTrans
 	);
-	~PlayerAttackSlashCollOperator()override = default;
+	~GobSwingCollOperator()override = default;
 
 	void Load(void)override;
 

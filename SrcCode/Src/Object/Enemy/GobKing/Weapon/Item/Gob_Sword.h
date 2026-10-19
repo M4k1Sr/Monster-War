@@ -2,15 +2,15 @@
 
 #include <map>
 
-#include "../../../Common/ActorBase/ActorBase.h"
+#include "../../../../Common/ActorBase/ActorBase.h"
 
-class King_Sword
+class Gob_Sword
 	: public ActorBase
 {
 public:
-	King_Sword(const Vector3& COLL_LOCAL_POS,
+	Gob_Sword(const Vector3& COLL_LOCAL_POS,
 		const Transform& playerTrans);
-	~King_Sword()override = default;
+	~Gob_Sword()override = default;
 
 	// ì«Ç›çûÇ›èàóù
 	void Load(void)override;

@@ -1,14 +1,14 @@
-#include "King_Sword.h"
+#include "Gob_Sword.h"
 
-#include "../../../Common/Collider/CapsuleCollider.h"
+#include "../../../../Common/Collider/CapsuleCollider.h"
 
-#include "../../../Common/Shader/DefaultShader.h"
-#include "../../../Common/Shader/RimLightShader.h"
-#include "../../../Common/Shader/WaterShader.h"
+#include "../../../../Common/Shader/DefaultShader.h"
+#include "../../../../Common/Shader/RimLightShader.h"
+#include "../../../../Common/Shader/WaterShader.h"
 
-#include "../../../../Utility/Utility.h"
+#include "../../../../../Utility/Utility.h"
 
-King_Sword::King_Sword(
+Gob_Sword::Gob_Sword(
 	const Vector3& COLL_LOCAL_POS,
 	const Transform& playerTrans
 ):
@@ -18,7 +18,7 @@ King_Sword::King_Sword(
 {
 }
 
-void King_Sword::Load(void)
+void Gob_Sword::Load(void)
 {
 #pragma region オブジェクト設定
 
@@ -40,7 +40,7 @@ void King_Sword::Load(void)
 #pragma region モデル設定
 
 	// モデルの読み込み
-	trans.LoadModel("Weapon/King_Sword");
+	trans.LoadModel("Weapon/Gob_Sword");
 
 	// 初期ローカル座標・角度
 	swordLocalPos = Vector3(9.5f, 8.5f, 10.5f);
@@ -74,7 +74,7 @@ void King_Sword::Load(void)
 
 }
 
-void King_Sword::SubUpdate(void)
+void Gob_Sword::SubUpdate(void)
 {	
 	// プレイヤーモデルの手フレームのワールド行列（アニメ反映済み）
 	MATRIX handMat = MV1GetFrameLocalWorldMatrix(playerTrans.model, 23);
@@ -99,7 +99,7 @@ void King_Sword::SubUpdate(void)
 	trans.pos = VTransform(VGet(0, 0, 0), mat);
 }
 
-void King_Sword::SubDraw(void)
+void Gob_Sword::SubDraw(void)
 {
 	DrawFormatString(10, 100, 0xffffff, "Pos(%.1f, %.1f, %.1f)", swordLocalPos.x, swordLocalPos.y, swordLocalPos.z);
 	DrawFormatString(10, 300, 0xffffff, "Rot(%.1f, %.1f, %.1f)", Rad2Deg(swordLocalRot.x), Rad2Deg(swordLocalRot.y), Rad2Deg(swordLocalRot.z));
