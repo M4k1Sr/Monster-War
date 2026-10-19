@@ -17,6 +17,10 @@ public:
 
 private:
 
+	// 武器ローカル座標・角度
+	Vector3 swordLocalPos = Vector3(0.0f, 0.0f, 0.0f);
+	Vector3 swordLocalRot = Vector3(0.0f, 0.0f, 0.0f);
+
 	// プレイヤーのモデル制御情報の参照
 	const Transform& playerTrans;
 
@@ -25,5 +29,8 @@ private:
 
 	// 更新
 	void SubUpdate(void)override;
+
+	void SubDraw(void)override;
+
 };
 

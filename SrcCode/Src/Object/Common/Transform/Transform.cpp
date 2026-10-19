@@ -139,6 +139,13 @@ void Transform::Attach(void)
 {
 	if (model == -1) { return; }
 
+	// 行列直指定モード
+	if (useMatrix)
+	{
+		MV1SetMatrix(model, matrix);
+		return;
+	}
+
 	// 最終的な回転
 	const MATRIX rotationMat = FinalRotationMat();
 
