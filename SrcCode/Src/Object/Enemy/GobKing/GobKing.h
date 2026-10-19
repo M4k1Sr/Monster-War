@@ -1,11 +1,20 @@
 #pragma once
 
-#include "../Common/CharacterBase/CharacterBase.h"
+#include "../../Common/CharacterBase/CharacterBase.h"
 
 class GobKing : public CharacterBase
 {
 public:
-	GobKing();
+	GobKing(
+		const Vector3& pos,
+		const  int hp
+	) :
+		CharacterBase(),
+		playerPos(nullptr)
+	{
+		SetGravityFlg(true);
+	}
+
 	~GobKing()override = default;
 
 	// 読み込み
@@ -13,6 +22,9 @@ public:
 
 	// 当たり判定の通知
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)override;
+
+	//座標渡し
+	void SetPlayerPos(const Vector3* pos) { playerPos = pos; }
 
 private:
 
@@ -120,4 +132,12 @@ private:
 	}
 
 	void SubUpdate(void)override;
+
+#pragma region 受けとる参照
+
+	//座標参照
+	const Vector3* playerPos;
+
+#pragma endregion
+
 };

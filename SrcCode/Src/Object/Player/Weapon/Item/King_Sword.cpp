@@ -29,7 +29,7 @@ void King_Sword::Load(void)
 	SetGravityFlg(false);
 
 	// 当たり判定による押し出しを有効にする
-	SetPushFlg(true);
+	SetPushFlg(false);
 
 	// 押し出しだしによる重みを設定
 	SetPushWeight(0);
@@ -76,29 +76,6 @@ void King_Sword::Load(void)
 
 void King_Sword::SubUpdate(void)
 {	
-
-	const float MOVE = 0.5f;
-	const float ROT = Deg2Rad(1.0f);
-
-	if (CheckHitKey(KEY_INPUT_LSHIFT)) {
-		// Shift押しながら → 回転
-		if (CheckHitKey(KEY_INPUT_I)) swordLocalRot.x += ROT;
-		if (CheckHitKey(KEY_INPUT_K)) swordLocalRot.x -= ROT;
-		if (CheckHitKey(KEY_INPUT_J)) swordLocalRot.y += ROT;
-		if (CheckHitKey(KEY_INPUT_L)) swordLocalRot.y -= ROT;
-		if (CheckHitKey(KEY_INPUT_U)) swordLocalRot.z += ROT;
-		if (CheckHitKey(KEY_INPUT_O)) swordLocalRot.z -= ROT;
-	}
-	else {
-		// 何も押さない → 位置
-		if (CheckHitKey(KEY_INPUT_I)) swordLocalPos.x += MOVE;
-		if (CheckHitKey(KEY_INPUT_K)) swordLocalPos.x -= MOVE;
-		if (CheckHitKey(KEY_INPUT_J)) swordLocalPos.y += MOVE;
-		if (CheckHitKey(KEY_INPUT_L)) swordLocalPos.y -= MOVE;
-		if (CheckHitKey(KEY_INPUT_U)) swordLocalPos.z += MOVE;
-		if (CheckHitKey(KEY_INPUT_O)) swordLocalPos.z -= MOVE;
-	}
-
 	// プレイヤーモデルの手フレームのワールド行列（アニメ反映済み）
 	MATRIX handMat = MV1GetFrameLocalWorldMatrix(playerTrans.model, 23);
 

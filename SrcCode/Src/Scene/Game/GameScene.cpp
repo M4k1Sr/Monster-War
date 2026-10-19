@@ -25,7 +25,7 @@
 
 #include "../../Object/Player/Player.h"
 
-#include "../../Object/Enemy/GobKing.h"
+#include "../../Object/Enemy/Enemymanager.h"
 
 #include "../../Object/Stage/Stage.h"
 
@@ -42,10 +42,13 @@ void GameScene::SubPostLoad(void)
 	//AddActor(new BoxDebugObject(Vector3(20000, 0, 20000), Vector3::Yonly(-500), false));
 
 	//AddActor(new CapsuleDebugObject(Vector3(50, 0, 0), Vector3(-50, 0, 0), 50.0f, Vector3(), true, true, true, 50, true));
-	
-	AddActor(new Player);
+	operatorObject = new Player();
+	AddActor(operatorObject);
 
-	AddActor(new GobKing);
+	//敵の生成
+	AddActor(new EnemyManager);
+	//プレイヤー座標渡し
+	ActorSerch<EnemyManager>(actors)->SetPlayerPos(&operatorObject->GetTrans().pos);
 
 	AddActor(new Stage);
 

@@ -48,6 +48,10 @@
     <ClCompile Include="Src\Object\Player\State\PlayerJumpState.cpp" />
     <ClCompile Include="Src\Object\Player\State\PlayerKickDownAttackState.cpp" />
     <ClCompile Include="Src\Object\Player\State\PlayerMoveState.cpp" />
+<<<<<<< HEAD
+=======
+    <ClCompile Include="Src\Object\Player\Weapon\CollOperator\PlayerKickDownAttackCollOperator.cpp" />
+>>>>>>> main
     <ClCompile Include="Src\Object\Player\Player.cpp" />
     <ClCompile Include="Src\Object\Common\Shader\DefaultShader.cpp" />
     <ClCompile Include="Src\Object\Common\Shader\RimLightShader.cpp" />
@@ -58,6 +62,7 @@
     <ClCompile Include="Src\Scene\Common\PostEffect\FocusLinesPostEffect\FocusLinesPostEffect.cpp" />
     <ClCompile Include="Src\Common\Quaternion.cpp" />
     <ClCompile Include="Src\Object\Stage\Stage.cpp" />
+<<<<<<< HEAD
     <ClCompile Include="Src\Object\Player\State\PlayerAttackSlashState.cpp" />
     <ClCompile Include="Src\Object\Player\State\PlayerRollingSlashState.cpp" />
     <ClCompile Include="Src\Object\Player\Weapon\Item\King_Sword.cpp" />
@@ -66,6 +71,28 @@
     <ClCompile Include="Src\Object\Player\Weapon\CollOperator\PlayerRollingSlashCollOperator.cpp" />
     <ClCompile Include="Src\Object\Player\Weapon\CollOperator\PlayerAttackSlashCollOperator.cpp" />
     <ClCompile Include="Src\Object\Player\Weapon\CollOperator\PlayerKickDownAttackCollOperator.cpp" />
+=======
+    <ClCompile Include="Src\Object\Player\Weapon\CollOperator\PlayerAttackSlashCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Player\State\PlayerAttackSlashState.cpp" />
+    <ClCompile Include="Src\Object\Player\State\PlayerRollingSlashState.cpp" />
+    <ClCompile Include="Src\Object\Player\Weapon\CollOperator\PlayerRollingSlashCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Enemy\GobKing\State\GobKingAttackState.cpp" />
+    <ClCompile Include="Src\Object\Enemy\GobKing\State\GobKingDieState.cpp" />
+    <ClCompile Include="Src\Object\Enemy\GobKing\State\GobKIngIdleState.cpp" />
+    <ClCompile Include="Src\Object\Enemy\GobKing\State\GobKingMoveState.cpp" />
+    <ClCompile Include="Src\Object\Enemy\GobKing\State\GobKingReactState.cpp" />
+    <ClCompile Include="Src\Object\Enemy\GobKing\State\GobKingRoarState.cpp" />
+    <ClCompile Include="Src\Object\Enemy\GobKing\GobKing.cpp" />
+    <ClCompile Include="Src\Object\Enemy\EnemyBase.cpp" />
+    <ClCompile Include="Src\Object\Enemy\EnemyManager.cpp" />
+    <ClCompile Include="Src\Object\Player\Weapon\Item\King_Sword.cpp" />
+    <ClCompile Include="Src\Object\Enemy\GobKing\Weapon\Item\Gob_Sword.cpp" />
+    <ClCompile Include="Src\Object\Enemy\GobKing\Weapon\CollOperator\GobSwingCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Enemy\GobKing\Weapon\CollOperator\GobThrowRockCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Player\Weapon\CollOperator\PlayerAttackSlashCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Player\Weapon\CollOperator\PlayerKickDownAttackCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Player\Weapon\CollOperator\PlayerRollingSlashCollOperator.cpp" />
+>>>>>>> main
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\resource.h" />
@@ -138,6 +165,10 @@
     <ClInclude Include="Src\Object\Player\State\PlayerJumpState.h" />
     <ClInclude Include="Src\Object\Player\State\PlayerKickDownAttackState.h" />
     <ClInclude Include="Src\Object\Player\State\PlayerMoveState.h" />
+<<<<<<< HEAD
+=======
+    <ClInclude Include="Src\Object\Player\Weapon\CollOperator\PlayerKickDownAttackCollOperator.h" />
+>>>>>>> main
     <ClInclude Include="Src\Object\Player\Player.h" />
     <ClInclude Include="Src\Object\Common\Shader\DefaultShader.h" />
     <ClInclude Include="Src\Object\Common\Shader\RimLightShader.h" />
@@ -149,6 +180,7 @@
     <ClInclude Include="Src\Scene\Common\PostEffect\FocusLinesPostEffect\FocusLinesPostEffect.h" />
     <ClInclude Include="Src\Common\Quaternion.h" />
     <ClInclude Include="Src\Object\Stage\Stage.h" />
+<<<<<<< HEAD
     <ClInclude Include="Src\Object\Player\State\PlayerAttackSlashState.h" />
     <ClInclude Include="Src\Object\Player\State\PlayerRollingSlashState.h" />
     <ClInclude Include="Src\Object\Player\Weapon\Item\King_Sword.h" />
@@ -157,6 +189,28 @@
     <ClInclude Include="Src\Object\Player\Weapon\CollOperator\PlayerRollingSlashCollOperator.h" />
     <ClInclude Include="Src\Object\Player\Weapon\CollOperator\PlayerAttackSlashCollOperator.h" />
     <ClInclude Include="Src\Object\Player\Weapon\CollOperator\PlayerKickDownAttackCollOperator.h" />
+=======
+    <ClInclude Include="Src\Object\Player\Weapon\CollOperator\PlayerAttackSlashCollOperator.h" />
+    <ClInclude Include="Src\Object\Player\State\PlayerAttackSlashState.h" />
+    <ClInclude Include="Src\Object\Player\State\PlayerRollingSlashState.h" />
+    <ClInclude Include="Src\Object\Player\Weapon\CollOperator\PlayerRollingSlashCollOperator.h" />
+    <ClInclude Include="Src\Object\Enemy\GobKing\State\GobKingAttackState.h" />
+    <ClInclude Include="Src\Object\Enemy\GobKing\State\GobKingDieState.h" />
+    <ClInclude Include="Src\Object\Enemy\GobKing\State\GobKIngIdleState.h" />
+    <ClInclude Include="Src\Object\Enemy\GobKing\State\GobKingMoveState.h" />
+    <ClInclude Include="Src\Object\Enemy\GobKing\State\GobKingReactState.h" />
+    <ClInclude Include="Src\Object\Enemy\GobKing\State\GobKingRoarState.h" />
+    <ClInclude Include="Src\Object\Enemy\GobKing\GobKing.h" />
+    <ClInclude Include="Src\Object\Enemy\EnemyBase.h" />
+    <ClInclude Include="Src\Object\Enemy\EnemyManager.h" />
+    <ClInclude Include="Src\Object\Player\Weapon\Item\King_Sword.h" />
+    <ClInclude Include="Src\Object\Enemy\GobKing\Weapon\Item\Gob_Sword.h" />
+    <ClInclude Include="Src\Object\Enemy\GobKing\Weapon\CollOperator\GobSwingCollOperator.h" />
+    <ClInclude Include="Src\Object\Enemy\GobKing\Weapon\CollOperator\GobThrowRockCollOperator.h" />
+    <ClInclude Include="Src\Object\Player\Weapon\CollOperator\PlayerAttackSlashCollOperator.h" />
+    <ClInclude Include="Src\Object\Player\Weapon\CollOperator\PlayerKickDownAttackCollOperator.h" />
+    <ClInclude Include="Src\Object\Player\Weapon\CollOperator\PlayerRollingSlashCollOperator.h" />
+>>>>>>> main
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Shader\Common\Pixel\ModelFog.hlsli" />
