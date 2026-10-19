@@ -2,11 +2,19 @@
 
 #include "../../../Common/CharacterBase/CharacterStateBase.h"
 
+#include "../../../../Common/Vector3.h"
+
 class GobKingIdleState : public CharacterStateBase
 {
 public:
 
-	GobKingIdleState(std::function<void(void)> playAnimeIdle);
+	GobKingIdleState(
+		float SEARCH_RANGE,
+		float ATTACK_RANGE,
+
+		const Vector3& gobPos,
+		const Vector3*& playerPos,
+		std::function<void(void)> playAnimeIdle);
 
 	~GobKingIdleState()override = default;
 
@@ -18,6 +26,22 @@ public:
 
 private:
 
+#pragma region 定数
+
+	// 索敵範囲
+	const float SEARCH_RANGE;
+	// 攻撃可能範囲
+	const float ATTACK_RANGE;
+
+#pragma endregion
+
 	// 待機アニメーションの再生関数のポインタ
 	const std::function<void(void)> playAnimeIdle;
+
+	//ゴブリンキング座標
+	const Vector3& gobPos;
+
+	//プレイヤー座標参照
+	const Vector3* const& playerPos;
+
 };

@@ -4,17 +4,37 @@
 
 #include "../../../../Manager/Input/InputManager.h"
 
-GobKingIdleState::GobKingIdleState(std::function<void(void)> playAnimeIdle) :
+GobKingIdleState::GobKingIdleState(
+	float SEARCH_RANGE,
+	float ATTACK_RANGE,
+
+	const Vector3& gobPos,
+	const Vector3*& playerPos,
+	std::function<void(void)> playAnimeIdle
+):
+	gobPos(gobPos),
+	playerPos(playerPos),
+
+	SEARCH_RANGE(SEARCH_RANGE),
+	ATTACK_RANGE(ATTACK_RANGE),
+
 	playAnimeIdle(playAnimeIdle)
 {
 }
 
 void GobKingIdleState::OwnStateConditionUpdate(void)
 {
-	Vector3 vec = Vector3();
+	if (playerPos == nullptr) { OwnChangeState(); }
 
-	// ˆÚ“®“ü—Í‚ª‚È‚¯‚ê‚ÎAŽ©•ª‚Ìó‘Ô‚É‘JˆÚ
-	if (vec == 0.0f) { OwnChangeState(); }
+	//Vector3 diff = *playerPos - gobPos;
+	//float distSq = diff.x * diff.x + diff.z * diff.z;
+
+	//// õ“G”ÍˆÍ‚ÌŠOA‚Ü‚½‚ÍUŒ‚”ÍˆÍ‚Ì“à‘¤ ¨ ‘Ò‹@
+	//if (distSq >= SEARCH_RANGE * SEARCH_RANGE ||
+	//	distSq <= ATTACK_RANGE * ATTACK_RANGE)
+	//{
+	//	OwnChangeState();
+	//}
 }
 
 void GobKingIdleState::Enter(void)

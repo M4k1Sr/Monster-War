@@ -16,7 +16,6 @@
 //
 #include "State/GobKingIdleState.h"
 #include "State/GobKingMoveState.h"
-//#include "State/PlayerJumpState.h"
 //#include "State/PlayerAttackSlashState.h"
 //#include "State/PlayerRollingSlashState.h"
 //#include "State/PlayerKickDownAttackState.h"
@@ -77,7 +76,7 @@ void GobKing::Load(void)
 	AddCollider(
 		new CapsuleCollider(
 			COLLIDER_TAG::Enemy,
-			Vector3::Yonly(0.0f) * trans.scale,
+			Vector3::Yonly(-30.0f) * trans.scale,
 			Vector3::Yonly(-60.0f) * trans.scale,
 			30.0f * trans.scale.MaxElementF()
 		)
@@ -112,16 +111,23 @@ void GobKing::Load(void)
 	// 待機状態
 	AddState(
 		STATE::Idle,
-		new GobKingIdleState([&]() { AnimePlay(ANIME_TYPE::Idle); })
+		new GobKingIdleState(
+			2000.0f,300.0f,
+			trans.pos,
+			playerPos,
+			[&]() { AnimePlay(ANIME_TYPE::Idle); }
+		)
 	);
 
 	// 移動状態
 	AddState(
 		STATE::Move,
 		new GobKingMoveState(
-			10.0f,
+			10.0f,2000.0f,300.0f,
 			std::bind(&GobKing::MoveAccel, this, std::placeholders::_1),
 			ACCEL_MAX,
+			trans.pos,
+			playerPos,
 			[&]() { AnimePlay(ANIME_TYPE::Walk); },
 			[&]() { AnimePlay(ANIME_TYPE::Run); }
 		)
@@ -183,15 +189,16 @@ void GobKing::Load(void)
 	//	)
 	//);
 
-	//// 「待機状態」->「移動状態」の自動遷移登録
-	//RegisterStateTransition(STATE::Idle, STATE::Move);
+	// 「待機状態」->「移動状態」の自動遷移登録
+	RegisterStateTransition(STATE::Idle, STATE::Move);
+
 	////「攻撃状態」->「移動状態」の自動遷移登録
 	//RegisterStateTransition(STATE::AttackSlash, STATE::Move);
 	//// 「回転攻撃状態」->「移動状態」の自動遷移登録
 	//RegisterStateTransition(STATE::AttackRollingSlash, STATE::Move);
 
-	//// 「移動状態」->「待機状態」の自動遷移登録
-	//RegisterStateTransition(STATE::Move, STATE::Idle);
+	// 「移動状態」->「待機状態」の自動遷移登録
+	RegisterStateTransition(STATE::Move, STATE::Idle);
 
 	//// 「待機状態」->「ジャンプ状態」の自動遷移登録
 	//RegisterStateTransition(STATE::Idle, STATE::Jump);

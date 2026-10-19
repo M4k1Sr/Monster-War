@@ -2,6 +2,8 @@
 
 #include "../../../Common/CharacterBase/CharacterStateBase.h"
 
+#include "../../../../Common/Vector3.h"
+
 struct Vector3;
 
 class GobKingMoveState : public CharacterStateBase
@@ -10,8 +12,15 @@ public:
 
 	GobKingMoveState(
 		float ACCEL_MAX, 
+		float SEARCH_RANGE,
+		float ATTACK_RANGE,
+
 		std::function<void(const Vector3&)> moveAccel,
 		float& accelMax,
+
+		const Vector3& gobPos,
+		const Vector3*& playerPos,
+
 		std::function<void(void)> playAnimeWalk,
 		std::function<void(void)> playAnimeRun
 	);
@@ -41,12 +50,23 @@ private:
 	// 非ダッシュ時の最大移動速度
 	const float ACCEL_MAX;
 
+	// 索敵範囲
+	const float SEARCH_RANGE;
+	// 攻撃可能範囲
+	const float ATTACK_RANGE;
+
 #pragma endregion
 
 #pragma region 受け取る参照変数・関数
 
 	// 移動関数のポインタ
 	const std::function<void(const Vector3&)> moveAccel;
+
+	//ゴブリンキング座標
+	const Vector3& gobPos;
+
+	//プレイヤー座標参照
+	const Vector3* const& playerPos;
 
 	// 横軸加速度の最大値の参照
 	float& accelMax;

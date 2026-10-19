@@ -7,15 +7,25 @@
 
 GobKingMoveState::GobKingMoveState(
 	float ACCEL_MAX,
+	float SEARCH_RANGE,
+	float ATTACK_RANGE,
 
 	std::function<void(const Vector3&)> moveAccel,
 
 	float& accelMax,
 
+	const Vector3& gobPos,
+	const Vector3*& playerPos,
+
 	std::function<void(void)> playAnimeWalk,
 	std::function<void(void)> playAnimeRun
 ) :
+	gobPos(gobPos),
+	playerPos(playerPos),
+
 	ACCEL_MAX(ACCEL_MAX),
+	SEARCH_RANGE(SEARCH_RANGE),
+	ATTACK_RANGE(ATTACK_RANGE),
 
 	moveAccel(moveAccel),
 
@@ -30,8 +40,22 @@ GobKingMoveState::GobKingMoveState(
 
 void GobKingMoveState::OwnStateConditionUpdate(void)
 {
-	//// ˆÚ“®“ü—Í‚ª‚ ‚ê‚ÎAŽ©•ª‚Ìó‘Ô‚É‘JˆÚ
-	//if (move != 0.0f) { OwnChangeState(); }
+	// ƒvƒŒƒCƒ„[‚ª‚¢‚È‚¯‚ê‚Î‰½‚à‚µ‚È‚¢
+	if (playerPos == nullptr) { return; }
+
+	// UŒ‚”ÍˆÍŠO‚È‚ç‚ÎˆÚ“®ó‘Ô‚Ö‘JˆÚ
+	// UŒ‚”ÍˆÍ‚È‚çreturn
+
+	// ƒvƒŒƒCƒ„[ŠÔ‚Ì‹——£ŒvŽZ
+	// ‚‚³(y’l)‚Í–³Ž‹
+	Vector3 diff = *playerPos - gobPos;
+	float distSq = diff.x * diff.x + diff.z * diff.z;
+
+	if (distSq > ATTACK_RANGE * ATTACK_RANGE &&
+		distSq < SEARCH_RANGE * SEARCH_RANGE)
+	{
+		OwnChangeState();
+	}
 }
 
 void GobKingMoveState::Enter(void)
