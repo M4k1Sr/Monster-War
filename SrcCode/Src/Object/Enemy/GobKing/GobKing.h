@@ -70,20 +70,13 @@ private:
 		Roar,
 
 		Walk,
+		
 		Swing,
+		Throw,
 
-		Run,
+		HitReact,
 
-
-		//DrawSword,
-		//WeaponIdle,
-
-		//ThrowRock,
-
-		//HitReact,
-
-		//Flying,
-		//GetUp,
+		Flying,
 
 		Max
 	};
@@ -96,18 +89,14 @@ private:
 		0.5f,	// Roar
 
 		0.5f,	// Walk
-		0.5f,	// Run
 
-		0.5f,	// DrawSword
-		//0.5f,	// WeaponIdle
-		//0.5f,	// Swing
+		0.5f,	// Swing
+		0.5f,	// Throw
 
-		//0.5f,	// ThrowRock
+		0.5f,	// React
 
-		//0.5f,	// HitReact
+		0.5f,	// Flying
 
-		//0.5f,	// Flying
-		//0.5f,	// GetUp
 	};
 
 	// アニメーションループ再生フラグテーブル
@@ -118,20 +107,13 @@ private:
 		false,	// Roar
 
 		true,	// Walk
-		true,	// Run
 
-
-		//false,	// DrawSword
-		//true,	// WeaponIdle
 		false,	// Swing
+		false,	// Throw
 
-		//false,	// TThrowRock
+		false,	// React
 
-		//false,	// HitReact
-
-		//false,	// Flying
-		//false,	// GetUp
-
+		false,	// Flying
 	};
 
 #pragma endregion

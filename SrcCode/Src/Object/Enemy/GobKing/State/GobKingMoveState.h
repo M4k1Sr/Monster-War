@@ -21,8 +21,7 @@ public:
 		const Vector3& gobPos,
 		const Vector3*& playerPos,
 
-		std::function<void(void)> playAnimeWalk,
-		std::function<void(void)> playAnimeRun
+		std::function<void(void)> playAnimeWalk
 	);
 
 	~GobKingMoveState()override = default;
@@ -73,8 +72,6 @@ private:
 
 	// 歩きアニメーションの再生関数のポインタ
 	const std::function<void(void)> playAnimeWalk;
-	// 走りアニメーションの再生関数のポインタ
-	const std::function<void(void)> playAnimeRun;
 
 #pragma endregion
 

@@ -16,7 +16,7 @@
 //
 #include "State/GobKingIdleState.h"
 #include "State/GobKingMoveState.h"
-//#include "State/PlayerAttackSlashState.h"
+#include "State/GobKingRoarState.h"
 //#include "State/PlayerRollingSlashState.h"
 //#include "State/PlayerKickDownAttackState.h"
 
@@ -53,6 +53,9 @@ void GobKing::Load(void)
 
 	// モデルの角度のズレの補正
 	trans.SetLocalRotation(Quaternion::FromRotationY(Deg2Rad(180.0f)));
+
+	// 初期座標
+	trans.pos = Vector3(VGet(0.0f, 0.0f, -2500.0f));
 
 	// シェーダー登録
 	CreateShader(new DefaultShader());
@@ -119,17 +122,24 @@ void GobKing::Load(void)
 		)
 	);
 
+	//// おたけび状態
+	//AddState(
+	//	STATE::Roar,
+	//	new GobKingRoarState(
+
+	//	)
+	//)
+
 	// 移動状態
 	AddState(
 		STATE::Move,
 		new GobKingMoveState(
-			1.0f,SEARCH_RANGE,ATTACK_RANGE,
+			5.0f,SEARCH_RANGE,ATTACK_RANGE,
 			std::bind(&GobKing::MoveAccel, this, std::placeholders::_1),
 			ACCEL_MAX,
 			trans.pos,
 			playerPos,
-			[&]() { AnimePlay(ANIME_TYPE::Walk); },
-			[&]() { AnimePlay(ANIME_TYPE::Run); }
+			[&]() { AnimePlay(ANIME_TYPE::Walk); }
 		)
 	);
 

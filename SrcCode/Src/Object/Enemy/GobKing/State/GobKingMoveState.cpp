@@ -17,8 +17,7 @@ GobKingMoveState::GobKingMoveState(
 	const Vector3& gobPos,
 	const Vector3*& playerPos,
 
-	std::function<void(void)> playAnimeWalk,
-	std::function<void(void)> playAnimeRun
+	std::function<void(void)> playAnimeWalk
 ) :
 	gobPos(gobPos),
 	playerPos(playerPos),
@@ -32,7 +31,6 @@ GobKingMoveState::GobKingMoveState(
 	accelMax(accelMax),
 
 	playAnimeWalk(playAnimeWalk),
-	playAnimeRun(playAnimeRun),
 
 	isTired(false)
 {
@@ -105,8 +103,5 @@ void GobKingMoveState::UpdateMove(void)
 {
 	// 歩くアニメーションにする
 	playAnimeWalk();
-
-	//// ダッシュしていないときは走るアニメーションにする
-	//playAnimeRun();
 
 }
