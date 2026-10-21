@@ -122,13 +122,32 @@ void GobKing::Load(void)
 		)
 	);
 
-	//// おたけび状態
-	//AddState(
-	//	STATE::Roar,
-	//	new GobKingRoarState(
+	// おたけび状態
+	AddState(
+		STATE::Roar,
+		new GobKingRoarState(
+			HEAR_RANGE,
+			trans.pos,
+			playerPos,
+			[&]() { AnimePlay(ANIME_TYPE::Roar); },
+			[&]() { 
 
-	//	)
-	//)
+				//再生したアニメが終了したら遷移
+				if (IsAnimeEnd())
+				{
+					ChangeState(STATE::Idle);
+				}
+			},
+			[&]() { 
+				//再生したアニメが終了したら遷移
+				if (IsAnimeEnd())
+				{
+					ChangeState(STATE::Move);
+				}
+
+			}
+		)
+	);
 
 	// 移動状態
 	AddState(

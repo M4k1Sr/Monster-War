@@ -6,21 +6,25 @@
 #include "../../../../Manager/Camera/CurrentCamera.h"
 
 GobKingRoarState::GobKingRoarState(
-	float SEARCH_RANGE,
-	float ATTACK_RANGE,
+	float HEAR_RANGE,
 
 	const Vector3& gobPos,
 	const Vector3*& playerPos,
 
-	std::function<void(void)> playAnimeRoar
+	std::function<void(void)> playAnimeRoar,
+
+	std::function<void(void)> changeStateIdle,
+	std::function<void(void)> changeStateMove
 ) :
 	gobPos(gobPos),
 	playerPos(playerPos),
 
-	SEARCH_RANGE(SEARCH_RANGE),
-	ATTACK_RANGE(ATTACK_RANGE),
+	HEAR_RANGE(HEAR_RANGE),
 
-	playAnimeRoar(playAnimeRoar)
+	playAnimeRoar(playAnimeRoar),
+
+	changeStateIdle(changeStateIdle),
+	changeStateMove(changeStateMove)
 {
 }
 
@@ -37,8 +41,7 @@ void GobKingRoarState::OwnStateConditionUpdate(void)
 	Vector3 diff = *playerPos - gobPos;
 	float distSq = diff.x * diff.x + diff.z * diff.z;
 
-	if (distSq > ATTACK_RANGE * ATTACK_RANGE &&
-		distSq < SEARCH_RANGE * SEARCH_RANGE)
+	if (distSq < HEAR_RANGE * HEAR_RANGE)
 	{
 		OwnChangeState();
 	}
@@ -46,11 +49,19 @@ void GobKingRoarState::OwnStateConditionUpdate(void)
 
 void GobKingRoarState::Enter(void)
 {
-	//playAnimeWalk();
 }
 
 void GobKingRoarState::Update(void)
 {
+	// プレイヤー間の距離計算
+	// 高さ(y値)は無視
+	Vector3 diff = *playerPos - gobPos;
+	float distSq = diff.x * diff.x + diff.z * diff.z;
+
+	if (distSq < HEAR_RANGE * HEAR_RANGE)
+	{
+		playAnimeRoar();
+	}
 }
 
 void GobKingRoarState::Exit(void)

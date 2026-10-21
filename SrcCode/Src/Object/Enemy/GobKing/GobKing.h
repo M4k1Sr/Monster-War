@@ -30,6 +30,8 @@ private:
 
 #pragma region ’è”
 
+	// ’®Šo”ÍˆÍ
+	const float HEAR_RANGE = 1500.0f;
 	// õ“G”ÍˆÍ
 	const float SEARCH_RANGE = 1000.0f;
 	// UŒ‚‰Â”\”ÍˆÍ

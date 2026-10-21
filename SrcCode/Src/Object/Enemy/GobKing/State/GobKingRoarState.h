@@ -11,13 +11,16 @@ class GobKingRoarState : public CharacterStateBase
 public:
 
 	GobKingRoarState(
-		float SEARCH_RANGE,
-		float ATTACK_RANGE,
+		float HEAR_RANGE,
 
 		const Vector3& gobPos,
 		const Vector3*& playerPos,
 
-		std::function<void(void)> playAnimeRoar
+		std::function<void(void)> playAnimeRoar,
+
+		std::function<void(void)> changeStateIdle,
+		std::function<void(void)> changeStateMove
+
 	);
 
 	~GobKingRoarState()override = default;
@@ -39,10 +42,8 @@ private:
 
 #pragma region 定数
 
-	// 索敵範囲
-	const float SEARCH_RANGE;
-	// 攻撃可能範囲
-	const float ATTACK_RANGE;
+	// 聴覚範囲
+	const float HEAR_RANGE;
 
 #pragma endregion
 
@@ -56,6 +57,11 @@ private:
 
 	// おたけびアニメーションの再生関数のポインタ
 	const std::function<void(void)> playAnimeRoar;
+
+	// 待機状態に戻る関数のポインタ
+	const std::function<void(void)> changeStateIdle;
+	// 移動状態に遷移する関数のポインタ
+	const std::function<void(void)> changeStateMove;
 
 #pragma endregion
 
