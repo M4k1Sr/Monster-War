@@ -10,6 +10,8 @@
 #include "../Common/Shader/RimLightShader.h"
 #include "../Common/Shader/WaterShader.h"
 
+#include "../../Scene/SceneManager.h"
+
 #include "Weapon/CollOperator/PlayerAttackSlashCollOperator.h"
 #include "Weapon/CollOperator/PlayerRollingSlashCollOperator.h"
 #include "Weapon/CollOperator/PlayerKickDownAttackCollOperator.h"
@@ -61,6 +63,7 @@ void Player::Load(void)
 	// モデルの角度のズレの補正
 	trans.SetLocalRotation(Quaternion::FromRotationY(Deg2Rad(180.0f)));
 
+	
 	// シェーダー登録
 	CreateShader(new DefaultShader());
 
@@ -240,6 +243,9 @@ void Player::Load(void)
 
 void Player::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
 {
+	if (ownTag != COLLIDER_TAG::Player) { return; }
+
+	if (other.GetTag() == COLLIDER_TAG::GobKingSwing) { Damage(50); }
 }
 
 void Player::SubUpdate(void)
@@ -259,4 +265,9 @@ void Player::SubUpdate(void)
 		case 1: { CreateShader(new RimLightShader()); break; }
 		}
 	}
+}
+
+void Player::OnDeath(void)
+{
+	SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GameOver);
 }

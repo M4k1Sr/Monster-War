@@ -153,4 +153,5 @@ private:
 
 	void SubUpdate(void)override;
 
+	void OnDeath(void)override;
 };

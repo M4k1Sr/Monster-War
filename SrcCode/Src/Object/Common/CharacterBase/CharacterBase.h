@@ -31,6 +31,9 @@ private:
 	// ステート管理用マップ（キー：ステート番号、値：状態クラスのポインタ）
 	std::map<int, CharacterStateBase*> stateMap;
 
+	// 持ちHP
+	int hp;
+
 	// ステートの追加
 	void AddState(int stateNum, CharacterStateBase* stateIns);
 
@@ -138,4 +141,15 @@ protected:
 	void SetAnimeStep(float step);
 	
 #pragma endregion
+
+#pragma region ダメージ系関数
+
+	virtual void Damage(int damage);
+
+	// 死亡判定る
+	virtual void OnDeath(void) {}
+
+	bool IsDead(void)const { return hp <= 0; }
+
+#pragma endregion 
 };

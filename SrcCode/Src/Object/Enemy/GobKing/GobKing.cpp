@@ -10,6 +10,8 @@
 #include "../../Common/Shader/RimLightShader.h"
 #include "../../Common/Shader/WaterShader.h"
 
+#include "../../../Scene/SceneManager.h"
+
 #include "../GobKing/Weapon/CollOperator/GobSwingCollOperator.h"
 //#include "Weapon/PlayerRollingSlashCollOperator.h"
 //#include "Weapon/PlayerKickDownAttackCollOperator.h"
@@ -175,69 +177,11 @@ void GobKing::Load(void)
 			playerPos,
 			[&]() {AnimePlay(ANIME_TYPE::Swing); },
 			[&]() {AnimePlay(ANIME_TYPE::Taunt); },
-
 			[&]() {return GetAnimeRatio(); },
 			std::bind(&GobKing::IsAnimeEnd, this),
-
 			[&]() {ChangeState(STATE::Idle); }
 		)
 	);
-
-	//// ƒWƒƒƒ“ƒvó‘Ô
-	//// Œã‰ñ‚µ
-	//AddState(
-	//	STATE::Jump,
-	//	new PlayerJumpState(
-	//		20.0f, velocity.y, isGround,
-	//		std::bind(&Player::MoveAccel, this, std::placeholders::_1),
-	//		[&]() { AnimePlay(ANIME_TYPE::JumpStart); },
-	//		[&]() { AnimePlay(ANIME_TYPE::Jumping); },
-	//		[&]() { AnimePlay(ANIME_TYPE::JumpEnd); },
-	//		std::bind(&Player::IsAnimeEnd, this),
-	//		[&]() { ChangeState(STATE::Idle); }
-	//	)
-	//);
-
-	//// UŒ‚(aŒ‚)ó‘Ô
-	//AddState(
-	//	STATE::AttackSlash,
-	//	new PlayerAttackSlashState(
-	//		0.3f, 0.5f, 0.6f,
-	//		*attackSlashCollOperator,
-	//		[&]() {AnimePlay(ANIME_TYPE::Slash_Down); },
-	//		[&]() {AnimePlay(ANIME_TYPE::Slash_Up); },
-	//		[&]() {AnimePlay(ANIME_TYPE::Slash_End); },
-	//		[&]() {return GetAnimeRatio(); },
-	//		[&]() {return IsAnimeEnd(); },
-	//		[&]() {ChangeState(STATE::Idle); }
-	//	)
-	//);
-
-	//// ‰ñ“]UŒ‚ó‘Ô
-	//AddState(
-	//	STATE::AttackRollingSlash,
-	//	new PlayerRollingSlashState(
-	//		0.3f, 0.5f,
-	//		*rollingSlashCollOperator,
-	//		[&]() {AnimePlay(ANIME_TYPE::Charge); },
-	//		[&]() {AnimePlay(ANIME_TYPE::RollingSlash); },
-	//		[&]() {return GetAnimeRatio(); },
-	//		[&]() {return IsAnimeEnd(); },
-	//		[&]() {ChangeState(STATE::Idle); }
-	//	)
-	//);
-
-	//// UŒ‚i“¥‚İ‚Â‚¯jó‘Ô
-	//AddState(
-	//	STATE::KickDownAttack,
-	//	new PlayerKickDownAttackState(
-	//		0.9f, 1.0f,
-	//		*kickDownAttackCollOperator,
-	//		[&]() { AnimePlay(ANIME_TYPE::KickDown); },
-	//		[&]() { return GetAnimeRatio(); },
-	//		[&]() { ChangeState(STATE::Idle); }
-	//	)
-	//);
 
 	// u‘Ò‹@ó‘Ôv->uˆÚ“®ó‘Ôv‚Ì©“®‘JˆÚ“o˜^
 	RegisterStateTransition(STATE::Idle, STATE::Move);
@@ -257,6 +201,11 @@ void GobKing::Load(void)
 
 void GobKing::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
 {
+	if (ownTag != COLLIDER_TAG::Enemy) { return; }
+
+	if (other.GetTag() == COLLIDER_TAG::PlayerAttackSlash) { Damage(50); }
+
+	if (other.GetTag() == COLLIDER_TAG::PlayerRollingSlash) { Damage(100); }
 }
 
 void GobKing::SubUpdate(void)
@@ -276,4 +225,9 @@ void GobKing::SubUpdate(void)
 		case 1: { CreateShader(new RimLightShader()); break; }
 		}
 	}
+}
+
+void GobKing::OnDeath(void)
+{
+	SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GameOver);
 }

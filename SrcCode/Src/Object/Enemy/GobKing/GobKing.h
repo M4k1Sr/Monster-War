@@ -139,4 +139,7 @@ private:
 
 #pragma endregion
 
+	// €–S‚µ‚½Û
+	void OnDeath(void)override;
+
 };
