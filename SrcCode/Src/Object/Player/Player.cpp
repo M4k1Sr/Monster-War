@@ -109,12 +109,6 @@ void Player::Load(void)
 
 	AddChildActor(rollingSlashCollOperator);
 
-	//// 攻撃当たり判定管理クラス
-	//PlayerKickDownAttackCollOperator* kickDownAttackCollOperator =
-	//	new PlayerKickDownAttackCollOperator(100.0f, Vector3(0, -100, 100), trans);
-
-	//AddChildActor(kickDownAttackCollOperator);
-
 #pragma endregion
 
 #pragma region 下位アクターの生成(武器)
@@ -193,18 +187,6 @@ void Player::Load(void)
 		)
 	);
 
-	//// 攻撃（踏みつけ）状態
-	//AddState(
-	//	STATE::KickDownAttack,
-	//	new PlayerKickDownAttackState(
-	//		0.9f, 1.0f,
-	//		*kickDownAttackCollOperator,
-	//		[&]() { AnimePlay(ANIME_TYPE::KickDown); },
-	//		[&]() { return GetAnimeRatio(); },
-	//		[&]() { ChangeState(STATE::Idle); }
-	//	)
-	//);
-
 	// 「待機状態」->「移動状態」の自動遷移登録
 	RegisterStateTransition(STATE::Idle, STATE::Move);
 	////	「攻撃状態」->「移動状態」の自動遷移登録
@@ -232,11 +214,6 @@ void Player::Load(void)
 	RegisterStateTransition(STATE::Move, STATE::AttackRollingSlash);
 	// 「攻撃（斬撃）状態」->「回転攻撃状態」の自動遷移登録
 	RegisterStateTransition(STATE::AttackSlash, STATE::AttackRollingSlash);
-
-	//// 「待機状態」->「攻撃（踏みつけ）状態」の自動遷移登録
-	//RegisterStateTransition(STATE::Idle, STATE::KickDownAttack);
-	//// 「移動状態」->「攻撃（踏みつけ）状態」の自動遷移登録
-	//RegisterStateTransition(STATE::Move, STATE::KickDownAttack);
 
 #pragma endregion
 }

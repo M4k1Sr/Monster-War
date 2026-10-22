@@ -13,14 +13,11 @@
 #include "../../../Scene/SceneManager.h"
 
 #include "../GobKing/Weapon/CollOperator/GobSwingCollOperator.h"
-//#include "Weapon/PlayerRollingSlashCollOperator.h"
-//#include "Weapon/PlayerKickDownAttackCollOperator.h"
 //
 #include "State/GobKingIdleState.h"
 #include "State/GobKingMoveState.h"
 #include "State/GobKingRoarState.h"
 #include "State/GobKingSwingState.h"
-//#include "State/PlayerKickDownAttackState.h"
 
 void GobKing::Load(void)
 {
@@ -97,16 +94,6 @@ void GobKing::Load(void)
 		new GobSwingCollOperator(100.0f, Vector3(0, -400, 300), trans);
 
 	AddChildActor(swingCollOperator);
-
-	//// ‰ñ“]UŒ‚“–‚½‚è”»’èŠÇ—ƒNƒ‰ƒX
-	//PlayerRollingSlashCollOperator* rollingSlashCollOperator =
-	//	new PlayerRollingSlashCollOperator(100.0f, Vector3(0, 0, 100), trans);
-
-	//// UŒ‚“–‚½‚è”»’èŠÇ—ƒNƒ‰ƒX
-	//PlayerKickDownAttackCollOperator* kickDownAttackCollOperator =
-	//	new PlayerKickDownAttackCollOperator(100.0f, Vector3(0, -100, 100), trans);
-
-	//AddChildActor(kickDownAttackCollOperator);
 
 #pragma endregion
 
@@ -229,5 +216,5 @@ void GobKing::SubUpdate(void)
 
 void GobKing::OnDeath(void)
 {
-	SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GameOver);
+	SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GameClear);
 }
