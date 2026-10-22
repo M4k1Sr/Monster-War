@@ -92,7 +92,7 @@ void GobKing::Load(void)
 
 	// UŒ‚“–‚½‚è”»’èŠÇ—ƒNƒ‰ƒX
 	GobSwingCollOperator* swingCollOperator =
-		new GobSwingCollOperator(100.0f, Vector3(0, 0, 100), trans);
+		new GobSwingCollOperator(100.0f, Vector3(0, -400, 300), trans);
 
 	AddChildActor(swingCollOperator);
 

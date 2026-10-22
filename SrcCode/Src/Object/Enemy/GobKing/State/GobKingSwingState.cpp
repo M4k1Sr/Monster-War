@@ -121,7 +121,7 @@ void GobKingSwingState::Update(void)
 
 		if (1.0f <= animeRatio) {
 
-			// 当てた時だけ煽る（+ 確率で）
+			// 当てた時だけ煽る
 			if (IsTauntRoll()) {
 				step = STEP::Taunt;
 				playAnimeTaunt();
@@ -163,6 +163,7 @@ bool GobKingSwingState::IsInSwingRange(void) const
 
 bool GobKingSwingState::IsTauntRoll(void) const
 {
+	// 二分の一の確率で威嚇行動
 	std::uniform_int_distribution<int> dist(0, 99);
 	return dist(Rng()) < 50;
 }

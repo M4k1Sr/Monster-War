@@ -11,7 +11,7 @@ public:
 		float COLL_RADIUS,
 		const Vector3& COLL_LOCAL_POS,
 
-		const Transform& playerTrans
+		const Transform& gobKingTrans
 	);
 	~GobSwingCollOperator()override = default;
 
@@ -27,8 +27,8 @@ private:
 	// 攻撃の判定を発生させる座標（プレイヤー座標からの相対座標）
 	const Vector3 COLL_LOCAL_POS;
 
-	// プレイヤーのモデル制御情報の参照
-	const Transform& playerTrans;
+	// ゴブリンキングのモデル制御情報の参照
+	const Transform& gobKingTrans;
 
 	// 生成するコライダー
 	SphereCollider* attackColl;

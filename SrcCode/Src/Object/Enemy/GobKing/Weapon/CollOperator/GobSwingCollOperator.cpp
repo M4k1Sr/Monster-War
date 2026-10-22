@@ -6,13 +6,13 @@ GobSwingCollOperator::GobSwingCollOperator(
 	float COLL_RADIUS,
 	const Vector3& COLL_LOCAL_POS,
 
-	const Transform& playerTrans
+	const Transform& gobKingTrans
 ) :
 	COLL_LOCAL_POS(COLL_LOCAL_POS),
 
-	playerTrans(playerTrans),
+	gobKingTrans(gobKingTrans),
 
-	attackColl(new SphereCollider(COLLIDER_TAG::PlayerAttackSlash, COLL_RADIUS))
+	attackColl(new SphereCollider(COLLIDER_TAG::GobKingSwing, COLL_RADIUS))
 {
 }
 
@@ -43,16 +43,16 @@ void GobSwingCollOperator::SubUpdate(void)
 	if (!attackColl->GetJudgeFlg()) { return; }
 
 	// 追従し続ける
-	trans.pos = playerTrans.pos + playerTrans.VTrans(COLL_LOCAL_POS);
+	trans.pos = gobKingTrans.pos + gobKingTrans.VTrans(COLL_LOCAL_POS);
 }
 
 void GobSwingCollOperator::On(void)
 {
 	attackColl->SetJudgeFlg(true);
 
-	// プレイヤーの座標、プレイヤーの角度、攻撃判定の相対座標をつかい
+	// ゴブリンキングの座標、ゴブリンキングの角度、攻撃判定の相対座標をつかい
 	// 判定の座標を割り出す
-	trans.pos = playerTrans.pos + playerTrans.VTrans(COLL_LOCAL_POS);
+	trans.pos = gobKingTrans.pos + gobKingTrans.VTrans(COLL_LOCAL_POS);
 }
 
 void GobSwingCollOperator::Off(void)
