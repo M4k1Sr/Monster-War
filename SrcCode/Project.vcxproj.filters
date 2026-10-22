@@ -75,10 +75,11 @@
     <ClCompile Include="Src\Object\Player\Weapon\Item\King_Sword.cpp" />
     <ClCompile Include="Src\Object\Enemy\GobKing\Weapon\Item\Gob_Sword.cpp" />
     <ClCompile Include="Src\Object\Enemy\GobKing\Weapon\CollOperator\GobSwingCollOperator.cpp" />
-    <ClCompile Include="Src\Object\Enemy\GobKing\Weapon\CollOperator\GobThrowRockCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Enemy\GobKing\Weapon\CollOperator\GobThrowCollOperator.cpp" />
     <ClCompile Include="Src\Object\Player\Weapon\CollOperator\PlayerAttackSlashCollOperator.cpp" />
     <ClCompile Include="Src\Object\Player\Weapon\CollOperator\PlayerKickDownAttackCollOperator.cpp" />
     <ClCompile Include="Src\Object\Player\Weapon\CollOperator\PlayerRollingSlashCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Enemy\GobKing\State\GobKingThrowState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\resource.h" />
@@ -179,10 +180,11 @@
     <ClInclude Include="Src\Object\Player\Weapon\Item\King_Sword.h" />
     <ClInclude Include="Src\Object\Enemy\GobKing\Weapon\Item\Gob_Sword.h" />
     <ClInclude Include="Src\Object\Enemy\GobKing\Weapon\CollOperator\GobSwingCollOperator.h" />
-    <ClInclude Include="Src\Object\Enemy\GobKing\Weapon\CollOperator\GobThrowRockCollOperator.h" />
+    <ClInclude Include="Src\Object\Enemy\GobKing\Weapon\CollOperator\GobThrowCollOperator.h" />
     <ClInclude Include="Src\Object\Player\Weapon\CollOperator\PlayerAttackSlashCollOperator.h" />
     <ClInclude Include="Src\Object\Player\Weapon\CollOperator\PlayerKickDownAttackCollOperator.h" />
     <ClInclude Include="Src\Object\Player\Weapon\CollOperator\PlayerRollingSlashCollOperator.h" />
+    <ClInclude Include="Src\Object\Enemy\GobKing\State\GobKingThrowState.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Shader\Common\Pixel\ModelFog.hlsli" />

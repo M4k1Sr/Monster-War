@@ -13,11 +13,14 @@
 #include "../../../Scene/SceneManager.h"
 
 #include "../GobKing/Weapon/CollOperator/GobSwingCollOperator.h"
-//
+#include "../GobKing/Weapon/CollOperator/GobThrowCollOperator.h"
+
 #include "State/GobKingIdleState.h"
 #include "State/GobKingMoveState.h"
 #include "State/GobKingRoarState.h"
 #include "State/GobKingSwingState.h"
+#include "State/GobKingThrowState.h"
+#include "State/GobKingReactState.h"
 
 void GobKing::Load(void)
 {
@@ -95,6 +98,12 @@ void GobKing::Load(void)
 
 	AddChildActor(swingCollOperator);
 
+	// 岩投擲当たり判定管理クラス
+	GobThrowCollOperator* throwCollOperator =
+		new GobThrowCollOperator(100.0f, Vector3(0, -400, 300), trans);
+
+	AddChildActor(throwCollOperator);
+
 #pragma endregion
 
 
@@ -170,6 +179,40 @@ void GobKing::Load(void)
 		)
 	);
 
+	// 岩投擲状態
+	AddState(
+		STATE::Throw_Rock,
+		new GobKingThrowState(
+			0.5f,
+			0.6f,
+			ATTACK_RANGE,
+			throwCollOperator,
+			trans.pos,
+			playerPos,
+			[&]() {AnimePlay(ANIME_TYPE::Throw); },
+			[&]() {AnimePlay(ANIME_TYPE::Taunt); },
+			[&]() {return GetAnimeRatio(); },
+			std::bind(&GobKing::IsAnimeEnd, this),
+			[&]() {ChangeState(STATE::Idle); }
+		)
+	);
+
+	// リアクション状態
+	AddState(
+		STATE::React,
+		new GobKingReactState(
+			hitReact,
+			[&]() {AnimePlay(ANIME_TYPE::HitReact); }
+		)
+	);
+
+	//// 死亡(吹っ飛び)状態
+	//AddState(
+	//	STATE::Flying,
+	//	new GobKingDieState(
+	//	)
+	//)
+
 	// 「待機状態」->「移動状態」の自動遷移登録
 	RegisterStateTransition(STATE::Idle, STATE::Move);
 	// 「移動状態」->「待機状態」の自動遷移登録
@@ -183,6 +226,20 @@ void GobKing::Load(void)
 	// 「移動状態」->「攻撃状態」の自動遷移登録
 	RegisterStateTransition(STATE::Move, STATE::Attack_Swing);
 
+	// 「待機状態」->「岩投擲攻撃状態」の自動遷移登録
+	RegisterStateTransition(STATE::Idle, STATE::Throw_Rock);
+	// 「移動状態」->「岩投擲攻撃状態」の自動遷移登録
+	RegisterStateTransition(STATE::Move, STATE::Throw_Rock);
+
+	// 「待機状態」->「ヒットリアクション状態」の自動遷移登録
+	RegisterStateTransition(STATE::Idle, STATE::React);
+	// 「移動状態」->「ヒットリアクション状態」の自動遷移登録
+	RegisterStateTransition(STATE::Move, STATE::React);
+	// 「攻撃状態」->「ヒットリアクション状態」の自動遷移登録
+	RegisterStateTransition(STATE::Attack_Swing, STATE::React);
+	// 「岩投擲攻撃状態」->「ヒットリアクション状態」の自動遷移登録
+	RegisterStateTransition(STATE::Throw_Rock, STATE::React);
+
 #pragma endregion
 }
 
@@ -190,7 +247,10 @@ void GobKing::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const 
 {
 	if (ownTag != COLLIDER_TAG::Enemy) { return; }
 
-	if (other.GetTag() == COLLIDER_TAG::PlayerAttackSlash) { Damage(50); }
+	if (other.GetTag() == COLLIDER_TAG::PlayerAttackSlash) { 
+		Damage(0);
+		hitReact = true; 
+	}
 
 	if (other.GetTag() == COLLIDER_TAG::PlayerRollingSlash) { Damage(100); }
 }
@@ -216,5 +276,5 @@ void GobKing::SubUpdate(void)
 
 void GobKing::OnDeath(void)
 {
-	SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GameClear);
+	//SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GameClear);
 }

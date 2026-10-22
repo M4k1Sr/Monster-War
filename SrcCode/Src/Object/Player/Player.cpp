@@ -222,7 +222,7 @@ void Player::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const C
 {
 	if (ownTag != COLLIDER_TAG::Player) { return; }
 
-	if (other.GetTag() == COLLIDER_TAG::GobKingSwing) { Damage(50); }
+	if (other.GetTag() == COLLIDER_TAG::GobKingSwing) { Damage(0); }
 }
 
 void Player::SubUpdate(void)

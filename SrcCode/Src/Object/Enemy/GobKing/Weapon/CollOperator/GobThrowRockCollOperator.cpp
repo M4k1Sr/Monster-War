@@ -1,1 +1,0 @@
-#include "GobThrowRockCollOperator.h"

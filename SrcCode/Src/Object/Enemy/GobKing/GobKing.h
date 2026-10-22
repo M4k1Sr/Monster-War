@@ -10,7 +10,8 @@ public:
 		const  int hp
 	) :
 		CharacterBase(),
-		playerPos(nullptr)
+		playerPos(nullptr),
+		hitReact(hitReact)
 	{
 		SetGravityFlg(true);
 	}
@@ -52,7 +53,7 @@ private:
 		Throw_Rock,
 		Attack_Swing,
 
-		Hit,
+		React,
 
 		Flying,
 		Death,
@@ -136,6 +137,9 @@ private:
 
 	//座標参照
 	const Vector3* playerPos;
+
+	// ダメージを受けたか判定
+	bool hitReact;
 
 #pragma endregion
 
