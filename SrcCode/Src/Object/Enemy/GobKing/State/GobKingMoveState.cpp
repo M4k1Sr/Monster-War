@@ -58,7 +58,6 @@ void GobKingMoveState::OwnStateConditionUpdate(void)
 
 void GobKingMoveState::Enter(void)
 {
-	//playAnimeWalk();
 }
 
 void GobKingMoveState::Update(void)

@@ -31,11 +31,11 @@ private:
 #pragma region ’è”
 
 	// ’®Šo”ÍˆÍ
-	const float HEAR_RANGE = 1500.0f;
+	const float HEAR_RANGE = 2000.0f;
 	// õ“G”ÍˆÍ
-	const float SEARCH_RANGE = 1000.0f;
+	const float SEARCH_RANGE = 1500.0f;
 	// UŒ‚‰Â”\”ÍˆÍ
-	const float ATTACK_RANGE = 100.0f;
+	const float ATTACK_RANGE = 300.0f;
 
 #pragma endregion
 
@@ -74,6 +74,7 @@ private:
 		Walk,
 		
 		Swing,
+		Taunt,
 		Throw,
 
 		HitReact,
@@ -93,6 +94,7 @@ private:
 		0.5f,	// Walk
 
 		0.5f,	// Swing
+		0.5f,	// Taunt
 		0.5f,	// Throw
 
 		0.5f,	// React
@@ -111,6 +113,7 @@ private:
 		true,	// Walk
 
 		false,	// Swing
+		false,	// Taunt
 		false,	// Throw
 
 		false,	// React

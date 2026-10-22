@@ -10,14 +10,14 @@
 #include "../../Common/Shader/RimLightShader.h"
 #include "../../Common/Shader/WaterShader.h"
 
-//#include "Weapon/PlayerAttackSlashCollOperator.h"
+#include "../GobKing/Weapon/CollOperator/GobSwingCollOperator.h"
 //#include "Weapon/PlayerRollingSlashCollOperator.h"
 //#include "Weapon/PlayerKickDownAttackCollOperator.h"
 //
 #include "State/GobKingIdleState.h"
 #include "State/GobKingMoveState.h"
 #include "State/GobKingRoarState.h"
-//#include "State/PlayerRollingSlashState.h"
+#include "State/GobKingSwingState.h"
 //#include "State/PlayerKickDownAttackState.h"
 
 void GobKing::Load(void)
@@ -90,11 +90,11 @@ void GobKing::Load(void)
 
 #pragma region 下位アクターの生成
 
-	//// 攻撃当たり判定管理クラス
-	//PlayerAttackSlashCollOperator* attackSlashCollOperator =
-	//	new PlayerAttackSlashCollOperator(100.0f, Vector3(0, 0, 100), trans);
+	// 攻撃当たり判定管理クラス
+	GobSwingCollOperator* swingCollOperator =
+		new GobSwingCollOperator(100.0f, Vector3(0, 0, 100), trans);
 
-	//AddChildActor(attackSlashCollOperator);
+	AddChildActor(swingCollOperator);
 
 	//// 回転攻撃当たり判定管理クラス
 	//PlayerRollingSlashCollOperator* rollingSlashCollOperator =
@@ -130,6 +130,7 @@ void GobKing::Load(void)
 			trans.pos,
 			playerPos,
 			[&]() { AnimePlay(ANIME_TYPE::Roar); },
+			std::bind(&GobKing::IsAnimeEnd, this),
 			[&]() { 
 
 				//再生したアニメが終了したら遷移
@@ -159,6 +160,26 @@ void GobKing::Load(void)
 			trans.pos,
 			playerPos,
 			[&]() { AnimePlay(ANIME_TYPE::Walk); }
+		)
+	);
+
+	// 攻撃状態
+	AddState(
+		STATE::Attack_Swing,
+		new GobKingSwingState(
+			0.5f,
+			0.6f,
+			ATTACK_RANGE,
+			swingCollOperator,
+			trans.pos,
+			playerPos,
+			[&]() {AnimePlay(ANIME_TYPE::Swing); },
+			[&]() {AnimePlay(ANIME_TYPE::Taunt); },
+
+			[&]() {return GetAnimeRatio(); },
+			std::bind(&GobKing::IsAnimeEnd, this),
+
+			[&]() {ChangeState(STATE::Idle); }
 		)
 	);
 
@@ -220,37 +241,16 @@ void GobKing::Load(void)
 
 	// 「待機状態」->「移動状態」の自動遷移登録
 	RegisterStateTransition(STATE::Idle, STATE::Move);
-
-	////「攻撃状態」->「移動状態」の自動遷移登録
-	//RegisterStateTransition(STATE::AttackSlash, STATE::Move);
-	//// 「回転攻撃状態」->「移動状態」の自動遷移登録
-	//RegisterStateTransition(STATE::AttackRollingSlash, STATE::Move);
-
 	// 「移動状態」->「待機状態」の自動遷移登録
 	RegisterStateTransition(STATE::Move, STATE::Idle);
 
-	//// 「待機状態」->「ジャンプ状態」の自動遷移登録
-	//RegisterStateTransition(STATE::Idle, STATE::Jump);
-	//// 「移動状態」->「ジャンプ状態」の自動遷移登録
-	//RegisterStateTransition(STATE::Move, STATE::Jump);
-	//// 「回転攻撃状態」->「ジャンプ状態」の自動遷移登録
-	//RegisterStateTransition(STATE::AttackRollingSlash, STATE::Jump);
+	// 「待機状態」->「おたけび状態」の自動遷移登録
+	RegisterStateTransition(STATE::Idle, STATE::Roar);
 
-	//// 「待機状態」->「攻撃（斬撃）状態」の自動遷移登録
-	//RegisterStateTransition(STATE::Idle, STATE::AttackSlash);
-	//// 「移動状態」->「攻撃（斬撃）状態」の自動遷移登録
-	//RegisterStateTransition(STATE::Move, STATE::AttackSlash);
-	//// 「待機状態」->「回転攻撃状態」の自動遷移登録
-	//RegisterStateTransition(STATE::Idle, STATE::AttackRollingSlash);
-	//// 「移動状態」->「回転攻撃状態」の自動遷移登録
-	//RegisterStateTransition(STATE::Move, STATE::AttackRollingSlash);
-	//// 「攻撃（斬撃）状態」->「回転攻撃状態」の自動遷移登録
-	//RegisterStateTransition(STATE::AttackSlash, STATE::AttackRollingSlash);
-
-	//// 「待機状態」->「攻撃（踏みつけ）状態」の自動遷移登録
-	//RegisterStateTransition(STATE::Idle, STATE::KickDownAttack);
-	//// 「移動状態」->「攻撃（踏みつけ）状態」の自動遷移登録
-	//RegisterStateTransition(STATE::Move, STATE::KickDownAttack);
+	// 「待機状態」->「攻撃状態」の自動遷移登録
+	RegisterStateTransition(STATE::Idle, STATE::Attack_Swing);
+	// 「移動状態」->「攻撃状態」の自動遷移登録
+	RegisterStateTransition(STATE::Move, STATE::Attack_Swing);
 
 #pragma endregion
 }
