@@ -18,6 +18,9 @@ struct Transform
 	// モデルの中心を軸に描画するために使用
 	Vector3 centerDiff;
 
+	// アニメーション移動の打ち消し量（モデル空間）
+	Vector3 animationOffset;
+
 	// 回転
 	Quaternion rotation;
 
@@ -48,16 +51,14 @@ struct Transform
 		prevPos(),
 
 		centerDiff(),
+		animationOffset(),
 
 		rotation(),
 		localRotation(),
 
 		scale(1),
 
-		dynamicFlg(true),
-
-		useMatrix(false),
-		matrix(MGetIdent())
+		dynamicFlg(true)
 	{
 	}
 
@@ -162,6 +163,8 @@ struct Transform
 	/// <param name="path">エフェクトのパス（Data/Effect/～.efk）</param>
 	void LoadEffect(std::string path);
 
+	/// モデル描画に使用するワールド変換行列を取得する
+	MATRIX GetWorldMatrix(void) const;
 
 	// Transform情報をモデルに適用
 	void Attach(void);

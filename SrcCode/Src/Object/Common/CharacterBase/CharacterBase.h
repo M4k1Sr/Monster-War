@@ -22,9 +22,6 @@ public:
 
 private:
 
-	// アニメーションコントローラーのインスタンス
-	AnimationController* anime;
-
 	// ステート管理用変数
 	int state;
 
@@ -78,7 +75,7 @@ protected:
 
 	// アニメーションコントローラーの作成
 	void CreateAnimationController(void);
-	
+
 	/// <summary>
 	/// モデルにくっついてるFBXアニメーションを全部登録する
 	/// </summary>
@@ -110,7 +107,7 @@ protected:
 	/// <param name="type">参照番号</param>
 	/// <param name="loop">ループ再生フラグ（指定なしで登録された情報で再生）</param>
 	virtual void AnimePlay(int type, signed char loop = -1);
-	
+
 	/// <summary>
 	/// アニメーション再生
 	/// </summary>
@@ -136,8 +133,16 @@ protected:
 
 	// アニメーションの再生時間を設定（0.0f～再生時間）
 	void SetAnimeStep(float step);
-	
+
+	// 指定フレームのXYZ移動をモデル空間で打ち消す
+	bool SetPositionCorrectionFrame(const std::string& frameName);
+
+	void SetPositionCorrection(bool enabled);
+
 #pragma endregion
+
+	// アニメーションコントローラーのポインタ
+	AnimationController* anime;
 
 #pragma region ダメージ系関数・変数
 

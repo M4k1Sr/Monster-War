@@ -4,6 +4,8 @@
 
 #include "../../Utility/Utility.h"
 
+#include "../Common/AnimationController/AnimationController.h"
+
 #include "../Common/Collider/CapsuleCollider.h"
 
 #include "../Common/Shader/DefaultShader.h"
@@ -63,7 +65,6 @@ void Player::Load(void)
 	// モデルの角度のズレの補正
 	trans.SetLocalRotation(Quaternion::FromRotationY(Deg2Rad(180.0f)));
 
-	
 	// シェーダー登録
 	CreateShader(new DefaultShader());
 
@@ -77,6 +78,9 @@ void Player::Load(void)
 
 	// アニメーションの読み込み
 	AddInFbxAnimation((int)ANIME_TYPE::Max, ANIME_SPEED_TABLE, ANIME_LOOP_TABLE);
+
+	anime->SetPositionCorrectionFrame("mixamorig:Hips");
+	anime->SetPositionCorrection(true);
 
 #pragma endregion
 
