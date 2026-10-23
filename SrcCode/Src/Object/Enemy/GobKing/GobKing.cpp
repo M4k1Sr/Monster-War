@@ -277,7 +277,7 @@ void GobKing::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const 
 
 	// プレイヤーの切り付け攻撃
 	if (other.GetTag() == COLLIDER_TAG::PlayerAttackSlash) { 
-		Damage(50);
+		Damage(20);
 
 		// 死亡していたら不要
 		if (!IsDead()) { hitReact = true; }
@@ -285,7 +285,7 @@ void GobKing::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const 
 
 	// プレイヤーの溜め攻撃
 	if (other.GetTag() == COLLIDER_TAG::PlayerRollingSlash) {
-		Damage(100);
+		Damage(50);
 
 		// 死亡していたら不要
 		if (!IsDead()) { hitReact = true; }

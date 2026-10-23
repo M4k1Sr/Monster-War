@@ -148,7 +148,6 @@ void PlayerAttackSlashState::Exit(void)
 void PlayerAttackSlashState::StartComboNext(void)
 {
 	comboKeyInput = false;
-	//step = STEP::Startup;
 
 	// コンボステップ
 	switch (comboStep) {
@@ -157,10 +156,12 @@ void PlayerAttackSlashState::StartComboNext(void)
 		// 斬撃アニメーション発生済みなので、斬撃アニメーション関数は呼び出さない
 		break;
 	case COMBO_STEP::Up:
-		comboStep = COMBO_STEP::End;
+		step = STEP::Startup;		// ステップを最初から
+		comboStep = COMBO_STEP::End;// コンボステップを最終コンボに
 		playAnimeAttackSlash_Up();
 		break;
 	case COMBO_STEP::End:
+		step = STEP::Startup;		// ステップを最初から
 		comboStep = COMBO_STEP::Down;
 		playAnimeAttackSlash_End();
 		break;
