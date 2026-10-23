@@ -25,6 +25,7 @@
 #include "State/GobKingSwingState.h"
 #include "State/GobKingThrowState.h"
 #include "State/GobKingReactState.h"
+#include "State/GobKingDieState.h"
 
 void GobKing::Load(void)
 {
@@ -212,12 +213,16 @@ void GobKing::Load(void)
 		)
 	);
 
-	//// éÄñS(êÅÇ¡îÚÇ—)èÛë‘
-	//AddState(
-	//	STATE::Flying,
-	//	new GobKingDieState(
-	//	)
-	//)
+	// éÄñS(êÅÇ¡îÚÇ—)èÛë‘
+	AddState(
+		STATE::Flying,
+		new GobKingDieState(
+			isDie,
+			isFlyEnd,
+			[&]() {AnimePlay(ANIME_TYPE::Flying); },
+			std::bind(&GobKing::IsAnimeEnd, this)
+		)
+	);
 
 	// Åuë“ã@èÛë‘Åv->Åuà⁄ìÆèÛë‘ÅvÇÃé©ìÆëJà⁄ìoò^
 	RegisterStateTransition(STATE::Idle, STATE::Move);
@@ -248,6 +253,18 @@ void GobKing::Load(void)
 	// Åuä‚ìäù±çUåÇèÛë‘Åv->ÅuÉqÉbÉgÉäÉAÉNÉVÉáÉìèÛë‘ÅvÇÃé©ìÆëJà⁄ìoò^
 	RegisterStateTransition(STATE::Throw_Rock, STATE::React);
 
+	// Åuë“ã@èÛë‘Åv->ÅuéÄñSèÛë‘ÅvÇÃé©ìÆëJà⁄ìoò^
+	RegisterStateTransition(STATE::Idle, STATE::Flying);
+	// Åuà⁄ìÆèÛë‘Åv->ÅuéÄñSèÛë‘ÅvÇÃé©ìÆëJà⁄ìoò^
+	RegisterStateTransition(STATE::Move, STATE::Flying);
+	// ÅuÇ®ÇΩÇØÇ—èÛë‘Åv->ÅuéÄñSèÛë‘ÅvÇÃé©ìÆëJà⁄ìoò^
+	RegisterStateTransition(STATE::Roar, STATE::Flying);
+	// ÅuçUåÇèÛë‘Åv->ÅuéÄñSèÛë‘ÅvÇÃé©ìÆëJà⁄ìoò^
+	RegisterStateTransition(STATE::Attack_Swing, STATE::Flying);
+	// Åuä‚ìäù±çUåÇèÛë‘Åv->ÅuéÄñSèÛë‘ÅvÇÃé©ìÆëJà⁄ìoò^
+	RegisterStateTransition(STATE::Throw_Rock, STATE::Flying);
+
+
 #pragma endregion
 }
 
@@ -258,20 +275,29 @@ void GobKing::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const 
 	// ñ≥ìGíÜÇÕñ≥éã
 	if (invincibleFrame > 0) { return; }
 
+	// ÉvÉåÉCÉÑÅ[ÇÃêÿÇËïtÇØçUåÇ
 	if (other.GetTag() == COLLIDER_TAG::PlayerAttackSlash) { 
 		Damage(50);
-		hitReact = true; 
+
+		// éÄñSÇµÇƒÇ¢ÇΩÇÁïsóv
+		if (!IsDead()) { hitReact = true; }
 	}
 
-	if (other.GetTag() == COLLIDER_TAG::PlayerRollingSlash) { Damage(100); }
+	// ÉvÉåÉCÉÑÅ[ÇÃó≠ÇﬂçUåÇ
+	if (other.GetTag() == COLLIDER_TAG::PlayerRollingSlash) {
+		Damage(100);
+
+		// éÄñSÇµÇƒÇ¢ÇΩÇÁïsóv
+		if (!IsDead()) { hitReact = true; }
+	}
+
+
 }
 
 void GobKing::SubUpdate(void)
 {
 	// ñ≥ìGóPó\ÉtÉåÅ[ÉÄèàóù
 	if (invincibleFrame > 0 && TimeScale::Get() > 0.0f) { invincibleFrame--; }
-
-	printfDx("hp:%d inv:%d\n", hp, invincibleFrame);
 
 	static char type = 0;
 	static bool prev = false, now = false;
@@ -288,6 +314,10 @@ void GobKing::SubUpdate(void)
 		case 1: { CreateShader(new RimLightShader()); break; }
 		}
 	}
+
+	// éÄñSîªíË
+	if (IsDead()) { OnDeath(); isDie = true; }
+
 }
 
 #pragma region É_ÉÅÅ[ÉWä÷êî
@@ -300,11 +330,12 @@ void GobKing::Damage(int damage) {
 
 	invincibleFrame = INVINCIBLE_FRAME_MAX;
 
-	if (IsDead()) { OnDeath(); }
 }
 
 #pragma endregion
 void GobKing::OnDeath(void)
 {
-	SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GameClear);
+	if (isFlyEnd) {
+		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GameClear);
+	}
 }

@@ -14,6 +14,9 @@ public:
 		hitReact(false),
 		invincibleFrame(INVINCIBLE_FRAME_MAX)
 	{
+		isDie = false,
+		isFlyEnd = false,
+
 		hp = initHp;
 		SetGravityFlg(true);
 	}
@@ -148,6 +151,12 @@ private:
 	
 	// –³“G—P—\ƒtƒŒ[ƒ€
 	int invincibleFrame;
+
+	// €–S‚µ‚½‚©
+	bool isDie;
+
+	// “G‚ª‚Á”ò‚ÑI‚í‚Á‚½‚©
+	bool isFlyEnd;
 
 #pragma endregion
 

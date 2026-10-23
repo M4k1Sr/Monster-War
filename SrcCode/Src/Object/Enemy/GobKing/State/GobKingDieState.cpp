@@ -2,21 +2,38 @@
 
 #include "../../../../Common/Vector3.h"
 
-#include "../../../../Manager/Input/InputManager.h"
-
 GobKingDieState::GobKingDieState(
-	std::function<void(void)> playAnimeDie
+	bool& isDie,
+	bool& isFlyEnd,
+	std::function<void(void)> playAnimeDie,
+
+	std::function<bool(void)> isAnimeEnd
 ) :
-	playAnimeDie(playAnimeDie)
+	isDie(isDie),
+	isFlyEnd(isFlyEnd),
+	playAnimeDie(playAnimeDie),
+	isAnimeEnd(isAnimeEnd)
 {
 }
 
 void GobKingDieState::OwnStateConditionUpdate(void)
 {
-	OwnChangeState();
+	if (isDie) {
+		OwnChangeState();
+	}
 }
 
 void GobKingDieState::Enter(void)
 {
+	isFlyEnd = false;
 	playAnimeDie();
+}
+
+void GobKingDieState::Update(void)
+{
+	if (isAnimeEnd()) { isFlyEnd = true; }
+}
+
+void GobKingDieState::Exit(void)
+{
 }
