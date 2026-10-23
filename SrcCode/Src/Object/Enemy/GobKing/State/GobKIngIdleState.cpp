@@ -26,15 +26,15 @@ void GobKingIdleState::OwnStateConditionUpdate(void)
 {
 	if (playerPos == nullptr) { OwnChangeState(); }
 
-	//Vector3 diff = *playerPos - gobPos;
-	//float distSq = diff.x * diff.x + diff.z * diff.z;
+	Vector3 diff = *playerPos - gobPos;
+	float distSq = diff.x * diff.x + diff.z * diff.z;
 
-	//// õ“G”ÍˆÍ‚ÌŠOA‚Ü‚½‚ÍUŒ‚”ÍˆÍ‚Ì“à‘¤ ¨ ‘Ò‹@
-	//if (distSq >= SEARCH_RANGE * SEARCH_RANGE ||
-	//	distSq <= ATTACK_RANGE * ATTACK_RANGE)
-	//{
-	//	OwnChangeState();
-	//}
+	// õ“G”ÍˆÍ‚ÌŠOA‚Ü‚½‚ÍUŒ‚”ÍˆÍ‚Ì“à‘¤ ¨ ‘Ò‹@
+	if (distSq >= SEARCH_RANGE * SEARCH_RANGE)
+	{
+		OwnChangeState();
+		return;
+	}
 }
 
 void GobKingIdleState::Enter(void)

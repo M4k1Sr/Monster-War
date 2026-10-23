@@ -10,6 +10,8 @@
 #include "../Common/Shader/RimLightShader.h"
 #include "../Common/Shader/WaterShader.h"
 
+#include "../../Scene/SceneManager.h"
+
 #include "Weapon/CollOperator/PlayerAttackSlashCollOperator.h"
 #include "Weapon/CollOperator/PlayerRollingSlashCollOperator.h"
 #include "Weapon/CollOperator/PlayerKickDownAttackCollOperator.h"
@@ -61,6 +63,7 @@ void Player::Load(void)
 	// ƒ‚ƒfƒ‹‚ÌŠp“x‚ÌƒYƒŒ‚Ì•â³
 	trans.SetLocalRotation(Quaternion::FromRotationY(Deg2Rad(180.0f)));
 
+	
 	// ƒVƒF[ƒ_[“o˜^
 	CreateShader(new DefaultShader());
 
@@ -105,12 +108,6 @@ void Player::Load(void)
 		new PlayerRollingSlashCollOperator(100.0f, Vector3(0, 0, 100), trans);
 
 	AddChildActor(rollingSlashCollOperator);
-
-	//// UŒ‚“–‚½‚è”»’èŠÇ—ƒNƒ‰ƒX
-	//PlayerKickDownAttackCollOperator* kickDownAttackCollOperator =
-	//	new PlayerKickDownAttackCollOperator(100.0f, Vector3(0, -100, 100), trans);
-
-	//AddChildActor(kickDownAttackCollOperator);
 
 #pragma endregion
 
@@ -190,22 +187,8 @@ void Player::Load(void)
 		)
 	);
 
-	//// UŒ‚i“¥‚Ý‚Â‚¯jó‘Ô
-	//AddState(
-	//	STATE::KickDownAttack,
-	//	new PlayerKickDownAttackState(
-	//		0.9f, 1.0f,
-	//		*kickDownAttackCollOperator,
-	//		[&]() { AnimePlay(ANIME_TYPE::KickDown); },
-	//		[&]() { return GetAnimeRatio(); },
-	//		[&]() { ChangeState(STATE::Idle); }
-	//	)
-	//);
-
 	// u‘Ò‹@ó‘Ôv->uˆÚ“®ó‘Ôv‚ÌŽ©“®‘JˆÚ“o˜^
 	RegisterStateTransition(STATE::Idle, STATE::Move);
-	////	uUŒ‚ó‘Ôv->uˆÚ“®ó‘Ôv‚ÌŽ©“®‘JˆÚ“o˜^
-	//RegisterStateTransition(STATE::AttackSlash, STATE::Move);
 	// u‰ñ“]UŒ‚ó‘Ôv->uˆÚ“®ó‘Ôv‚ÌŽ©“®‘JˆÚ“o˜^
 	RegisterStateTransition(STATE::AttackRollingSlash, STATE::Move);
 
@@ -230,16 +213,17 @@ void Player::Load(void)
 	// uUŒ‚iŽaŒ‚jó‘Ôv->u‰ñ“]UŒ‚ó‘Ôv‚ÌŽ©“®‘JˆÚ“o˜^
 	RegisterStateTransition(STATE::AttackSlash, STATE::AttackRollingSlash);
 
-	//// u‘Ò‹@ó‘Ôv->uUŒ‚i“¥‚Ý‚Â‚¯jó‘Ôv‚ÌŽ©“®‘JˆÚ“o˜^
-	//RegisterStateTransition(STATE::Idle, STATE::KickDownAttack);
-	//// uˆÚ“®ó‘Ôv->uUŒ‚i“¥‚Ý‚Â‚¯jó‘Ôv‚ÌŽ©“®‘JˆÚ“o˜^
-	//RegisterStateTransition(STATE::Move, STATE::KickDownAttack);
-
 #pragma endregion
 }
 
 void Player::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
 {
+	if (ownTag != COLLIDER_TAG::Player) { return; }
+
+	//// –³“G’†‚Í–³Ž‹
+	//if (invincibleFrame > 0) { return; }
+
+	if (other.GetTag() == COLLIDER_TAG::GobKingSwing) { /*Damage(0);*/  }
 }
 
 void Player::SubUpdate(void)
@@ -259,4 +243,9 @@ void Player::SubUpdate(void)
 		case 1: { CreateShader(new RimLightShader()); break; }
 		}
 	}
+}
+
+void Player::OnDeath(void)
+{
+	SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GameOver);
 }

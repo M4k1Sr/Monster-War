@@ -2,6 +2,8 @@
 
 #include <stdexcept>
 
+#include <algorithm>
+
 #include "../../../Application/Application.h"
 
 #include "CharacterStateBase.h"
@@ -139,3 +141,4 @@ float CharacterBase::GetAnimeStep(void)const { return anime->GetAnimeStep(); }
 void CharacterBase::SetAnimeStep(float step) { anime->SetAnimeStep(step); }
 
 #pragma endregion
+

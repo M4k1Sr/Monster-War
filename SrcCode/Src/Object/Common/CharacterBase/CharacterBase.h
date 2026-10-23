@@ -138,4 +138,16 @@ protected:
 	void SetAnimeStep(float step);
 	
 #pragma endregion
+
+#pragma region ダメージ系関数・変数
+
+	// 持ちHP
+	int hp;
+
+	// 死亡判定る
+	virtual void OnDeath(void) {}
+
+	bool IsDead(void)const { return hp <= 0; }
+
+#pragma endregion 
 };

@@ -7,11 +7,17 @@ class GobKing : public CharacterBase
 public:
 	GobKing(
 		const Vector3& pos,
-		const  int hp
+		const int initHp
 	) :
 		CharacterBase(),
-		playerPos(nullptr)
+		playerPos(nullptr),
+		hitReact(false),
+		invincibleFrame(INVINCIBLE_FRAME_MAX)
 	{
+		isDie = false,
+		isFlyEnd = false,
+
+		hp = initHp;
 		SetGravityFlg(true);
 	}
 
@@ -28,6 +34,20 @@ public:
 
 private:
 
+#pragma region 定数
+
+	// 聴覚範囲
+	const float HEAR_RANGE = 2000.0f;
+	// 索敵範囲
+	const float SEARCH_RANGE = 1500.0f;
+	// 攻撃可能範囲
+	const float ATTACK_RANGE = 300.0f;
+
+	// ダメージを受けた際の無敵猶予フレーム 
+	static constexpr int INVINCIBLE_FRAME_MAX = 60;
+
+#pragma endregion
+
 	// 状態定義
 	enum class STATE
 	{
@@ -41,7 +61,7 @@ private:
 		Throw_Rock,
 		Attack_Swing,
 
-		Hit,
+		React,
 
 		Flying,
 		Death,
@@ -58,21 +78,17 @@ private:
 
 		Idle,
 
-		Walk,
-		Run,
-
 		Roar,
 
-		DrawSword,
-		WeaponIdle,
+		Walk,
+		
 		Swing,
-
-		ThrowRock,
+		Taunt,
+		Throw,
 
 		HitReact,
 
 		Flying,
-		GetUp,
 
 		Max
 	};
@@ -80,23 +96,20 @@ private:
 	// アニメーション再生速度テーブル
 	float ANIME_SPEED_TABLE[(int)ANIME_TYPE::Max] =
 	{
-		1.0f,	// Idle
+		0.5f,	// Idle
+	
+		0.5f,	// Roar
 
-		1.0f,	// Walk
-		1.0f,	// Run
+		0.5f,	// Walk
 
-		1.0f,	// Roar
-		
-		1.0f,	// DrawSword
-		1.0f,	// WeaponIdle
-		1.0f,	// Swing
+		0.5f,	// Swing
+		0.5f,	// Taunt
+		0.5f,	// Throw
 
-		1.0f,	// ThrowRock
+		0.5f,	// React
 
-		1.0f,	// HitReact
+		0.5f,	// Flying
 
-		1.0f,	// Flying
-		1.0f,	// GetUp
 	};
 
 	// アニメーションループ再生フラグテーブル
@@ -104,22 +117,17 @@ private:
 	{
 		true,	// Idle
 
-		true,	// Walk
-		true,	// Run
-
 		false,	// Roar
 
-		false,	// DrawSword
-		true,	// WeaponIdle
+		true,	// Walk
+
 		false,	// Swing
+		false,	// Taunt
+		false,	// Throw
 
-		false,	// TThrowRock
-
-		false,	// HitReact
+		false,	// React
 
 		false,	// Flying
-		false,	// GetUp
-
 	};
 
 #pragma endregion
@@ -138,6 +146,24 @@ private:
 	//座標参照
 	const Vector3* playerPos;
 
+	// ダメージを受けたか判定
+	bool hitReact;
+	
+	// 無敵猶予フレーム
+	int invincibleFrame;
+
+	// 死亡したか
+	bool isDie;
+
+	// 敵が吹っ飛び終わったか
+	bool isFlyEnd;
+
 #pragma endregion
+
+	// ダメージ
+	void Damage(int damage);
+
+	// 死亡した際
+	void OnDeath(void)override;
 
 };

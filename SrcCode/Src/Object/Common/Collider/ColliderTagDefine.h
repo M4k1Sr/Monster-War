@@ -26,7 +26,7 @@ enum class COLLIDER_TAG
 	PlayerWeaponItem,
 
 	Enemy,
-	EnemySwing,
+	GobKingSwing,
 
 	Stage,
 

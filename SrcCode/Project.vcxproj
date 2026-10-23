@@ -148,12 +148,12 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-
-    <ClCompile Include="Src\Object\Enemy\GobKing\Weapon\CollOperator\GobThrowRockCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Enemy\GobKing\State\GobKingThrowState.cpp" />
+    <ClCompile Include="Src\Object\Enemy\GobKing\Weapon\CollOperator\GobThrowCollOperator.cpp" />
     <ClCompile Include="Src\Object\Enemy\EnemyBase.cpp" />
     <ClCompile Include="Src\Object\Enemy\EnemyManager.cpp" />
     <ClCompile Include="Src\Object\Enemy\GobKing\GobKing.cpp" />
-    <ClCompile Include="Src\Object\Enemy\GobKing\State\GobKingAttackState.cpp" />
+    <ClCompile Include="Src\Object\Enemy\GobKing\State\GobKingSwingState.cpp" />
     <ClCompile Include="Src\Object\Enemy\GobKing\State\GobKingDieState.cpp" />
     <ClCompile Include="Src\Object\Enemy\GobKing\State\GobKIngIdleState.cpp" />
     <ClCompile Include="Src\Object\Enemy\GobKing\State\GobKingMoveState.cpp" />
@@ -226,11 +226,12 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Object\Stage\Stage.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Src\Object\Enemy\GobKing\Weapon\CollOperator\GobThrowRockCollOperator.h" />
+    <ClInclude Include="Src\Object\Enemy\GobKing\State\GobKingThrowState.h" />
+    <ClInclude Include="Src\Object\Enemy\GobKing\Weapon\CollOperator\GobThrowCollOperator.h" />
     <ClInclude Include="Src\Object\Enemy\EnemyBase.h" />
     <ClInclude Include="Src\Object\Enemy\EnemyManager.h" />
     <ClInclude Include="Src\Object\Enemy\GobKing\GobKing.h" />
-    <ClInclude Include="Src\Object\Enemy\GobKing\State\GobKingAttackState.h" />
+    <ClInclude Include="Src\Object\Enemy\GobKing\State\GobKingSwingState.h" />
     <ClInclude Include="Src\Object\Enemy\GobKing\State\GobKingDieState.h" />
     <ClInclude Include="Src\Object\Enemy\GobKing\State\GobKIngIdleState.h" />
     <ClInclude Include="Src\Object\Enemy\GobKing\State\GobKingMoveState.h" />
