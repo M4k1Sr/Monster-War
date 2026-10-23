@@ -80,6 +80,9 @@
     <ClCompile Include="Src\Object\Player\Weapon\CollOperator\PlayerKickDownAttackCollOperator.cpp" />
     <ClCompile Include="Src\Object\Player\Weapon\CollOperator\PlayerRollingSlashCollOperator.cpp" />
     <ClCompile Include="Src\Object\Enemy\GobKing\State\GobKingThrowState.cpp" />
+    <ClCompile Include="Src\Object\Player\State\PlayerBackFlipState.cpp" />
+    <ClCompile Include="Src\Object\Player\State\PlayerReactState.cpp" />
+    <ClCompile Include="Src\Object\Player\State\PlayerDieState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\resource.h" />
@@ -185,6 +188,9 @@
     <ClInclude Include="Src\Object\Player\Weapon\CollOperator\PlayerKickDownAttackCollOperator.h" />
     <ClInclude Include="Src\Object\Player\Weapon\CollOperator\PlayerRollingSlashCollOperator.h" />
     <ClInclude Include="Src\Object\Enemy\GobKing\State\GobKingThrowState.h" />
+    <ClInclude Include="Src\Object\Player\State\PlayerBackFlipState.h" />
+    <ClInclude Include="Src\Object\Player\State\PlayerReactState.h" />
+    <ClInclude Include="Src\Object\Player\State\PlayerDieState.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Shader\Common\Pixel\ModelFog.hlsli" />

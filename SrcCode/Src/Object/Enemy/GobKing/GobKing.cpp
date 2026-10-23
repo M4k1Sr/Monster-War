@@ -64,8 +64,8 @@ void GobKing::Load(void)
 	// ‰ŠúÀ•W
 	trans.pos = Vector3(VGet(0.0f, 0.0f, -2500.0f));
 
-	// ƒVƒF[ƒ_[“o˜^
-	CreateShader(new DefaultShader());
+	//// ƒVƒF[ƒ_[“o˜^
+	//CreateShader(new DefaultShader());
 
 #pragma endregion
 
@@ -299,21 +299,21 @@ void GobKing::SubUpdate(void)
 	// –³“G—P—\ƒtƒŒ[ƒ€ˆ—
 	if (invincibleFrame > 0 && TimeScale::Get() > 0.0f) { invincibleFrame--; }
 
-	static char type = 0;
-	static bool prev = false, now = false;
+	//static char type = 0;
+	//static bool prev = false, now = false;
 
-	prev = now;
-	now = CheckHitKey(KEY_INPUT_SPACE) == 1;
+	//prev = now;
+	//now = CheckHitKey(KEY_INPUT_SPACE) == 1;
 
-	if (!prev && now) {
+	//if (!prev && now) {
 
-		if (++type > 1) { type = 0; }
+	//	if (++type > 1) { type = 0; }
 
-		switch (type) {
-		case 0: { CreateShader(new DefaultShader()); break; }
-		case 1: { CreateShader(new RimLightShader()); break; }
-		}
-	}
+	//	switch (type) {
+	//	case 0: { CreateShader(new DefaultShader()); break; }
+	//	case 1: { CreateShader(new RimLightShader()); break; }
+	//	}
+	//}
 
 	// Ž€–S”»’è
 	if (IsDead()) { OnDeath(); isDie = true; }

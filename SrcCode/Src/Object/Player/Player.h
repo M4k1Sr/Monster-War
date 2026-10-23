@@ -28,6 +28,11 @@ private:
 		AttackSlash,
 		AttackRollingSlash,
 
+		BackFlip,
+
+		React,
+		Flying,
+
 		Max
 	};
 
@@ -153,6 +158,23 @@ private:
 
 	void SubUpdate(void)override;
 
+#pragma region ダメージ関係
+
+	// ダメージを受けたか判定
+	bool hitReact;
+
+	// 死亡したか
+	bool isDie;
+
+	// 敵が吹っ飛び終わったか
+	bool isFlyEnd;
+
+	// ダメージ
+	void Damage(int damage);
+
+	// 死亡した際
 	void OnDeath(void)override;
+
+#pragma endregion
 
 };
