@@ -135,6 +135,33 @@ void Transform::LoadEffect(std::string path)
 	model = LoadEffekseerEffect(("Data/Effect/" + path + ".efk").c_str());
 }
 
+MATRIX Transform::GetWorldMatrix(void) const
+{
+	// 最終回転
+	const MATRIX rotationMat = FinalRotationMat();
+
+	// 描画座標
+	const Vector3 drawPos =
+		pos + Vector3(
+			VTransform(centerDiff.ToVECTOR(), rotationMat)
+		);
+
+	// スケール
+	MATRIX modelMat = MGetTranslate(animationOffset.ToVECTOR());
+	modelMat = MMult(modelMat, MGetScale(scale.ToVECTOR()));
+
+	// 回転
+	modelMat = MMult(modelMat, rotationMat);
+
+	// 座標
+	modelMat = MMult(
+		modelMat,
+		MGetTranslate(drawPos.ToVECTOR())
+	);
+
+	return modelMat;
+}
+
 void Transform::Attach(void)
 {
 	if (model == -1) { return; }
@@ -161,8 +188,7 @@ void Transform::Attach(void)
 	// 座標
 	modelMat = MMult(modelMat, MGetTranslate(drawPos.ToVECTOR()));
 
-	// モデルへ適用
-	MV1SetMatrix(model, modelMat);
+	MV1SetMatrix(model, GetWorldMatrix());
 }
 
 void Transform::Draw(void)

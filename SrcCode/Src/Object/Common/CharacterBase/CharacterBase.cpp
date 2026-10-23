@@ -2,8 +2,6 @@
 
 #include <stdexcept>
 
-#include <algorithm>
-
 #include "../../../Application/Application.h"
 
 #include "CharacterStateBase.h"
@@ -20,7 +18,7 @@ CharacterBase::CharacterBase() :
 {
 }
 
-CharacterBase::CharacterBase(const std::string& parameterPath):
+CharacterBase::CharacterBase(const std::string& parameterPath) :
 	ActorBase(parameterPath),
 
 	state(0),
@@ -40,7 +38,10 @@ void CharacterBase::BaseUpdate(void)
 	}
 
 	// アニメーション更新
-	if (anime) { anime->Update(); }
+	if (anime) {
+		anime->Update();
+		trans.animationOffset = anime->GetPositionCorrection();
+	}
 }
 
 void CharacterBase::BaseRelease(void)
@@ -140,5 +141,8 @@ float CharacterBase::GetAnimeStep(void)const { return anime->GetAnimeStep(); }
 
 void CharacterBase::SetAnimeStep(float step) { anime->SetAnimeStep(step); }
 
-#pragma endregion
+bool CharacterBase::SetPositionCorrectionFrame(const std::string& frameName) { return anime->SetPositionCorrectionFrame(frameName); }
 
+void CharacterBase::SetPositionCorrection(bool enabled) { anime->SetPositionCorrection(enabled); }
+
+#pragma endregion
