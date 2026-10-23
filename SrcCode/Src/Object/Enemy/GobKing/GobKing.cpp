@@ -4,6 +4,10 @@
 
 #include "../../../Utility/Utility.h"
 
+#include "../../../Manager/TimeScale/TimeScale.h"
+
+#include "../../Common/CharacterBase/CharacterBase.h"
+
 #include "../../Common/Collider/CapsuleCollider.h"
 
 #include "../../Common/Shader/DefaultShader.h"
@@ -202,7 +206,9 @@ void GobKing::Load(void)
 		STATE::React,
 		new GobKingReactState(
 			hitReact,
-			[&]() {AnimePlay(ANIME_TYPE::HitReact); }
+			[&]() {AnimePlay(ANIME_TYPE::HitReact); },
+			std::bind(&GobKing::IsAnimeEnd, this),
+			[&]() {ChangeState(STATE::Idle); }
 		)
 	);
 
@@ -235,6 +241,8 @@ void GobKing::Load(void)
 	RegisterStateTransition(STATE::Idle, STATE::React);
 	// uˆÚ“®ó‘Ôv->uƒqƒbƒgƒŠƒAƒNƒVƒ‡ƒ“ó‘Ôv‚ÌŽ©“®‘JˆÚ“o˜^
 	RegisterStateTransition(STATE::Move, STATE::React);
+	// u‚¨‚½‚¯‚Ñó‘Ôv->uƒqƒbƒgƒŠƒAƒNƒVƒ‡ƒ“ó‘Ôv‚ÌŽ©“®‘JˆÚ“o˜^
+	RegisterStateTransition(STATE::Roar, STATE::React);
 	// uUŒ‚ó‘Ôv->uƒqƒbƒgƒŠƒAƒNƒVƒ‡ƒ“ó‘Ôv‚ÌŽ©“®‘JˆÚ“o˜^
 	RegisterStateTransition(STATE::Attack_Swing, STATE::React);
 	// uŠâ“Š±UŒ‚ó‘Ôv->uƒqƒbƒgƒŠƒAƒNƒVƒ‡ƒ“ó‘Ôv‚ÌŽ©“®‘JˆÚ“o˜^
@@ -247,8 +255,11 @@ void GobKing::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const 
 {
 	if (ownTag != COLLIDER_TAG::Enemy) { return; }
 
+	// –³“G’†‚Í–³Ž‹
+	if (invincibleFrame > 0) { return; }
+
 	if (other.GetTag() == COLLIDER_TAG::PlayerAttackSlash) { 
-		Damage(0);
+		Damage(50);
 		hitReact = true; 
 	}
 
@@ -257,6 +268,11 @@ void GobKing::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const 
 
 void GobKing::SubUpdate(void)
 {
+	// –³“G—P—\ƒtƒŒ[ƒ€ˆ—
+	if (invincibleFrame > 0 && TimeScale::Get() > 0.0f) { invincibleFrame--; }
+
+	printfDx("hp:%d inv:%d\n", hp, invincibleFrame);
+
 	static char type = 0;
 	static bool prev = false, now = false;
 
@@ -274,7 +290,21 @@ void GobKing::SubUpdate(void)
 	}
 }
 
+#pragma region ƒ_ƒ[ƒWŠÖ”
+
+void GobKing::Damage(int damage) {
+	// Ž€–SŒãE–³“G’†‚ÍŽó‚¯•t‚¯‚È‚¢
+	if (IsDead() || invincibleFrame > 0) { return; }
+
+	hp = (std::max)(0, hp - damage);
+
+	invincibleFrame = INVINCIBLE_FRAME_MAX;
+
+	if (IsDead()) { OnDeath(); }
+}
+
+#pragma endregion
 void GobKing::OnDeath(void)
 {
-	//SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GameClear);
+	SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GameClear);
 }

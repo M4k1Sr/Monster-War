@@ -7,12 +7,14 @@ class GobKing : public CharacterBase
 public:
 	GobKing(
 		const Vector3& pos,
-		const  int hp
+		const int initHp
 	) :
 		CharacterBase(),
 		playerPos(nullptr),
-		hitReact(hitReact)
+		hitReact(false),
+		invincibleFrame(INVINCIBLE_FRAME_MAX)
 	{
+		hp = initHp;
 		SetGravityFlg(true);
 	}
 
@@ -37,6 +39,9 @@ private:
 	const float SEARCH_RANGE = 1500.0f;
 	// 攻撃可能範囲
 	const float ATTACK_RANGE = 300.0f;
+
+	// ダメージを受けた際の無敵猶予フレーム 
+	static constexpr int INVINCIBLE_FRAME_MAX = 60;
 
 #pragma endregion
 
@@ -140,8 +145,14 @@ private:
 
 	// ダメージを受けたか判定
 	bool hitReact;
+	
+	// 無敵猶予フレーム
+	int invincibleFrame;
 
 #pragma endregion
+
+	// ダメージ
+	void Damage(int damage);
 
 	// 死亡した際
 	void OnDeath(void)override;

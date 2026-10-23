@@ -3,11 +3,18 @@
 #include "../../../../Common/Vector3.h"
 
 GobKingReactState::GobKingReactState(
-	const bool& hitReact,
-	std::function<void(void)> playAnimeReact
+	bool& hitReact,
+	std::function<void(void)> playAnimeReact,
+
+	std::function<bool(void)> isAnimeEnd,
+
+	std::function<void(void)> changeStateIdle
+
 ) :
 	hitReact(hitReact),
-	playAnimeReact(playAnimeReact)
+	playAnimeReact(playAnimeReact),
+	isAnimeEnd(isAnimeEnd),
+	changeStateIdle(changeStateIdle)
 {
 }
 
@@ -22,4 +29,14 @@ void GobKingReactState::Enter(void)
 {
 	hitReact = false;
 	playAnimeReact();
+}
+
+void GobKingReactState::Update(void)
+{
+	if (isAnimeEnd()) { changeStateIdle(); }
+}
+
+void GobKingReactState::Exit(void)
+{
+	hitReact = false;
 }

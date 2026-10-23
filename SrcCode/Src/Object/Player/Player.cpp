@@ -189,8 +189,6 @@ void Player::Load(void)
 
 	// u‘Ò‹@ó‘Ôv->uˆÚ“®ó‘Ôv‚ÌŽ©“®‘JˆÚ“o˜^
 	RegisterStateTransition(STATE::Idle, STATE::Move);
-	////	uUŒ‚ó‘Ôv->uˆÚ“®ó‘Ôv‚ÌŽ©“®‘JˆÚ“o˜^
-	//RegisterStateTransition(STATE::AttackSlash, STATE::Move);
 	// u‰ñ“]UŒ‚ó‘Ôv->uˆÚ“®ó‘Ôv‚ÌŽ©“®‘JˆÚ“o˜^
 	RegisterStateTransition(STATE::AttackRollingSlash, STATE::Move);
 
@@ -222,7 +220,10 @@ void Player::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const C
 {
 	if (ownTag != COLLIDER_TAG::Player) { return; }
 
-	if (other.GetTag() == COLLIDER_TAG::GobKingSwing) { Damage(0); }
+	//// –³“G’†‚Í–³Ž‹
+	//if (invincibleFrame > 0) { return; }
+
+	if (other.GetTag() == COLLIDER_TAG::GobKingSwing) { /*Damage(0);*/  }
 }
 
 void Player::SubUpdate(void)

@@ -142,15 +142,3 @@ void CharacterBase::SetAnimeStep(float step) { anime->SetAnimeStep(step); }
 
 #pragma endregion
 
-#pragma region ダメージ関数
-
-void CharacterBase::Damage(int damage) {
-	//// 死亡後・無敵中は受け付けない
-	//if (IsDead() || invincibleFrame > 0) { return; }
-
-	hp = (std::max)(0, hp - damage);
-
-	if (IsDead()) { OnDeath(); }
-}
-
-#pragma endregion

@@ -9,8 +9,13 @@ class GobKingReactState : public CharacterStateBase
 public:
 
 	GobKingReactState(
-		const bool& hitReact,
-		std::function<void(void)> playAnimeReact);
+		bool& hitReact,
+		std::function<void(void)> playAnimeReact,
+
+		std::function<bool(void)> isAnimeEnd,
+
+		std::function<void(void)> changeStateIdle
+	);
 
 	~GobKingReactState()override = default;
 
@@ -20,6 +25,12 @@ public:
 	// 状態遷移後1度行う初期化処理
 	void Enter(void)override;
 
+	// 更新処理
+	void Update(void)override;
+	
+	// 遷移終了後1度行う処理
+	void Exit(void)override;
+
 private:
 
 #pragma region 定数
@@ -28,6 +39,13 @@ private:
 	// リアクションアニメーションの再生関数のポインタ
 	const std::function<void(void)> playAnimeReact;
 
-	bool hitReact;
+	// アニメーションが終了したかどうかを取得する関数のポインタ
+	const std::function<bool(void)> isAnimeEnd;
+
+	// 待機状態に戻る関数のポインタ
+	const std::function<void(void)> changeStateIdle;
+
+	// 攻撃をうけたか
+	bool& hitReact;
 
 };
