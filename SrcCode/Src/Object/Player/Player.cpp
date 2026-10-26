@@ -198,13 +198,13 @@ void Player::Load(void)
 		)
 	);
 
-	// パルクール状態
-	AddState(
-		STATE::BackFlip,
-		new PlayerBackFlipState(
-			[&]() {AnimePlay(ANIME_TYPE::BackFlip); }
-		)
-	);
+	//// パルクール状態
+	//AddState(
+	//	STATE::BackFlip,
+	//	new PlayerBackFlipState(
+	//		[&]() {AnimePlay(ANIME_TYPE::BackFlip); }
+	//	)
+	//);
 
 	//// リアクション状態
 	//AddState(

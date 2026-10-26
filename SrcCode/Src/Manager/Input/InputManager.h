@@ -59,6 +59,9 @@ public:
 		PlayerAttackSlash,
 		PlayerKickDownAttack,
 
+		// ƒoƒN“]
+		PlayerBackFlip,
+
 #pragma endregion
 
 #pragma region ƒJƒƒ‰‘€ì

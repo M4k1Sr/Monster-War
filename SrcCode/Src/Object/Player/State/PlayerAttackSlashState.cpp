@@ -41,6 +41,7 @@ PlayerAttackSlashState::PlayerAttackSlashState(
 	step(),
 	comboStep(),
 
+	comboKeyInputFrame(false),
 	comboKeyInput(false)
 {
 }
@@ -67,6 +68,8 @@ void PlayerAttackSlashState::Enter(void)
 	// 攻撃アニメーション再生
 	playAnimeAttackSlash_Down();
 
+	// コンボキー遷移
+	comboKeyInputFrame = true;
 	// コンボキー受付をリセット
 	comboKeyInput = false;
 }
@@ -77,7 +80,11 @@ void PlayerAttackSlashState::Update(void)
 	const float animeRatio = getAnimeRatio();
 
 	// コンボ入力の受付
-	if (Input::GetIns().GetInfo(KEY_TYPE::PlayerAttackSlash).down) {
+	if (comboKeyInputFrame) {
+		// このフレームのみスキップ
+		comboKeyInputFrame = false;
+	}
+	else if (Input::GetIns().GetInfo(KEY_TYPE::PlayerAttackSlash).down) {
 		comboKeyInput = true;
 	}
 
@@ -126,9 +133,11 @@ void PlayerAttackSlashState::Update(void)
 
 			// 待機状態へ遷移
 			changeStateIdle();
+			return;
 		}
 
 		if (!comboKeyInput) { break; }					// コンボキーが押されていない場合はコンボ受付しない
+		if (comboStep == COMBO_STEP::End) { break; }	// 最終段は繋がない
 		if (animeRatio <= COMBO_ACCEPT_TIME) { break; }	// コンボ受付時間に達していない場合は受付ない
 
 		StartComboNext();
@@ -148,22 +157,25 @@ void PlayerAttackSlashState::Exit(void)
 void PlayerAttackSlashState::StartComboNext(void)
 {
 	comboKeyInput = false;
+	step = STEP::Startup;
+	collOperator.Off();
 
 	// コンボステップ
 	switch (comboStep) {
 	case COMBO_STEP::Down:
 		comboStep = COMBO_STEP::Up;
+		playAnimeAttackSlash_Up();
 		// 斬撃アニメーション発生済みなので、斬撃アニメーション関数は呼び出さない
 		break;
 	case COMBO_STEP::Up:
 		step = STEP::Startup;		// ステップを最初から
 		comboStep = COMBO_STEP::End;// コンボステップを最終コンボに
-		playAnimeAttackSlash_Up();
+		playAnimeAttackSlash_End();
 		break;
 	case COMBO_STEP::End:
 		step = STEP::Startup;		// ステップを最初から
 		comboStep = COMBO_STEP::Down;
-		playAnimeAttackSlash_End();
+		playAnimeAttackSlash_Down();	
 		break;
 	}
 }
