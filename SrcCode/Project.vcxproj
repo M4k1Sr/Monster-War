@@ -148,6 +148,9 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Player\State\PlayerDieState.cpp" />
+    <ClCompile Include="Src\Object\Player\State\PlayerReactState.cpp" />
+    <ClCompile Include="Src\Object\Player\State\PlayerBackFlipState.cpp" />
     <ClCompile Include="Src\Object\Enemy\GobKing\State\GobKingThrowState.cpp" />
     <ClCompile Include="Src\Object\Enemy\GobKing\Weapon\CollOperator\GobThrowCollOperator.cpp" />
     <ClCompile Include="Src\Object\Enemy\EnemyBase.cpp" />
@@ -226,6 +229,9 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Object\Stage\Stage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Player\State\PlayerDieState.h" />
+    <ClInclude Include="Src\Object\Player\State\PlayerReactState.h" />
+    <ClInclude Include="Src\Object\Player\State\PlayerBackFlipState.h" />
     <ClInclude Include="Src\Object\Enemy\GobKing\State\GobKingThrowState.h" />
     <ClInclude Include="Src\Object\Enemy\GobKing\Weapon\CollOperator\GobThrowCollOperator.h" />
     <ClInclude Include="Src\Object\Enemy\EnemyBase.h" />

@@ -96,6 +96,12 @@
 >>>>>>> main
 =======
     <ClCompile Include="Src\Object\Enemy\GobKing\State\GobKingThrowState.cpp" />
+<<<<<<< HEAD
+>>>>>>> main
+=======
+    <ClCompile Include="Src\Object\Player\State\PlayerBackFlipState.cpp" />
+    <ClCompile Include="Src\Object\Player\State\PlayerReactState.cpp" />
+    <ClCompile Include="Src\Object\Player\State\PlayerDieState.cpp" />
 >>>>>>> main
   </ItemGroup>
   <ItemGroup>
@@ -218,6 +224,12 @@
 >>>>>>> main
 =======
     <ClInclude Include="Src\Object\Enemy\GobKing\State\GobKingThrowState.h" />
+<<<<<<< HEAD
+>>>>>>> main
+=======
+    <ClInclude Include="Src\Object\Player\State\PlayerBackFlipState.h" />
+    <ClInclude Include="Src\Object\Player\State\PlayerReactState.h" />
+    <ClInclude Include="Src\Object\Player\State\PlayerDieState.h" />
 >>>>>>> main
   </ItemGroup>
   <ItemGroup>

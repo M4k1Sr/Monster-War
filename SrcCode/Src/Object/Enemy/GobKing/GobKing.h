@@ -11,13 +11,14 @@ public:
 	) :
 		CharacterBase(),
 		playerPos(nullptr),
-		hitReact(false),
-		invincibleFrame(INVINCIBLE_FRAME_MAX)
+		hitReact(false)
 	{
 		isDie = false,
 		isFlyEnd = false,
 
+		invincibleFrame = INVINCIBLE_FRAME_MAX,
 		hp = initHp;
+
 		SetGravityFlg(true);
 	}
 
@@ -149,9 +150,6 @@ private:
 	// ダメージを受けたか判定
 	bool hitReact;
 	
-	// 無敵猶予フレーム
-	int invincibleFrame;
-
 	// 死亡したか
 	bool isDie;
 

@@ -12,6 +12,8 @@
 #include "../Common/Shader/RimLightShader.h"
 #include "../Common/Shader/WaterShader.h"
 
+#include "../../Manager/TimeScale/TimeScale.h"
+
 #include "../../Scene/SceneManager.h"
 
 #include "Weapon/CollOperator/PlayerAttackSlashCollOperator.h"
@@ -26,9 +28,14 @@
 #include "State/PlayerAttackSlashState.h"
 #include "State/PlayerRollingSlashState.h"
 #include "State/PlayerKickDownAttackState.h"
+#include "State/PlayerBackFlipState.h"
+#include "State/PlayerReactState.h"
+#include "State/PlayerDieState.h"
 
 Player::Player() : CharacterBase("Data/Parameter/Player/")
 {
+	hp = 100;
+	invincibleFrame = 60.0f;
 }
 
 void Player::Load(void)
@@ -65,8 +72,8 @@ void Player::Load(void)
 	// ƒ‚ƒfƒ‹‚ÌŠp“x‚ÌƒYƒŒ‚Ì•â³
 	trans.SetLocalRotation(Quaternion::FromRotationY(Deg2Rad(180.0f)));
 
-	// ƒVƒF[ƒ_[“o˜^
-	CreateShader(new DefaultShader());
+	//// ƒVƒF[ƒ_[“o˜^
+	//CreateShader(new DefaultShader());
 
 #pragma endregion
 
@@ -191,6 +198,36 @@ void Player::Load(void)
 		)
 	);
 
+	//// ƒpƒ‹ƒN[ƒ‹ó‘Ô
+	//AddState(
+	//	STATE::BackFlip,
+	//	new PlayerBackFlipState(
+	//		[&]() {AnimePlay(ANIME_TYPE::BackFlip); }
+	//	)
+	//);
+
+	//// ƒŠƒAƒNƒVƒ‡ƒ“ó‘Ô
+	//AddState(
+	//	STATE::React,
+	//	new PlayerReactState(
+	//		hitReact,
+	//		[&]() {AnimePlay(ANIME_TYPE::React); },
+	//		std::bind(&Player::IsAnimeEnd, this),
+	//		[&]() {ChangeState(STATE::Idle); }
+	//	)
+	//);
+
+	//// Ž€–S(‚Á”ò‚Ñ)ó‘Ô
+	//AddState(
+	//	STATE::Flying,
+	//	new PlayerDieState(
+	//		isDie,
+	//		isFlyEnd,
+	//		[&]() {AnimePlay(ANIME_TYPE::Flying); },
+	//		std::bind(&Player::IsAnimeEnd, this)
+	//	)
+	//);
+
 	// u‘Ò‹@ó‘Ôv->uˆÚ“®ó‘Ôv‚ÌŽ©“®‘JˆÚ“o˜^
 	RegisterStateTransition(STATE::Idle, STATE::Move);
 	// u‰ñ“]UŒ‚ó‘Ôv->uˆÚ“®ó‘Ôv‚ÌŽ©“®‘JˆÚ“o˜^
@@ -217,36 +254,81 @@ void Player::Load(void)
 	// uUŒ‚iŽaŒ‚jó‘Ôv->u‰ñ“]UŒ‚ó‘Ôv‚ÌŽ©“®‘JˆÚ“o˜^
 	RegisterStateTransition(STATE::AttackSlash, STATE::AttackRollingSlash);
 
+	//// u‘Ò‹@ó‘Ôv->uƒqƒbƒgƒŠƒAƒNƒVƒ‡ƒ“ó‘Ôv‚ÌŽ©“®‘JˆÚ“o˜^
+	//RegisterStateTransition(STATE::Idle, STATE::React);
+	//// uˆÚ“®ó‘Ôv->uƒqƒbƒgƒŠƒAƒNƒVƒ‡ƒ“ó‘Ôv‚ÌŽ©“®‘JˆÚ“o˜^
+	//RegisterStateTransition(STATE::Move, STATE::React);
+	//// uUŒ‚iŽaŒ‚jó‘Ôv->uƒqƒbƒgƒŠƒAƒNƒVƒ‡ƒ“ó‘Ôv‚ÌŽ©“®‘JˆÚ“o˜^
+	//RegisterStateTransition(STATE::AttackSlash, STATE::React);
+	//// u‰ñ“]UŒ‚ó‘Ôv->uƒqƒbƒgƒŠƒAƒNƒVƒ‡ƒ“ó‘Ôv‚ÌŽ©“®‘JˆÚ“o˜^
+	//RegisterStateTransition(STATE::AttackRollingSlash, STATE::React);
+
+	//// u‘Ò‹@ó‘Ôv->uŽ€–Só‘Ôv‚ÌŽ©“®‘JˆÚ“o˜^
+	//RegisterStateTransition(STATE::Idle, STATE::Flying);
+	//// uˆÚ“®ó‘Ôv->uŽ€–Só‘Ôv‚ÌŽ©“®‘JˆÚ“o˜^
+	//RegisterStateTransition(STATE::Move, STATE::Flying);
+	//// uUŒ‚iŽaŒ‚jó‘Ôv->uŽ€–Só‘Ôv‚ÌŽ©“®‘JˆÚ“o˜^
+	//RegisterStateTransition(STATE::AttackSlash, STATE::Flying);
+	//// u‰ñ“]UŒ‚ó‘Ôv->uŽ€–Só‘Ôv‚ÌŽ©“®‘JˆÚ“o˜^
+	//RegisterStateTransition(STATE::AttackRollingSlash, STATE::Flying);
+
 #pragma endregion
 }
 
 void Player::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
 {
-	if (ownTag != COLLIDER_TAG::Player) { return; }
+	if (ownTag != COLLIDER_TAG::Enemy) { return; }
 
-	//// –³“G’†‚Í–³Ž‹
-	//if (invincibleFrame > 0) { return; }
+	// –³“G’†‚Í–³Ž‹
+	if (invincibleFrame > 0) { return; }
 
-	if (other.GetTag() == COLLIDER_TAG::GobKingSwing) { /*Damage(0);*/  }
+	// ƒSƒuƒŠƒ“ƒLƒ“ƒO‚ÌƒXƒCƒ“ƒOUŒ‚
+	if (other.GetTag() == COLLIDER_TAG::GobKingSwing) {
+		Damage(50);
+
+		// Ž€–S‚µ‚Ä‚¢‚½‚ç•s—v
+		if (!IsDead()) { hitReact = true; }
+	}
+
 }
 
 void Player::SubUpdate(void)
 {
-	static char type = 0;
-	static bool prev = false, now = false;
+	if (invincibleFrame > 0 && TimeScale::Get() > 0.0f) { invincibleFrame--; }
+	
+	//static char type = 0;
+	//static bool prev = false, now = false;
 
-	prev = now;
-	now = CheckHitKey(KEY_INPUT_SPACE) == 1;
+	//prev = now;
+	//now = CheckHitKey(KEY_INPUT_SPACE) == 1;
 
-	if (!prev && now) {
+	//if (!prev && now) {
 
-		if (++type > 1) { type = 0; }
+	//	if (++type > 1) { type = 0; }
 
-		switch (type){
-		case 0: { CreateShader(new DefaultShader()); break; }
-		case 1: { CreateShader(new RimLightShader()); break; }
-		}
-	}
+	//	switch (type){
+	//	case 0: { CreateShader(new DefaultShader()); break; }
+	//	case 1: { CreateShader(new RimLightShader()); break; }
+	//	}
+	//}
+
+		// Ž€–S”»’è
+	if (IsDead()) { OnDeath(); isDie = true; }
+
+}
+
+void Player::Damage(int damage) {
+
+	printfDx("player::hp:%d  IsDead:%d\n", hp, (int)IsDead());
+
+	// Ž€–SŒãE–³“G’†‚ÍŽó‚¯•t‚¯‚È‚¢
+	if (IsDead() || invincibleFrame > 0) { return; }
+
+	hp = (std::max)(0, hp - damage);
+
+	invincibleFrame = 60;
+
+	if (IsDead()) { OnDeath(); }
 }
 
 void Player::OnDeath(void)

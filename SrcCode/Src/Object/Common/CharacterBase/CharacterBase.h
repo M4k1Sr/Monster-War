@@ -149,6 +149,9 @@ protected:
 	// ‚¿HP
 	int hp;
 
+	// –³“G—P—\ƒtƒŒ[ƒ€
+	int invincibleFrame;
+
 	// €–S”»’è‚é
 	virtual void OnDeath(void) {}
 

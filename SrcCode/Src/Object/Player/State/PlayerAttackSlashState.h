@@ -118,6 +118,8 @@ private:
 	// コンボステップ
 	COMBO_STEP comboStep;
 
+	// コンボキー遷移用
+	bool comboKeyInputFrame;
 	// コンボキー受付
 	bool comboKeyInput;
 
