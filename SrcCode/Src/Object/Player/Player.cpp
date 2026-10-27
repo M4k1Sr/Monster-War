@@ -202,13 +202,17 @@ void Player::Load(void)
 		)
 	);
 
-	//// パルクール状態
-	//AddState(
-	//	STATE::BackFlip,
-	//	new PlayerBackFlipState(
-	//		[&]() {AnimePlay(ANIME_TYPE::BackFlip); }
-	//	)
-	//);
+	// パルクール状態
+	AddState(
+		STATE::BackFlip,
+		new PlayerBackFlipState(
+			0.3f,0.5f,
+			lockOnTarget,
+			[&]() {AnimePlay(ANIME_TYPE::BackFlip); },
+			[&]() {return GetAnimeRatio(); },
+			[&]() {ChangeState(STATE::Idle); }
+		)
+	);
 
 	//// リアクション状態
 	//AddState(
@@ -257,6 +261,12 @@ void Player::Load(void)
 	RegisterStateTransition(STATE::Move, STATE::AttackRollingSlash);
 	// 「攻撃（斬撃）状態」->「回転攻撃状態」の自動遷移登録
 	RegisterStateTransition(STATE::AttackSlash, STATE::AttackRollingSlash);
+
+	// 「待機状態」->「回避状態」の自動遷移登録
+	RegisterStateTransition(STATE::Idle, STATE::BackFlip);
+	// 「移動状態」->「回避状態」の自動遷移登録
+	RegisterStateTransition(STATE::Move, STATE::BackFlip);
+
 
 	//// 「待機状態」->「ヒットリアクション状態」の自動遷移登録
 	//RegisterStateTransition(STATE::Idle, STATE::React);
