@@ -95,7 +95,7 @@ private:
 		0.65f,	// StepLeft
 
 		1.0f,	// InPlaceJump
-		1.0f,	// BackFlip
+		0.55f,	// BackFlip
 
 		0.65f,	// DrawSword
 		0.65f,	// WeaponIdle
@@ -192,5 +192,6 @@ private:
 
 #pragma endregion
 
+	bool isJustDodge;
 
 };

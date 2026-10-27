@@ -22,6 +22,7 @@
 
 #include "Weapon/CollOperator/PlayerAttackSlashCollOperator.h"
 #include "Weapon/CollOperator/PlayerRollingSlashCollOperator.h"
+#include "Weapon/CollOperator/PlayerBackFlipCollOperator.h"
 #include "Weapon/CollOperator/PlayerKickDownAttackCollOperator.h"
 
 #include "Weapon/Item/King_Sword.h"
@@ -124,6 +125,12 @@ void Player::Load(void)
 
 	AddChildActor(rollingSlashCollOperator);
 
+	// 回避当たり判定管理クラス
+	PlayerBackFlipCollOperator* backFlipCollOperator =
+		new PlayerBackFlipCollOperator(100.0f, Vector3(0, 0, 0), trans,isJustDodge);
+
+	AddChildActor(backFlipCollOperator);
+
 #pragma endregion
 
 #pragma region 下位アクターの生成(武器)
@@ -206,7 +213,8 @@ void Player::Load(void)
 	AddState(
 		STATE::BackFlip,
 		new PlayerBackFlipState(
-			0.3f,0.5f,
+			0.05f,0.3f,
+			*backFlipCollOperator,
 			lockOnTarget,
 			[&]() {AnimePlay(ANIME_TYPE::BackFlip); },
 			[&]() {return GetAnimeRatio(); },

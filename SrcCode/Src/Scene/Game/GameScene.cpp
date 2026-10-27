@@ -47,8 +47,6 @@ void GameScene::SubPostLoad(void)
 	operatorObject = new Player();
 	AddActor(operatorObject);
 
-	//targetObject = new EnemyManager();
-	//AddActor(targetObject);
 	// 敵の生成
 	AddActor(new EnemyManager);
 	// プレイヤー座標渡し

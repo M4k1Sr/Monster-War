@@ -3,13 +3,16 @@
 #include "../../../Common/Vector3.h"
 
 #include "../../../Manager/Input/InputManager.h"
+
 #include "../../../Manager/Camera/CurrentCamera.h"
+
+#include "../Weapon/CollOperator/PlayerBackFlipCollOperator.h"
 
 PlayerBackFlipState::PlayerBackFlipState(
 	float JUST_START_TIME,
 	float JUST_END_TIME,
 
-	//PlayerBackFlipCollOperator& collOperator,
+	PlayerBackFlipCollOperator& collOperator,
 
 	const Vector3* const& lockOnTarget,
 	
@@ -22,7 +25,7 @@ PlayerBackFlipState::PlayerBackFlipState(
 	JUST_START_TIME(JUST_START_TIME),
 	JUST_END_TIME(JUST_END_TIME),
 
-	//collOperator(collOperator),
+	collOperator(collOperator),
 
 	playAnimeBackFlip(playAnimeBackFlip),
 	getAnimeRatio(getAnimeRatio),
@@ -54,8 +57,8 @@ void PlayerBackFlipState::Enter(void)
 	// ステップを「前隙」へ
 	step = STEP::Startup;
 
-	//// 当たり判定を消去
-	//collOperator.Off();
+	// 当たり判定を消去
+	collOperator.Off();
 
 	// 攻撃アニメーション再生
 	playAnimeBackFlip();
@@ -78,8 +81,8 @@ void PlayerBackFlipState::Update(void)
 			// ステップを「攻撃判定発生中」へ
 			step = STEP::Active;
 
-			//// 当たり判定を発生
-			//collOperator.On();
+			// 当たり判定を発生
+			collOperator.On();
 		}
 
 		break;
@@ -91,13 +94,13 @@ void PlayerBackFlipState::Update(void)
 		// 当たり判定を追従
 
 		// 回避判定発生終了
-		if (animeRatio <= JUST_END_TIME) {
+		if (JUST_END_TIME <= animeRatio) {
 
 			// ステップを「後隙」へ
 			step = STEP::Recovery;
 
-			//// 当たり判定を消去
-			//collOperator.Off();
+			// 当たり判定を消去
+			collOperator.Off();
 		}
 
 		break;
@@ -121,6 +124,6 @@ void PlayerBackFlipState::Update(void)
 
 void PlayerBackFlipState::Exit(void)
 {
-	//// 当たり判定を消去
-	//collOperator.Off();
+	// 当たり判定を消去
+	collOperator.Off();
 }

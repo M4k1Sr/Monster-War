@@ -2,7 +2,9 @@
 
 #include "../../Common/CharacterBase/CharacterStateBase.h"
 
-struct Vector3;
+#include "../../../Common/Vector3.h"
+
+class PlayerBackFlipCollOperator;
 
 class PlayerBackFlipState : public CharacterStateBase
 {
@@ -12,7 +14,7 @@ public:
 		float JUST_START_TIME,
 		float JUST_END_TIME,
 
-		//PlayerBackFlipCollOperator& collOperator,
+		PlayerBackFlipCollOperator& collOperator,
 
 		const Vector3* const& lockOnTarget,
 
@@ -61,8 +63,8 @@ private:
 
 #pragma region 受け取る参照変数・関数
 
-	//// 攻撃の当たり判定管理クラスの参照
-	//PlayerBackFlipCollOperator& collOperator;
+	// 攻撃の当たり判定管理クラスの参照
+	PlayerBackFlipCollOperator& collOperator;
 
 	// 宙返りアニメーションの再生関数ポインタ
 	const std::function<void(void)> playAnimeBackFlip;
