@@ -2,6 +2,8 @@
 
 #include "../Common/CharacterBase/CharacterBase.h"
 
+class EnemyManager;
+
 class Player : public CharacterBase
 {
 public:
@@ -13,6 +15,9 @@ public:
 
 	// 当たり判定の通知
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)override;
+
+	// エネミー座標渡し
+	void SetEnemyManager(EnemyManager* manager) { enemyManager = manager; }
 
 private:
 
@@ -176,5 +181,16 @@ private:
 	void OnDeath(void)override;
 
 #pragma endregion
+
+#pragma region ロックオン
+
+	// ターゲット座標
+	const Vector3* lockOnTarget = nullptr;
+
+	// エネミーマネージャ
+	EnemyManager* enemyManager = nullptr;
+
+#pragma endregion
+
 
 };

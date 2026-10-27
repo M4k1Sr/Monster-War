@@ -148,6 +148,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Manager\Camera\FollowAction\FollowActionCamera.cpp" />
     <ClCompile Include="Src\Object\Player\State\PlayerDieState.cpp" />
     <ClCompile Include="Src\Object\Player\State\PlayerReactState.cpp" />
     <ClCompile Include="Src\Object\Player\State\PlayerBackFlipState.cpp" />
@@ -229,6 +230,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Object\Stage\Stage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Manager\Camera\FollowAction\FollowActionCamera.h" />
     <ClInclude Include="Src\Object\Player\State\PlayerDieState.h" />
     <ClInclude Include="Src\Object\Player\State\PlayerReactState.h" />
     <ClInclude Include="Src\Object\Player\State\PlayerBackFlipState.h" />

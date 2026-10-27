@@ -112,6 +112,9 @@ void InputManager::Init(void)
 	SET_KEYBOARD(KEY_TYPE::CameraRotLeft, KEY_INPUT_LEFT);
 	SET_C_BUTTON(KEY_TYPE::CameraRotLeft, XINPUT_BUTTON_LEFT_SHOULDER);
 	SET_C_OTHERS(KEY_TYPE::CameraRotLeft, CONTROLLER_OTHERS::RightstickLeft);
+	
+	// ロックオン
+	SET_MOUSE_BUTTON(KEY_TYPE::LockOn, MOUSE_INPUT_RIGHT);
 
 #pragma endregion
 

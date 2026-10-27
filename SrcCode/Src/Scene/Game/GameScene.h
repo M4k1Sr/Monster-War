@@ -31,4 +31,7 @@ private:
 	// ‘€ì‘ÎÛ
 	ActorBase* operatorObject;
 
+	// ‘{õ‘ÎÛ
+	ActorBase* targetObject;
+
 };

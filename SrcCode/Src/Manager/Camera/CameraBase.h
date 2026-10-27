@@ -97,6 +97,14 @@ public:
 
 #pragma endregion
 
+#pragma region ロックオン関数
+
+	// ロックオン
+	virtual void SetLockOnTarget(const Vector3* target) {}
+	virtual bool IsLockOn(void) const { return false; }
+
+#pragma endregion
+
 protected:
 
 	// 座標

@@ -80,6 +80,9 @@ public:
 		CameraRotRight,
 		CameraRotLeft,
 
+		// ロックオン
+		LockOn,
+
 #pragma endregion
 
 #pragma region システム操作

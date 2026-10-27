@@ -66,3 +66,19 @@ void EnemyManager::SetPlayerPos(const Vector3* pos)
 		//}
 	}
 }
+
+const Vector3* EnemyManager::GetNearestEnemyPos(const Vector3& from, float range)
+{
+	const Vector3* nearest = nullptr;
+	float nearestSq = range * range;
+
+	for (ActorBase* child : GetChildActors()) {
+		// Ž€–SÏ‚Ý‚Ì“G‚ÍœŠO
+		const Vector3& p = child->GetTrans().pos;
+		const float distSq = (p - from).LengthSq();
+
+		if (distSq < nearestSq) { nearestSq = distSq; nearest = &p; }
+	}
+	return nearest;
+
+}

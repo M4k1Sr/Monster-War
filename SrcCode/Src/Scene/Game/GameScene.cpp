@@ -10,6 +10,8 @@
 #include "../../Manager/Font/FontManager.h"
 
 #include "../../Manager/Camera/FollowRemote/FollowRemoteCamera.h"
+#include "../../Manager/Camera/FollowAction/FollowActionCamera.h"
+#include "../../Manager/Camera/FollowYaw/FollowYawCamera.h"
 
 #include "../SceneManager.h"
 
@@ -45,10 +47,15 @@ void GameScene::SubPostLoad(void)
 	operatorObject = new Player();
 	AddActor(operatorObject);
 
-	//敵の生成
+	//targetObject = new EnemyManager();
+	//AddActor(targetObject);
+	// 敵の生成
 	AddActor(new EnemyManager);
-	//プレイヤー座標渡し
+	// プレイヤー座標渡し
 	ActorSerch<EnemyManager>(actors)->SetPlayerPos(&operatorObject->GetTrans().pos);
+
+	// プレイヤーに敵管理クラスを渡す（これを追加）
+	ActorSerch<Player>(actors)->SetEnemyManager(ActorSerch<EnemyManager>(actors));
 
 	AddActor(new Stage);
 
@@ -85,5 +92,5 @@ void GameScene::SubUiDraw(void)
 
 void GameScene::CreateCamera(void)
 {
-	camera = new FollowRemoteCamera(&ActorSerch<Player>(actors)->GetTrans().pos);
+	camera = new FollowActionCamera(&ActorSerch<Player>(actors)->GetTrans().pos);
 }

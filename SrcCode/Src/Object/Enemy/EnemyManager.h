@@ -16,6 +16,8 @@ public:
 
 	void SetPlayerPos(const Vector3* pos);
 
+	const Vector3* GetNearestEnemyPos(const Vector3& from, float range);
+
 private:
 };
 

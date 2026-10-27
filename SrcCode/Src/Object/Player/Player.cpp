@@ -12,9 +12,13 @@
 #include "../Common/Shader/RimLightShader.h"
 #include "../Common/Shader/WaterShader.h"
 
+#include "../../Manager/Input/InputManager.h"
+#include "../../Manager/Camera/CurrentCamera.h"
 #include "../../Manager/TimeScale/TimeScale.h"
 
 #include "../../Scene/SceneManager.h"
+
+#include "../Enemy/EnemyManager.h"
 
 #include "Weapon/CollOperator/PlayerAttackSlashCollOperator.h"
 #include "Weapon/CollOperator/PlayerRollingSlashCollOperator.h"
@@ -273,6 +277,9 @@ void Player::Load(void)
 	//RegisterStateTransition(STATE::AttackRollingSlash, STATE::Flying);
 
 #pragma endregion
+
+	
+
 }
 
 void Player::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
@@ -296,6 +303,20 @@ void Player::SubUpdate(void)
 {
 	if (invincibleFrame > 0 && TimeScale::Get() > 0.0f) { invincibleFrame--; }
 	
+	if (InputManager::GetIns().GetInfo(KEY_TYPE::LockOn).now) {
+
+		// 対象が未決定なら、一番近い敵を探す
+		if (lockOnTarget == nullptr && enemyManager != nullptr) {
+			lockOnTarget = enemyManager->GetNearestEnemyPos(trans.pos, 2000);
+		}
+	}
+	else {
+		lockOnTarget = nullptr;
+	}
+
+	// カメラへ反映（nullptrなら通常モードに戻る）
+	CurrentCamera::Get().SetLockOnTarget(lockOnTarget);
+
 	//static char type = 0;
 	//static bool prev = false, now = false;
 

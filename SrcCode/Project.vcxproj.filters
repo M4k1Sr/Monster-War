@@ -83,6 +83,7 @@
     <ClCompile Include="Src\Object\Player\State\PlayerBackFlipState.cpp" />
     <ClCompile Include="Src\Object\Player\State\PlayerReactState.cpp" />
     <ClCompile Include="Src\Object\Player\State\PlayerDieState.cpp" />
+    <ClCompile Include="Src\Manager\Camera\FollowAction\FollowActionCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\resource.h" />
@@ -191,6 +192,7 @@
     <ClInclude Include="Src\Object\Player\State\PlayerBackFlipState.h" />
     <ClInclude Include="Src\Object\Player\State\PlayerReactState.h" />
     <ClInclude Include="Src\Object\Player\State\PlayerDieState.h" />
+    <ClInclude Include="Src\Manager\Camera\FollowAction\FollowActionCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Shader\Common\Pixel\ModelFog.hlsli" />
