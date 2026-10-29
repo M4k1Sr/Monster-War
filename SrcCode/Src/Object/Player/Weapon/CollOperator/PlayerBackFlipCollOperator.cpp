@@ -18,6 +18,7 @@ PlayerBackFlipCollOperator::PlayerBackFlipCollOperator(
 
 	dodgeColl(new SphereCollider(COLLIDER_TAG::Playerdodge, COLL_RADIUS))
 {
+	isJustDodge = false;
 }
 
 void PlayerBackFlipCollOperator::Load(void)
@@ -39,6 +40,7 @@ void PlayerBackFlipCollOperator::Load(void)
 
 	// コライダーを追加
 	AddCollider(dodgeColl);
+
 }
 
 void PlayerBackFlipCollOperator::SubUpdate(void)
@@ -54,7 +56,7 @@ void PlayerBackFlipCollOperator::On(void)
 {
 	dodgeColl->SetJudgeFlg(true);
 
-	// プレイヤーの座標、プレイヤーの角度、攻撃判定の相対座標をつかい
+	// プレイヤーの座標、プレイヤーの角度、攻撃判定の相対座標を使って
 	// 判定の座標を割り出す
 	trans.pos = playerTrans.pos + playerTrans.VTrans(COLL_LOCAL_POS);
 }
@@ -62,13 +64,21 @@ void PlayerBackFlipCollOperator::On(void)
 void PlayerBackFlipCollOperator::Off(void)
 {
 	dodgeColl->SetJudgeFlg(false);
-	isJustDodge = false;
 }
 
 void PlayerBackFlipCollOperator::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
 {
 	// ゴブリンキングのスイング攻撃
 	if (other.GetTag() == COLLIDER_TAG::GobKingSwing) {
+		
+		// ジャスト回避成功
 		isJustDodge = true;
 	}
+}
+
+bool& PlayerBackFlipCollOperator::IsJustDodge(void)
+{
+	bool ret = isJustDodge;
+	isJustDodge = false;
+	return ret;
 }

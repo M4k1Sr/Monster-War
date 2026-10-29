@@ -213,7 +213,9 @@ void Player::Load(void)
 	AddState(
 		STATE::BackFlip,
 		new PlayerBackFlipState(
-			0.05f,0.3f,
+			0.05f, 0.3f,
+			6.0f,12.0f, velocity, isGround,
+			[&]() {return trans.VTrans(Vector3::Zonly(-1.0f)); },
 			*backFlipCollOperator,
 			lockOnTarget,
 			[&]() {AnimePlay(ANIME_TYPE::BackFlip); },

@@ -26,6 +26,9 @@ public:
 	// 当たり判定の通知
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)override;
 
+	// ジャスト回避判定
+	bool& IsJustDodge(void);
+
 private:
 
 	// 回避の判定を発生させる座標（プレイヤー座標からの相対座標）

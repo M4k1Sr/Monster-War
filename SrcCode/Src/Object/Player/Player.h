@@ -95,7 +95,7 @@ private:
 		0.65f,	// StepLeft
 
 		1.0f,	// InPlaceJump
-		0.55f,	// BackFlip
+		0.8f,	// BackFlip
 
 		0.65f,	// DrawSword
 		0.65f,	// WeaponIdle
@@ -192,6 +192,9 @@ private:
 
 #pragma endregion
 
+	// ジャスト回避判定
 	bool isJustDodge;
 
+	// スロー演出成功判定
+	bool isSlowSuccess;
 };

@@ -14,6 +14,15 @@ public:
 		float JUST_START_TIME,
 		float JUST_END_TIME,
 
+		float BACKFLIP_POWER,
+		float UP_POWER,
+
+		Vector3& velocity,
+
+		const bool& isGround,
+
+		std::function<Vector3(void)> getVec,
+
 		PlayerBackFlipCollOperator& collOperator,
 
 		const Vector3* const& lockOnTarget,
@@ -54,14 +63,31 @@ private:
 		Recovery
 	};
 
+	// 宙返り移動力
+	const float BACKFLIP_POWER;
+	// 宙返りジャンプ力
+	const float UP_POWER;
+
 	// 回避の判定を発生させ始めるアニメーション再生割合
 	const float JUST_START_TIME;
 	// 回避の判定を発生させ終わるアニメーション再生割合
 	const float JUST_END_TIME;
 
+	const float MOVE_START = 0.18f;
+	const float MOVE_END = 0.9f;
+
 #pragma endregion
 
 #pragma region 受け取る参照変数・関数
+
+	// プレイヤーのベクトル
+	Vector3& velocity;
+
+	// 地面と設置しているか
+	const bool& isGround;
+
+	// プレイヤーの現在向いている方向
+	std::function<Vector3(void)> getVec;
 
 	// 攻撃の当たり判定管理クラスの参照
 	PlayerBackFlipCollOperator& collOperator;
@@ -77,13 +103,26 @@ private:
 
 #pragma endregion
 
+#pragma region ジャスト回避に必要な変数
+
 	// 回避しているかどうか
 	bool isBackFlip;
 
 	// ターゲットがいるか
 	const Vector3* const& lockOnTarget;
 
+	// ジャンプ判定
+	bool isJumped;
+
+	// 宙返り中か
+	bool isAirborne;
+
+	// スロー判定かどうか
+	bool isSlow;
+
 	// 回避ステップ
 	STEP step;
+
+#pragma endregion
 
 };
