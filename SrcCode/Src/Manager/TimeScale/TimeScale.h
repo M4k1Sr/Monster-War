@@ -16,6 +16,10 @@ private:
 
 public:
 
+	// オブジェクトグループ
+	enum class GROUP { Player, Enemy, Other, Max };
+
+
 #pragma region シングルトン定義
 
 	// 生成
@@ -39,6 +43,14 @@ public:
 
 	// 現在の時間倍率を取得する
 	static float Get(void) { return ins->timeScale; }
+
+	// グローバル（ヒットストップ）× グループ倍率
+	static float GetTimeScale(GROUP g) { return ins->timeScale * ins->groups[(int)g].current; }
+
+	/// <param name="target">スロー倍率（敵なら0.1?0.2）</param>
+	/// <param name="holdFrame">倍率を維持するフレーム数</param>
+	/// <param name="easeFrame">その後1.0へ戻すフレーム数</param>
+	void SetGroupScale(GROUP g, float target, int holdFrame, int easeFrame);
 
 	/// <summary>
 	/// 時間倍率を変更する
@@ -71,8 +83,23 @@ public:
 	
 private:
 
+	// グループ構造体
+	struct GroupState {
+		float current = 1.0f;
+		float target = 1.0f;
+		int holdFrame = 0;
+		int easeFrame = 0;
+		int easeCounter = 0;
+	};
+
+	// グループ
+	GroupState groups[(int)GROUP::Max];
+
 	// 時間の倍率
 	float timeScale;
+
+	// グループごとの更新
+	void UpdateGroups(void);
 
 #pragma region 時間倍率変更に関する変数
 

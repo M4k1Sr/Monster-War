@@ -79,6 +79,16 @@ void TimeScale::Update(void)
 	}
 }
 
+void TimeScale::SetGroupScale(GROUP g, float target, int holdFrame, int easeFrame)
+{
+	GroupState& s = groups[(int)g];
+	s.current = target;
+	s.target = target;
+	s.holdFrame = holdFrame;
+	s.easeFrame = easeFrame;
+	s.easeCounter = 0;
+}
+
 void TimeScale::ChangeTimeScale(float targetTimeScale, unsigned short changeTime)
 {
 	if (isChangingTimeScale) { return; }
@@ -117,4 +127,20 @@ void TimeScale::TemporaryScale(float targetTimescale, unsigned short temporaryTi
 
 	// 1‚Â‚Ì—vŒ‚ð•Û‘¶
 	temporaryOrderStack.emplace_back(TemporaryOrder(beforeTimeScale, changeTime, temporaryTime));
+}
+
+void TimeScale::UpdateGroups(void)
+{
+	for (GroupState& s : groups) {
+		if (s.current == 1.0f) { continue; }
+
+		// ˆÛŽ’†
+		if (s.holdFrame > 0) { s.holdFrame--; continue; }
+
+		// –ß‚µ’†
+		if (s.easeFrame <= 0) { s.current = 1.0f; continue; }
+		s.easeCounter++;
+		float t = (std::min)(1.0f, (float)s.easeCounter / s.easeFrame);
+		s.current = s.target + (1.0f - s.target) * t;
+	}
 }

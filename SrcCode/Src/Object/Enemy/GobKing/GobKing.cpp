@@ -278,6 +278,10 @@ void GobKing::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const 
 	// プレイヤーの切り付け攻撃
 	if (other.GetTag() == COLLIDER_TAG::PlayerAttackSlash) { 
 		Damage(20);
+		
+		// ヒットストップ
+		TimeScale::GetIns().HitStop(4);
+		TimeScale::GetIns().SetGroupScale(TimeScale::GROUP::Enemy, 0.1f, 90, 20);
 
 		// 死亡していたら不要
 		if (!IsDead()) { hitReact = true; }
@@ -297,7 +301,7 @@ void GobKing::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const 
 void GobKing::SubUpdate(void)
 {
 	// 無敵猶予フレーム処理
-	if (invincibleFrame > 0 && TimeScale::Get() > 0.0f) { invincibleFrame--; }
+	if (invincibleFrame > 0 && GetTimeScale() > 0.0f) { invincibleFrame--; }
 
 	//static char type = 0;
 	//static bool prev = false, now = false;

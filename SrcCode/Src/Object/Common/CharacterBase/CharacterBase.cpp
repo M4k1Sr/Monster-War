@@ -39,7 +39,7 @@ void CharacterBase::BaseUpdate(void)
 
 	// アニメーション更新
 	if (anime) {
-		anime->Update();
+		if (anime) { anime->Update(GetTimeScale()); }
 		trans.animationOffset = anime->GetPositionCorrection();
 	}
 }

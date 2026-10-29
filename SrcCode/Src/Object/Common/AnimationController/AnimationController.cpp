@@ -110,10 +110,10 @@ void AnimationController::Stop(void)
 }
 
 
-void AnimationController::Update(void)
+void AnimationController::Update(float timeScale)
 {
 	// çƒê∂
-	playAnim.step += playAnim.speed * TimeScale::Get();
+	playAnim.step += playAnim.speed * timeScale;
 
 	if (prevAnim.speed != 0) {
 		while (blendRate <= 1.0f) {
@@ -129,7 +129,7 @@ void AnimationController::Update(void)
 
 			break;
 		}
-		blendRate += 0.1f * TimeScale::Get();
+		blendRate += 0.1f * timeScale;
 	}
 	if (loopflg) {
 		if (playAnim.step >= playAnim.totalTime)playAnim.step = 0.0f;

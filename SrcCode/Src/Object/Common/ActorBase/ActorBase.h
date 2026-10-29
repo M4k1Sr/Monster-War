@@ -8,6 +8,8 @@
 
 #include "../Collider/ColliderTagDefine.h"
 
+#include "../../../Manager/TimeScale/TimeScale.h"
+
 #include "ActorDrawTypeDefine.h"
 
 class ColliderBase;
@@ -74,6 +76,13 @@ public:
 	// 子クラスを取得する
 	const std::vector<ActorBase*>& GetChildActors(void)const { return childActors; }
 
+	// 各グループのタイムスケールを取得
+	float GetTimeScale(void) const {
+		float s = TimeScale::Get() * ownTimeScale;   // 引数なし
+		if (timeParent) { s *= timeParent->GetTimeScale(); }
+		return s;
+	}
+
 private:
 
 	// 当たり判定情報
@@ -120,6 +129,15 @@ private:
 	// 子クラス
 	std::vector<ActorBase*> childActors;
 
+	// タイムスケールの各グループ
+	TimeScale::GROUP timeGroup = TimeScale::GROUP::Other;
+
+	// そのクラスごとのタイムスケール倍率
+	float ownTimeScale = 1.0f;
+	
+	// 親へと引きつぐタイムスケールのポインタ
+	const ActorBase* timeParent = nullptr;
+
 protected:
 
 	// モデル制御情報構造体
@@ -139,6 +157,9 @@ protected:
 	const bool& isGround = isGroundMaster;
 
 #pragma region 初期設定
+
+	// 各オブジェクト毎のタイムスケールグループ
+	void SetTimeGroup(TimeScale::GROUP g) { timeGroup = g; }
 
 	// コライダー追加
 	void AddCollider(ColliderBase* newCollider);
@@ -174,6 +195,7 @@ protected:
 
 	// 子クラスを追加する
 	void AddChildActor(ActorBase* child) {
+		child->timeGroup = timeGroup;
 		child->Load();
 		childActors.push_back(child); 
 	}

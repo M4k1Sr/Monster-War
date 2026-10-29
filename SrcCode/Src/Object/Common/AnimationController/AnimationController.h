@@ -40,7 +40,7 @@ public:
 	void Play(int type, signed char loop = -1);
 
 	void Stop(void);
-	void Update(void);
+	void Update(float timeScale);
 	void Release(void);
 
 	bool IsEnd(void)const;

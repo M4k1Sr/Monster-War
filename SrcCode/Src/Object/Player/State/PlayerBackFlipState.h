@@ -30,7 +30,9 @@ public:
 		std::function<void(void)> playAnimeBackFlip,
 		std::function<float(void)> getAnimeRatio,
 
-		std::function<void(void)> changeStateIdle
+		std::function<void(void)> changeStateIdle,
+
+		std::function<void(void)> changeStateAttackSlash
 
 	);
 
@@ -73,8 +75,9 @@ private:
 	// 回避の判定を発生させ終わるアニメーション再生割合
 	const float JUST_END_TIME;
 
-	const float MOVE_START = 0.18f;
-	const float MOVE_END = 0.9f;
+	// スロー演出の範囲
+	const float SLOW_START = 0.18f;
+	const float SLOW_END = 0.9f;
 
 #pragma endregion
 
@@ -100,6 +103,9 @@ private:
 
 	// 待機状態に戻る関数のポインタ
 	const std::function<void(void)> changeStateIdle;
+
+	// 攻撃(斬撃)状態に遷移する関数のポインタ
+	const std::function<void(void)> changeStateAttackSlash;
 
 #pragma endregion
 

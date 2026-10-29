@@ -7,6 +7,7 @@
 EnemyManager::EnemyManager() :
 	ActorBase("Data/Parameter/Enemy/")
 {
+	SetTimeGroup(TimeScale::GROUP::Enemy);
 }
 
 void EnemyManager::Load(void)

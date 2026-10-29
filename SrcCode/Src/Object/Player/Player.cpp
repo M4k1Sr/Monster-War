@@ -41,6 +41,7 @@ Player::Player() : CharacterBase("Data/Parameter/Player/")
 {
 	hp = 100;
 	invincibleFrame = 60.0f;
+	SetTimeGroup(TimeScale::GROUP::Player);
 }
 
 void Player::Load(void)
@@ -220,7 +221,8 @@ void Player::Load(void)
 			lockOnTarget,
 			[&]() {AnimePlay(ANIME_TYPE::BackFlip); },
 			[&]() {return GetAnimeRatio(); },
-			[&]() {ChangeState(STATE::Idle); }
+			[&]() {ChangeState(STATE::Idle); },
+			[&]() {ChangeState(STATE::AttackSlash); }
 		)
 	);
 
@@ -265,6 +267,9 @@ void Player::Load(void)
 	RegisterStateTransition(STATE::Idle, STATE::AttackSlash);
 	// 「移動状態」->「攻撃（斬撃）状態」の自動遷移登録
 	RegisterStateTransition(STATE::Move, STATE::AttackSlash);
+	//// 「回避状態」->「攻撃（斬撃）状態」の自動遷移登録
+	//RegisterStateTransition(STATE::BackFlip, STATE::AttackSlash);
+
 	// 「待機状態」->「回転攻撃状態」の自動遷移登録
 	RegisterStateTransition(STATE::Idle, STATE::AttackRollingSlash);
 	// 「移動状態」->「回転攻撃状態」の自動遷移登録

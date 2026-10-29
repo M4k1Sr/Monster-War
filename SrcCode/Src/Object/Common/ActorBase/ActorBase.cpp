@@ -198,7 +198,7 @@ void ActorBase::Gravity(void)
 {
 	if (!gravityFlg) { return; }
 
-	velocity.y += GRAVITY * TimeScale::Get();
+	velocity.y += GRAVITY * GetTimeScale();
 	if (velocity.y < GRAVITY_MAX) { velocity.y = GRAVITY_MAX; }
 }
 

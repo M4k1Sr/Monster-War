@@ -30,7 +30,9 @@ PlayerBackFlipState::PlayerBackFlipState(
 	std::function<void(void)> playAnimeBackFlip,
 	std::function<float(void)> getAnimeRatio,
 
-	std::function<void(void)> changeStateIdle
+	std::function<void(void)> changeStateIdle,
+
+	std::function<void(void)> changeStateAttackSlash
 
 ) :
 	JUST_START_TIME(JUST_START_TIME),
@@ -42,7 +44,7 @@ PlayerBackFlipState::PlayerBackFlipState(
 	velocity(velocity),
 
 	isGround(isGround),
-
+	
 	getVec(getVec),
 
 	collOperator(collOperator),
@@ -51,6 +53,8 @@ PlayerBackFlipState::PlayerBackFlipState(
 	getAnimeRatio(getAnimeRatio),
 
 	changeStateIdle(changeStateIdle),
+
+	changeStateAttackSlash(changeStateAttackSlash),
 
 	lockOnTarget(lockOnTarget),
 
@@ -110,23 +114,29 @@ void PlayerBackFlipState::Update(void)
 	}
 
 	// 後退する区間
-	const bool inMoveRange = (animeRatio >= MOVE_START && animeRatio <= MOVE_END);
+	const bool inMoveRange = (animeRatio >= SLOW_START && animeRatio <= SLOW_END);
 	if (inMoveRange) {
 
 		// 区間内の進行度
-		const float t = (animeRatio - MOVE_START) / (MOVE_END - MOVE_START);
+		const float t = (animeRatio - SLOW_START) / (SLOW_END - SLOW_START);
 	
 		// 後ろ方向へ水平移動
 		const float speed = BACKFLIP_POWER * sinf(t * DX_PI_F);
 
+		// XZ値の移動処理
 		const Vector3 back = getVec();
 		velocity.x = back.x * speed;
 		velocity.z = back.z * speed;
 
+		//// スロー演出状態の間に攻撃(斬撃)キーが押されたら遷移
+		//if (InputManager::GetIns().GetInfo(KEY_TYPE::PlayerAttackSlash).now) {
+		//	changeStateAttackSlash();
+		//}
+
 	}
 
 	// スロー処理
-	if (animeRatio > MOVE_END && isSlow) {
+	if (animeRatio > SLOW_END && isSlow) {
 		TimeScale::GetIns().ChangeDefaultTimeScale();
 		isSlow = false;
 	}
@@ -193,5 +203,4 @@ void PlayerBackFlipState::Exit(void)
 		TimeScale::GetIns().ChangeDefaultTimeScale();
 		isSlow = false;
 	}
-
 }
