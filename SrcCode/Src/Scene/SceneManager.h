@@ -47,6 +47,7 @@ public:
 	enum class SCENE_ID
 	{
 		Title,
+		StageSelect,
 		Game,
 		GameClear,
 		GameOver,

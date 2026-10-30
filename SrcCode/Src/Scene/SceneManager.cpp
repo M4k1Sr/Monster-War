@@ -10,6 +10,7 @@
 #include "../Manager/Camera/CurrentCamera.h"
 
 #include "Title/TitleScene.h"
+#include "StageSelect/StageSelectScene.h"
 #include "Game/GameScene.h"
 #include "GameClear/GameClearScene.h"
 #include "GameOver/GameOverScene.h"
@@ -529,6 +530,8 @@ std::unique_ptr<SceneBase> SceneManager::CreateScene(SCENE_ID scene)const
 	switch (scene) {
 
 	case SCENE_ID::Title: { return std::make_unique<TitleScene>(); }
+
+	case SCENE_ID::StageSelect: { return std::make_unique<StageSelectScene>(); }
 
 	case SCENE_ID::Game: { return std::make_unique<GameScene>(); }
 

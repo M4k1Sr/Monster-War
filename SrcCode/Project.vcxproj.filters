@@ -85,6 +85,7 @@
     <ClCompile Include="Src\Object\Player\State\PlayerDieState.cpp" />
     <ClCompile Include="Src\Manager\Camera\FollowAction\FollowActionCamera.cpp" />
     <ClCompile Include="Src\Object\Player\Weapon\CollOperator\PlayerBackFlipCollOperator.cpp" />
+    <ClCompile Include="Src\Scene\StageSelect\StageSelectScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\resource.h" />
@@ -195,6 +196,7 @@
     <ClInclude Include="Src\Object\Player\State\PlayerDieState.h" />
     <ClInclude Include="Src\Manager\Camera\FollowAction\FollowActionCamera.h" />
     <ClInclude Include="Src\Object\Player\Weapon\CollOperator\PlayerBackFlipCollOperator.h" />
+    <ClInclude Include="Src\Scene\StageSelect\StageSelectScene.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Shader\Common\Pixel\ModelFog.hlsli" />

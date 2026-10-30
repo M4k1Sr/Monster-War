@@ -29,7 +29,7 @@ void TitleScene::SubPostUpdate(void)
 
 	// Œˆ’è
 	if (Input::GetIns().GetInfo(KEY_TYPE::Enter).down) {
-		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::Game);
+		SceneManager::GetIns().ChangeSceneFade(SCENE_ID::StageSelect);
 	}
 }
 

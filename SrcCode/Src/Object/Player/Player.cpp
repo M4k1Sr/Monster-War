@@ -267,8 +267,6 @@ void Player::Load(void)
 	RegisterStateTransition(STATE::Idle, STATE::AttackSlash);
 	// 「移動状態」->「攻撃（斬撃）状態」の自動遷移登録
 	RegisterStateTransition(STATE::Move, STATE::AttackSlash);
-	//// 「回避状態」->「攻撃（斬撃）状態」の自動遷移登録
-	//RegisterStateTransition(STATE::BackFlip, STATE::AttackSlash);
 
 	// 「待機状態」->「回転攻撃状態」の自動遷移登録
 	RegisterStateTransition(STATE::Idle, STATE::AttackRollingSlash);
