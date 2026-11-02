@@ -41,13 +41,11 @@ Player::Player() : CharacterBase("Data/Parameter/Player/"),
 	hitReact(false),
 	isDie(false),
 	isFlyEnd(false),
-	isJustDodge(false),
-	isSlowSuccess(false)
+	isJustDodge(false)
 {
 	hp = 100;
 	invincibleFrame = 60.0f;
-	isRushWait = false;
-	rushWaitCounter = 0;
+	isRush = false;
 	SetTimeGroup(TimeScale::GROUP::Player);
 }
 
@@ -193,6 +191,7 @@ void Player::Load(void)
 		STATE::AttackSlash,
 		new PlayerAttackSlashState(
 			0.3f, 0.5f, 0.6f,
+			isRush,
 			*attackSlashCollOperator,
 			[&]() {AnimePlay(ANIME_TYPE::Slash_Down); },
 			[&]() {AnimePlay(ANIME_TYPE::Slash_Up); },
@@ -415,23 +414,6 @@ void Player::OnDeath(void)
 	SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GameOver);
 }
 
-void Player::JustDodgeSuccess(void)
-{
-	// ラッシュの猶予フレームを設定
-	isRushWait = true;
-	rushWaitCounter = RUSH_WAIT_MAX;
-	TimeScale::GetIns().SetGroupScale(TimeScale::GROUP::Enemy, 0.1f, RUSH_WAIT_MAX, RUSH_EASE_FRAME);
-}
-
-void Player::JustDodgeEnd(void)
-{
-	// ジャスト回避のスロー演出が終わったとき
-	isRushWait = false;
-	isSlowSuccess = false;
-	rushWaitCounter = 0;
-	TimeScale::GetIns().SetGroupScale(TimeScale::GROUP::Enemy, 1.0f, 0, 10);
-}
-
 void Player::UpdateJustDodge(void)
 {
 	// ジャスト成立の検知（CollOperatorが立てたフラグ）
@@ -456,7 +438,9 @@ void Player::UpdateJustDodge(void)
 	case JUST_PHASE::AllSlow:
 		if (InputManager::GetIns().GetInfo(KEY_TYPE::PlayerAttackSlash).down) {
 			// プレイヤーだけ通常に戻してラッシュへ
-			TimeScale::GetIns().SetGroupScale(TimeScale::GROUP::Player, 1.0f, 0, 0);
+			//TimeScale::GetIns().SetGroupScale(TimeScale::GROUP::Player, 1.0f, 0, 0);
+			isRush = true;
+			TimeScale::GetIns().SetGroupScale(TimeScale::GROUP::Player, PLAYER_ACCEL, HOLD_LONG, 0);
 			ChangeState(STATE::AttackSlash);   // 将来はラッシュ専用ステート
 			justPhase = JUST_PHASE::Rush;
 		}
@@ -489,4 +473,7 @@ void Player::EndJustDodgeSlow(void)
 	// 両グループを通常へ戻す（hold 0、ease 0 で即時）
 	TimeScale::GetIns().SetGroupScale(TimeScale::GROUP::Enemy, 1.0f, 0, 0);
 	TimeScale::GetIns().SetGroupScale(TimeScale::GROUP::Player, 1.0f, 0, 0);
+
+	// ラッシュ攻撃しない
+	isRush = false;
 }

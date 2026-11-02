@@ -29,6 +29,8 @@ public:
 		float COLL_END_TIME,
 		float COMBO_ACCEPT_TIME,
 
+		const bool& isRush,
+
 		PlayerAttackSlashCollOperator& collOperator,
 
 		std::function<void(void)> playAnimeAttackSlash_Down,
@@ -93,6 +95,9 @@ private:
 
 #pragma region 受け取る参照変数・関数
 
+	// ラッシュ攻撃をしているか
+	const bool& isRush;
+
 	// 攻撃の当たり判定管理クラスの参照
 	PlayerAttackSlashCollOperator& collOperator;
 
@@ -123,5 +128,13 @@ private:
 	// コンボキー受付
 	bool comboKeyInput;
 
+	// 基本コンボ
 	void StartComboNext(void);
+
+	// ラッシュコンボカウンタ
+	int RushComboCnt;
+
+	// ラッシュコンボ
+	void StartRushComboNext(void);
+
 };

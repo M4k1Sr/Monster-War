@@ -11,6 +11,8 @@ PlayerAttackSlashState::PlayerAttackSlashState(
 	float COLL_END_TIME,
 	float COMBO_ACCEPT_TIME,
 
+	const bool& isRush,
+
 	PlayerAttackSlashCollOperator& collOperator,
 
 	std::function<void(void)> playAnimeAttackSlash_Down,
@@ -27,6 +29,8 @@ PlayerAttackSlashState::PlayerAttackSlashState(
 
 	COMBO_ACCEPT_TIME(COMBO_ACCEPT_TIME),
 
+	isRush(isRush),
+
 	collOperator(collOperator),
 
 	playAnimeAttackSlash_Down(playAnimeAttackSlash_Down),
@@ -40,6 +44,8 @@ PlayerAttackSlashState::PlayerAttackSlashState(
 
 	step(),
 	comboStep(),
+
+	RushComboCnt(0),
 
 	comboKeyInputFrame(false),
 	comboKeyInput(false)
@@ -140,7 +146,13 @@ void PlayerAttackSlashState::Update(void)
 		if (comboStep == COMBO_STEP::End) { break; }	// 最終段は繋がない
 		if (animeRatio <= COMBO_ACCEPT_TIME) { break; }	// コンボ受付時間に達していない場合は受付ない
 
-		StartComboNext();
+		// ラッシュの場合
+		if (isRush) {
+			StartRushComboNext();
+		}
+		else {
+			StartComboNext();
+		}
 
 		break;
 	}
@@ -165,7 +177,6 @@ void PlayerAttackSlashState::StartComboNext(void)
 	case COMBO_STEP::Down:
 		comboStep = COMBO_STEP::Up;
 		playAnimeAttackSlash_Up();
-		// 斬撃アニメーション発生済みなので、斬撃アニメーション関数は呼び出さない
 		break;
 	case COMBO_STEP::Up:
 		step = STEP::Startup;		// ステップを最初から
@@ -178,4 +189,38 @@ void PlayerAttackSlashState::StartComboNext(void)
 		playAnimeAttackSlash_Down();	
 		break;
 	}
+}
+
+void PlayerAttackSlashState::StartRushComboNext(void)
+{
+	comboKeyInput = false;
+	step = STEP::Startup;
+	collOperator.Off();
+
+	// コンボステップ
+	switch (comboStep) {
+	case COMBO_STEP::Down:
+		comboStep = COMBO_STEP::Up;
+		RushComboCnt++;
+		playAnimeAttackSlash_Up();
+		break;
+	case COMBO_STEP::Up:
+		step = STEP::Startup;		// ステップを最初から
+		if (RushComboCnt > 2) {
+			comboStep = COMBO_STEP::End;// コンボステップを最終コンボに
+			playAnimeAttackSlash_End();
+			break;
+		}
+		else {
+			comboStep = COMBO_STEP::Down;// 斬りつけコンボへ
+			playAnimeAttackSlash_Down();
+			break;
+		}
+	case COMBO_STEP::End:
+			step = STEP::Startup;	// ステップを最初から
+			comboStep = COMBO_STEP::Down;
+			playAnimeAttackSlash_Down();
+			break;
+	}
+
 }
