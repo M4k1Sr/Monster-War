@@ -40,6 +40,18 @@ private:
 
 		Max
 	};
+	
+	// スロー状態定義
+	enum class JUST_PHASE
+	{
+		None,
+
+		EnemySlow,
+
+		AllSlow,
+
+		Rush,
+	};
 
 #pragma region アニメーション関係定義
 
@@ -152,6 +164,24 @@ private:
 
 	};
 
+	// ラッシュ攻撃するかの猶予フレーム
+	const int RUSH_WAIT_MAX = 60;
+	// 戻りのイージング
+	const int RUSH_EASE_FRAME = 15;   
+
+	// backflipのおり始めのフレーム
+	const float FALL_START = 0.4;
+	// プレイヤー加速倍率
+	const float PLAYER_ACCEL = 2.0f;
+	// プレイヤースロー倍率
+	const float PLAYER_SLOW = 0.1f;
+	// 地面についたフレーム
+	const float LAND_RATIO = 0.65f;
+
+	// 敵のスロー倍率
+	const float ENEMY_SLOW_SCALE = 0.1f;
+	const int HOLD_LONG = 9999;
+
 #pragma endregion
 
 	// 初期化処理
@@ -192,9 +222,38 @@ private:
 
 #pragma endregion
 
+#pragma region ジャスト回避判定
+
 	// ジャスト回避判定
 	bool isJustDodge;
 
 	// スロー演出成功判定
 	bool isSlowSuccess;
+
+	// ジャスト回避成功時の演出処理
+	void JustDodgeSuccess(void);
+
+	// ジャスト回避がおきたときのスローが終わるまで
+	void JustDodgeEnd(void);
+
+	// ラッシュ攻撃したかの判定
+	bool isRushWait;
+
+	// ラッシュフレームカウンタ
+	int rushWaitCounter;
+
+	// ジャスト回避の更新
+	void UpdateJustDodge(void);
+
+	// ジャスト回避の更新遷移
+	JUST_PHASE justPhase;
+
+	// ジャスト回避スタート処理
+	void StartJustDodgeSlow(void);
+
+	// ジャスト回避終わり処理
+	void EndJustDodgeSlow(void);
+
+#pragma endregion
+
 };

@@ -64,8 +64,6 @@ PlayerBackFlipState::PlayerBackFlipState(
 		
 	isJumped(false),
 
-	isSlow(false),
-
 	step()
 
 {
@@ -84,9 +82,6 @@ void PlayerBackFlipState::OwnStateConditionUpdate(void)
 
 void PlayerBackFlipState::Enter(void)
 {
-	// スロー判定初期化
-	isSlow = false;
-
 	// ジャンプ判定初期化
 	isJumped = false;
 
@@ -106,13 +101,6 @@ void PlayerBackFlipState::Update(void)
 	// アニメーションの再生割合を取得
 	const float animeRatio = getAnimeRatio();
 
-	// ジャスト回避成功
-	if (collOperator.IsJustDodge() && !isSlow) {
-		// 0.2倍速を60フレーム、切り替えは即時(お試し)
-		TimeScale::GetIns().SetGroupScale(TimeScale::GROUP::Enemy, 0.18f, 180, 20);
-		isSlow = true;
-	}
-
 	// 後退する区間
 	const bool inMoveRange = (animeRatio >= SLOW_START && animeRatio <= SLOW_END);
 	if (inMoveRange) {
@@ -128,17 +116,11 @@ void PlayerBackFlipState::Update(void)
 		velocity.x = back.x * speed;
 		velocity.z = back.z * speed;
 
-		//// スロー演出状態の間に攻撃(斬撃)キーが押されたら遷移
-		//if (InputManager::GetIns().GetInfo(KEY_TYPE::PlayerAttackSlash).now) {
-		//	changeStateAttackSlash();
-		//}
+		// スロー演出状態の間に攻撃(斬撃)キーが押されたら遷移
+		if (InputManager::GetIns().GetInfo(KEY_TYPE::PlayerAttackSlash).now) {
+			changeStateAttackSlash();
+		}
 
-	}
-
-	// スロー処理
-	if (animeRatio > SLOW_END && isSlow) {
-		TimeScale::GetIns().ChangeDefaultTimeScale();
-		isSlow = false;
 	}
 
 	// ステップ別更新
@@ -198,9 +180,4 @@ void PlayerBackFlipState::Exit(void)
 {	
 	// 当たり判定を消去
 	collOperator.Off();
-	// スローが残っていれば元に戻す
-	if (isSlow) {
-		TimeScale::GetIns().ChangeDefaultTimeScale();
-		isSlow = false;
-	}
 }

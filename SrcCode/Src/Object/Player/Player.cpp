@@ -37,10 +37,17 @@
 #include "State/PlayerReactState.h"
 #include "State/PlayerDieState.h"
 
-Player::Player() : CharacterBase("Data/Parameter/Player/")
+Player::Player() : CharacterBase("Data/Parameter/Player/"),
+	hitReact(false),
+	isDie(false),
+	isFlyEnd(false),
+	isJustDodge(false),
+	isSlowSuccess(false)
 {
 	hp = 100;
 	invincibleFrame = 60.0f;
+	isRushWait = false;
+	rushWaitCounter = 0;
 	SetTimeGroup(TimeScale::GROUP::Player);
 }
 
@@ -301,8 +308,6 @@ void Player::Load(void)
 
 #pragma endregion
 
-	
-
 }
 
 void Player::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
@@ -324,6 +329,36 @@ void Player::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const C
 
 void Player::SubUpdate(void)
 {
+	// ジャスト回避
+	UpdateJustDodge();
+
+//#pragma region ジャスト回避
+//
+//	// ジャスト回避が成功したとき
+//	if (isJustDodge) {
+//		isJustDodge = false;
+//		if (!isSlowSuccess) { isSlowSuccess = true; JustDodgeSuccess(); }
+//	}
+//
+//	if (isRushWait) {
+//		// プレイヤーグループなのでスローしない→実フレームで数える
+//		rushWaitCounter--;
+//
+//		if (InputManager::GetIns().GetInfo(KEY_TYPE::PlayerAttackSlash).down) {
+//			// ラッシュ発動（今は仮：通常の斬撃へ）
+//			JustDodgeEnd();
+//			ChangeState(STATE::AttackSlash);
+//		}
+//		else if (rushWaitCounter <= 0) {
+//			// 猶予切れ。敵は TimeScale 側がイージングで戻すので倍率はいじらない
+//			isRushWait = false;
+//			isSlowSuccess = false;
+//		}
+//	}
+//
+//#pragma endregion
+
+
 	if (invincibleFrame > 0 && GetTimeScale() > 0.0f) { invincibleFrame--; }
 	
 	if (InputManager::GetIns().GetInfo(KEY_TYPE::LockOn).now) {
@@ -378,4 +413,80 @@ void Player::Damage(int damage) {
 void Player::OnDeath(void)
 {
 	SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GameOver);
+}
+
+void Player::JustDodgeSuccess(void)
+{
+	// ラッシュの猶予フレームを設定
+	isRushWait = true;
+	rushWaitCounter = RUSH_WAIT_MAX;
+	TimeScale::GetIns().SetGroupScale(TimeScale::GROUP::Enemy, 0.1f, RUSH_WAIT_MAX, RUSH_EASE_FRAME);
+}
+
+void Player::JustDodgeEnd(void)
+{
+	// ジャスト回避のスロー演出が終わったとき
+	isRushWait = false;
+	isSlowSuccess = false;
+	rushWaitCounter = 0;
+	TimeScale::GetIns().SetGroupScale(TimeScale::GROUP::Enemy, 1.0f, 0, 10);
+}
+
+void Player::UpdateJustDodge(void)
+{
+	// ジャスト成立の検知（CollOperatorが立てたフラグ）
+	if (isJustDodge) {
+		isJustDodge = false;
+		if (justPhase == JUST_PHASE::None) { 
+			StartJustDodgeSlow();
+			TimeScale::GetIns().SetGroupScale(TimeScale::GROUP::Player, PLAYER_ACCEL, HOLD_LONG, 0);
+		}
+	}
+
+	switch (justPhase) {
+
+	case JUST_PHASE::EnemySlow:
+		// 降り始めでプレイヤーもスロー
+		if (GetAnimeRatio() >= FALL_START) {
+			TimeScale::GetIns().SetGroupScale(TimeScale::GROUP::Player, PLAYER_SLOW, HOLD_LONG, 0);
+			justPhase = JUST_PHASE::AllSlow;
+		}
+		break;
+
+	case JUST_PHASE::AllSlow:
+		if (InputManager::GetIns().GetInfo(KEY_TYPE::PlayerAttackSlash).down) {
+			// プレイヤーだけ通常に戻してラッシュへ
+			TimeScale::GetIns().SetGroupScale(TimeScale::GROUP::Player, 1.0f, 0, 0);
+			ChangeState(STATE::AttackSlash);   // 将来はラッシュ専用ステート
+			justPhase = JUST_PHASE::Rush;
+		}
+		else if (isGround && GetAnimeRatio() >= LAND_RATIO) {
+			// 地面についたら全体のスローを解除する。
+			EndJustDodgeSlow();
+		}
+		break;
+
+	case JUST_PHASE::Rush:
+		// ラッシュ(攻撃ステート)が終わって待機系に戻ったら解除
+		if (GetState() != (int)STATE::AttackSlash) { EndJustDodgeSlow(); }
+		break;
+	}
+}
+
+void Player::StartJustDodgeSlow(void)
+{
+	// フェーズを「敵だけスロー」へ
+	justPhase = JUST_PHASE::EnemySlow;
+
+	// 敵グループだけスロー。解除は EndJustDodge で自分で行うので hold は十分長くする
+	TimeScale::GetIns().SetGroupScale(TimeScale::GROUP::Enemy, ENEMY_SLOW_SCALE, HOLD_LONG, 0);
+
+}
+
+void Player::EndJustDodgeSlow(void)
+{
+	justPhase = JUST_PHASE::None;
+	// 両グループを通常へ戻す（hold 0、ease 0 で即時）
+	TimeScale::GetIns().SetGroupScale(TimeScale::GROUP::Enemy, 1.0f, 0, 0);
+	TimeScale::GetIns().SetGroupScale(TimeScale::GROUP::Player, 1.0f, 0, 0);
 }

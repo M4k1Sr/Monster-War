@@ -123,9 +123,6 @@ private:
 	// 宙返り中か
 	bool isAirborne;
 
-	// スロー判定かどうか
-	bool isSlow;
-
 	// 回避ステップ
 	STEP step;
 

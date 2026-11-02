@@ -76,9 +76,9 @@ void PlayerBackFlipCollOperator::OnCollision(COLLIDER_TAG ownTag, const Collider
 	}
 }
 
-bool& PlayerBackFlipCollOperator::IsJustDodge(void)
+bool PlayerBackFlipCollOperator::IsJustDodge(void)
 {
-	bool ret = isJustDodge;
+	const bool ret = isJustDodge;
 	isJustDodge = false;
 	return ret;
 }

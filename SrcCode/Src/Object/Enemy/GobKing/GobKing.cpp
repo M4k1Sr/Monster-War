@@ -281,7 +281,6 @@ void GobKing::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const 
 		
 		// ヒットストップ
 		TimeScale::GetIns().HitStop(4);
-		TimeScale::GetIns().SetGroupScale(TimeScale::GROUP::Enemy, 0.1f, 90, 20);
 
 		// 死亡していたら不要
 		if (!IsDead()) { hitReact = true; }

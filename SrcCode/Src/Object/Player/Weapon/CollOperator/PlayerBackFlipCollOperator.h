@@ -27,7 +27,7 @@ public:
 	void OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)override;
 
 	// ƒWƒƒƒXƒg‰ñ”ð”»’è
-	bool& IsJustDodge(void);
+	bool IsJustDodge(void);
 
 private:
 

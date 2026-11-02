@@ -19,6 +19,9 @@ TimeScale::TimeScale() :
 
 void TimeScale::Update(void)
 {
+	// 
+	UpdateGroups();
+
 	// ŠÔ”{—¦•ÏX’†
 	if (isChangingTimeScale) {
 
