@@ -204,6 +204,9 @@ void ActorBase::Gravity(void)
 
 void ActorBase::VelocityUpdate(bool	deceleration)
 {
+	// ‚±‚ÌƒAƒNƒ^[‚Ì”{—¦iƒOƒ‹[ƒv ~ ŒÂ•Êj
+	const float timeScale = GetTimeScale();
+
 	// d—Íˆ—
 	Gravity();
 
@@ -220,10 +223,10 @@ void ActorBase::VelocityUpdate(bool	deceleration)
 		// Œ¸‘¬ˆ—
 		if (deceleration) {
 			// ‰¡²‚Ì‰Á‘¬“x‚ªŒ¸‘¬‚Ì”¼•ªˆÈ‰º‚Ìê‡‚ÍA‰¡²‚Ì‰Á‘¬“x‚ğ0‚É‚·‚é
-			if (widthAccelLen <= (DECEL_RATE * TimeScale::Get()) * 0.5f) { velocity.x = velocity.z = 0.0f; }
+			if (widthAccelLen <= (DECEL_RATE * timeScale) * 0.5f) { velocity.x = velocity.z = 0.0f; }
 
 			// Œ¸‘¬
-			scale = (widthAccelLen - (DECEL_RATE * TimeScale::Get())) / widthAccelLen;
+			scale = (widthAccelLen - (DECEL_RATE * timeScale)) / widthAccelLen;
 		}
 
 		// Å‘å‰Á‘¬§ŒÀ`````````````````````````````
@@ -239,7 +242,7 @@ void ActorBase::VelocityUpdate(bool	deceleration)
 #pragma endregion
 
 	// ‰Á‘¬“x‚ğÀ•W‚É”½‰f
-	if (velocity != 0.0f) { trans.pos += velocity * TimeScale::Get(); }
+	if (velocity != 0.0f) { trans.pos += velocity * timeScale; }
 }
 
 void ActorBase::AddCollider(ColliderBase* newCollider)
@@ -340,8 +343,10 @@ void ActorBase::MoveAccel(const Vector3& vec)
 {
 	if (vec == 0.0f) { return; }
 
+	const float timeScale = GetTimeScale();
+
 	// “ü—Í—Ê‚É‰‚¶‚Ä‰Á‘¬
-	velocity += (vec * ACCEL_RATE) * TimeScale::Get();
+	velocity += (vec * ACCEL_RATE) * timeScale;
 
 	// ˆÚ“®•ûŒü‚©‚ç–Ú•W‚ÌY²‰ñ“]‚ğæ“¾
 	const float targetAngle = atan2f(vec.x, vec.z);
@@ -354,7 +359,7 @@ void ActorBase::MoveAccel(const Vector3& vec)
 		Quaternion::Slerp(
 			trans.rotation,
 			targetRotation,
-			0.25f * TimeScale::Get()
+			0.25f * timeScale
 		)
 	);
 }

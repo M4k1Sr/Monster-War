@@ -78,9 +78,7 @@ public:
 
 	// 各グループのタイムスケールを取得
 	float GetTimeScale(void) const {
-		float s = TimeScale::Get() * ownTimeScale;   // 引数なし
-		if (timeParent) { s *= timeParent->GetTimeScale(); }
-		return s;
+		return TimeScale::GetTimeScale(timeGroup)* ownTimeScale;
 	}
 
 private:
@@ -136,7 +134,8 @@ private:
 	float ownTimeScale = 1.0f;
 	
 	// 親へと引きつぐタイムスケールのポインタ
-	const ActorBase* timeParent = nullptr;
+	// グループ化となりAddChildActorでタイムスケールを引きつぐので不要
+	//const ActorBase* timeParent = nullptr;
 
 protected:
 

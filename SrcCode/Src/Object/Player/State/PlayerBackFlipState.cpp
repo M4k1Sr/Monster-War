@@ -109,7 +109,7 @@ void PlayerBackFlipState::Update(void)
 	// ジャスト回避成功
 	if (collOperator.IsJustDodge() && !isSlow) {
 		// 0.2倍速を60フレーム、切り替えは即時(お試し)
-		TimeScale::GetIns().TemporaryScale(0.18f, 180);
+		TimeScale::GetIns().SetGroupScale(TimeScale::GROUP::Enemy, 0.18f, 180, 20);
 		isSlow = true;
 	}
 

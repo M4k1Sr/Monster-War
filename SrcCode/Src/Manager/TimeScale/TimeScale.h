@@ -17,7 +17,7 @@ private:
 public:
 
 	// オブジェクトグループ
-	enum class GROUP { Player, Enemy, Other, Max };
+	enum class GROUP { Player, Enemy, Camera, Other, Max };
 
 
 #pragma region シングルトン定義

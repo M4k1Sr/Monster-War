@@ -324,7 +324,7 @@ void Player::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const C
 
 void Player::SubUpdate(void)
 {
-	if (invincibleFrame > 0 && TimeScale::Get() > 0.0f) { invincibleFrame--; }
+	if (invincibleFrame > 0 && GetTimeScale() > 0.0f) { invincibleFrame--; }
 	
 	if (InputManager::GetIns().GetInfo(KEY_TYPE::LockOn).now) {
 
