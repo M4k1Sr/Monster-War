@@ -164,6 +164,10 @@ private:
 
 	};
 
+#pragma endregion
+
+#pragma region ジャスト回避・ラッシュ攻撃系定義
+
 	// backflipのおり始めのフレーム
 	const float FALL_START = 0.4;
 	// プレイヤー加速倍率
@@ -188,7 +192,7 @@ private:
 
 	void SubUpdate(void)override;
 
-#pragma region ダメージ関係
+#pragma region ダメージ関係変数・関数
 
 	// ダメージを受けたか判定
 	bool hitReact;
@@ -217,7 +221,7 @@ private:
 
 #pragma endregion
 
-#pragma region ジャスト回避・ラッシュ攻撃判定
+#pragma region ジャスト回避・ラッシュ攻撃判定用変数・関数
 
 	// ジャスト回避判定
 	bool isJustDodge;

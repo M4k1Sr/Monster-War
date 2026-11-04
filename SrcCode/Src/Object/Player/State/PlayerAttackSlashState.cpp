@@ -1,8 +1,12 @@
+#include <algorithm>
+
 #include "PlayerAttackSlashState.h"
 
 #include "../../Common/Transform/Transform.h"
 
 #include "../../../Manager/Input/InputManager.h"
+
+#include "../../../Manager/Camera/CurrentCamera.h"
 
 #include "../Weapon/CollOperator/PlayerAttackSlashCollOperator.h"
 
@@ -10,6 +14,14 @@ PlayerAttackSlashState::PlayerAttackSlashState(
 	float COLL_START_TIME,
 	float COLL_END_TIME,
 	float COMBO_ACCEPT_TIME,
+
+	const Vector3& playerPos,
+
+	const Vector3* const& lockOnTarget,
+
+	std::function<void(const Vector3&)> moveAccel,
+
+	float& accelMax,
 
 	const bool& isRush,
 
@@ -28,6 +40,14 @@ PlayerAttackSlashState::PlayerAttackSlashState(
 	COLL_END_TIME(COLL_END_TIME),
 
 	COMBO_ACCEPT_TIME(COMBO_ACCEPT_TIME),
+
+	playerPos(playerPos),
+
+	lockOnTarget(lockOnTarget),
+
+	moveAccel(moveAccel),
+
+	accelMax(accelMax),
 
 	isRush(isRush),
 
@@ -99,6 +119,9 @@ void PlayerAttackSlashState::Update(void)
 
 	case PlayerAttackSlashState::STEP::Startup: {
 		// 前隙
+
+		// 移動補正
+		attackMoveOffset();
 
 		// 攻撃判定発生開始
 		if (COLL_START_TIME <= animeRatio) {
@@ -220,7 +243,36 @@ void PlayerAttackSlashState::StartRushComboNext(void)
 			step = STEP::Startup;	// ステップを最初から
 			comboStep = COMBO_STEP::Down;
 			playAnimeAttackSlash_Down();
+			RushComboCnt = 0;
 			break;
 	}
 
+}
+
+void PlayerAttackSlashState::attackMoveOffset(void)
+{
+	// 移動方向
+	Vector3 dir = Vector3();
+	float dist = 0.0f;
+
+	if (lockOnTarget != nullptr) {
+		dir = *lockOnTarget - playerPos;  // プレイヤー→敵 のベクトル
+		dir.y = 0.0f;						// 水平方向だけ使う
+		dist = dir.Length();				// 正規化
+		dir.Normalize();               // 長さ1にして「方向」にする
+	}
+
+	// 止まる距離 = 敵のコライダー半径 + 攻撃が届く距離
+	const float stopDist = 150.0f + 100.0f;
+
+	if (lockOnTarget != nullptr && dist > stopDist) {
+		// ラッシュ中は速く、そうでなければ通常の上限
+		accelMax = isRush ? 5.0f : 0.5f * 1000.0f;
+
+		// 移動(向き補正もMoveAccel内のSlerpでかかる)
+		moveAccel(dir);
+	}
+	else {
+		accelMax = 0.0f;
+	}
 }

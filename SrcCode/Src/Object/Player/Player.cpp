@@ -191,6 +191,10 @@ void Player::Load(void)
 		STATE::AttackSlash,
 		new PlayerAttackSlashState(
 			0.3f, 0.5f, 0.6f,
+			trans.pos,
+			lockOnTarget,
+			std::bind(&Player::MoveAccel, this, std::placeholders::_1),
+			ACCEL_MAX,
 			isRush,
 			*attackSlashCollOperator,
 			[&]() {AnimePlay(ANIME_TYPE::Slash_Down); },

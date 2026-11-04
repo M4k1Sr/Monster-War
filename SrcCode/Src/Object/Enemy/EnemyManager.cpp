@@ -74,7 +74,6 @@ const Vector3* EnemyManager::GetNearestEnemyPos(const Vector3& from, float range
 	float nearestSq = range * range;
 
 	for (ActorBase* child : GetChildActors()) {
-		// Ž€–SÏ‚Ý‚Ì“G‚ÍœŠO
 		const Vector3& p = child->GetTrans().pos;
 		const float distSq = (p - from).LengthSq();
 

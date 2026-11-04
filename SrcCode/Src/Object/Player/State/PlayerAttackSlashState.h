@@ -6,6 +6,8 @@
 
 struct Transform;
 
+struct Vector3;
+
 class PlayerAttackSlashCollOperator;
 
 class PlayerAttackSlashState : public CharacterStateBase
@@ -27,7 +29,16 @@ public:
 	PlayerAttackSlashState(
 		float COLL_START_TIME,
 		float COLL_END_TIME,
+
 		float COMBO_ACCEPT_TIME,
+
+		const Vector3& playerPos,
+
+		const Vector3* const& lockOnTarget,
+
+		const std::function<void(const Vector3&)> moveAccel,
+
+		float& accelMax,
 
 		const bool& isRush,
 
@@ -95,6 +106,18 @@ private:
 
 #pragma region 受け取る参照変数・関数
 
+	// プレイヤー座標
+	const Vector3& playerPos;
+
+	// 攻撃する対象
+	const Vector3* const& lockOnTarget;
+
+	// 移動関数のポインタ
+	const std::function<void(const Vector3&)> moveAccel;
+
+	// 横軸加速度の最大値の参照
+	float& accelMax;
+
 	// ラッシュ攻撃をしているか
 	const bool& isRush;
 
@@ -136,5 +159,8 @@ private:
 
 	// ラッシュコンボ
 	void StartRushComboNext(void);
+
+	// 攻撃したときの座標補正
+	void attackMoveOffset(void);
 
 };
