@@ -210,8 +210,8 @@ void GobKing::Load(void)
 			isDie,
 			[&]() {AnimePlay(ANIME_TYPE::HitReact); },
 			std::bind(&GobKing::IsAnimeEnd, this),
-			[&]() {ChangeState(STATE::Idle); },
-			[&]() {ChangeState(STATE::Flying); }
+			[&]() {ChangeState(STATE::Flying); },
+			[&]() {ChangeState(STATE::Idle); }
 		)
 	);
 
