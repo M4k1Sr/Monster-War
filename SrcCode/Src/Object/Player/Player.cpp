@@ -26,6 +26,7 @@
 #include "Weapon/CollOperator/PlayerKickDownAttackCollOperator.h"
 
 #include "Weapon/Item/King_Sword.h"
+#include "Weapon/Item/Wings.h"
 
 #include "State/PlayerIdleState.h"
 #include "State/PlayerMoveState.h"
@@ -144,6 +145,12 @@ void Player::Load(void)
 		new King_Sword(-20.0f, trans);
 
 	AddChildActor(king_Sword);
+
+	// —ƒƒNƒ‰ƒX
+	Wings* wings =
+		new Wings(trans);
+
+	AddChildActor(wings);
 
 #pragma endregion
 

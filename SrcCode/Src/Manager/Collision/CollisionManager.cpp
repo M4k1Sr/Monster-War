@@ -947,7 +947,6 @@ bool CollisionManager::CapsuleToCapsule(CapsuleCollider* a, CapsuleCollider* b, 
 	float distSq = normal.LengthSq();
 	float radSum = aRadius + bRadius;
 
-	// 
 	if (distSq >= radSum * radSum) { return false; }
 
 #pragma endregion
