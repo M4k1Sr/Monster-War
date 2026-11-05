@@ -192,6 +192,8 @@ private:
 
 	void SubUpdate(void)override;
 
+	void SubDraw(void)override;
+
 #pragma region ダメージ関係変数・関数
 
 	// ダメージを受けたか判定

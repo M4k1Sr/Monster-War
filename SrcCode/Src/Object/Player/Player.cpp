@@ -41,7 +41,8 @@ Player::Player() : CharacterBase("Data/Parameter/Player/"),
 	hitReact(false),
 	isDie(false),
 	isFlyEnd(false),
-	isJustDodge(false)
+	isJustDodge(false),
+	justPhase(JUST_PHASE::None)
 {
 	hp = 100;
 	invincibleFrame = 60.0f;
@@ -83,9 +84,6 @@ void Player::Load(void)
 	// モデルの角度のズレの補正
 	trans.SetLocalRotation(Quaternion::FromRotationY(Deg2Rad(180.0f)));
 
-	//// シェーダー登録
-	//CreateShader(new DefaultShader());
-
 #pragma endregion
 
 
@@ -121,7 +119,7 @@ void Player::Load(void)
 
 	// 攻撃当たり判定管理クラス
 	PlayerAttackSlashCollOperator* attackSlashCollOperator =
-		new PlayerAttackSlashCollOperator(100.0f, Vector3(0, 0, 100), trans);
+		new PlayerAttackSlashCollOperator(100.0f, Vector3(0, 0, 100), isRush,trans);
 
 	AddChildActor(attackSlashCollOperator);
 
@@ -378,25 +376,28 @@ void Player::SubUpdate(void)
 	// カメラへ反映（nullptrなら通常モードに戻る）
 	CurrentCamera::Get().SetLockOnTarget(lockOnTarget);
 
-	//static char type = 0;
-	//static bool prev = false, now = false;
-
-	//prev = now;
-	//now = CheckHitKey(KEY_INPUT_SPACE) == 1;
-
-	//if (!prev && now) {
-
-	//	if (++type > 1) { type = 0; }
-
-	//	switch (type){
-	//	case 0: { CreateShader(new DefaultShader()); break; }
-	//	case 1: { CreateShader(new RimLightShader()); break; }
-	//	}
-	//}
-
 		// 死亡判定
 	if (IsDead()) { OnDeath(); isDie = true; }
 
+}
+
+void Player::SubDraw(void)
+{
+	const float global = TimeScale::Get();
+	const float gPlayer = TimeScale::GetTimeScale(TimeScale::GROUP::Player);
+	const float gEnemy = TimeScale::GetTimeScale(TimeScale::GROUP::Enemy);
+
+	DrawFormatString(0, 150, 0xffffff, "global:%.3f player:%.3f enemy:%.3f", global, gPlayer, gEnemy);
+	DrawFormatString(0, 170, 0xffffff, "state:%d phase:%d ratio:%.3f", GetState(), (int)justPhase, GetAnimeRatio());
+	DrawFormatString(0, 190, 0xffffff, "invincible:%.1f isGround:%d", (float)invincibleFrame, (int)isGround);
+
+	// 時間が完全に止まっている警告
+	if (gPlayer <= 0.0001f) {
+		DrawFormatString(0, 210, 0xff0000, "!!! PLAYER TIME STOPPED !!!");
+	}
+	if (global <= 0.0001f) {
+		DrawFormatString(0, 230, 0xff0000, "!!! GLOBAL TIME STOPPED !!!");
+	}
 }
 
 void Player::Damage(int damage) {
@@ -442,7 +443,6 @@ void Player::UpdateJustDodge(void)
 	case JUST_PHASE::AllSlow:
 		if (InputManager::GetIns().GetInfo(KEY_TYPE::PlayerAttackSlash).down) {
 			// プレイヤーだけ通常に戻してラッシュへ
-			//TimeScale::GetIns().SetGroupScale(TimeScale::GROUP::Player, 1.0f, 0, 0);
 			isRush = true;
 			TimeScale::GetIns().SetGroupScale(TimeScale::GROUP::Player, PLAYER_ACCEL, HOLD_LONG, 0);
 			ChangeState(STATE::AttackSlash);   // 将来はラッシュ専用ステート

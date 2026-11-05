@@ -4,16 +4,22 @@
 
 GobKingReactState::GobKingReactState(
 	bool& hitReact,
+	bool& isDie,
+
 	std::function<void(void)> playAnimeReact,
 
 	std::function<bool(void)> isAnimeEnd,
+
+	std::function<void(void)> changeStateDie,
 
 	std::function<void(void)> changeStateIdle
 
 ) :
 	hitReact(hitReact),
+	isDie(isDie),
 	playAnimeReact(playAnimeReact),
 	isAnimeEnd(isAnimeEnd),
+	changeStateDie(changeStateDie),
 	changeStateIdle(changeStateIdle)
 {
 }
@@ -33,6 +39,8 @@ void GobKingReactState::Enter(void)
 
 void GobKingReactState::Update(void)
 {
+	if (isDie) { changeStateDie(); }
+
 	if (isAnimeEnd()) { changeStateIdle(); }
 }
 

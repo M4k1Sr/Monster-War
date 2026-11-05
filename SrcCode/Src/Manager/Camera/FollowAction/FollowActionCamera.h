@@ -35,7 +35,7 @@ public:
 	/// <param name="fov">Ž‹–ìŠp</param>
 	FollowActionCamera(
 		const Vector3* targetPos,
-		const Vector3& cameraOffset = Vector3::Zonly(-400),
+		const Vector3& cameraOffset = Vector3::Zonly(-300),
 		const Vector3& lookAtOffset = Vector3(),
 		float ROT_POWER = 3.0f * (DX_PI_F / 180.0f),
 		float LOCK_DIST_BASE = 350.0f,

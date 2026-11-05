@@ -256,10 +256,10 @@ void PlayerAttackSlashState::attackMoveOffset(void)
 	float dist = 0.0f;
 
 	if (lockOnTarget != nullptr) {
-		dir = *lockOnTarget - playerPos;  // プレイヤー→敵 のベクトル
+		dir = *lockOnTarget - playerPos;	// プレイヤー→敵 のベクトル
 		dir.y = 0.0f;						// 水平方向だけ使う
 		dist = dir.Length();				// 正規化
-		dir.Normalize();               // 長さ1にして「方向」にする
+		dir.Normalize();					// 長さ1にして「方向」にする
 	}
 
 	// 止まる距離 = 敵のコライダー半径 + 攻撃が届く距離
@@ -267,7 +267,7 @@ void PlayerAttackSlashState::attackMoveOffset(void)
 
 	if (lockOnTarget != nullptr && dist > stopDist) {
 		// ラッシュ中は速く、そうでなければ通常の上限
-		accelMax = isRush ? 5.0f : 0.5f * 1000.0f;
+		accelMax = isRush ? 0.5f * 1000.0f : 0.5f ;
 
 		// 移動(向き補正もMoveAccel内のSlerpでかかる)
 		moveAccel(dir);

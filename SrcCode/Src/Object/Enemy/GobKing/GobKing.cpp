@@ -207,9 +207,11 @@ void GobKing::Load(void)
 		STATE::React,
 		new GobKingReactState(
 			hitReact,
+			isDie,
 			[&]() {AnimePlay(ANIME_TYPE::HitReact); },
 			std::bind(&GobKing::IsAnimeEnd, this),
-			[&]() {ChangeState(STATE::Idle); }
+			[&]() {ChangeState(STATE::Idle); },
+			[&]() {ChangeState(STATE::Flying); }
 		)
 	);
 
@@ -264,7 +266,6 @@ void GobKing::Load(void)
 	// 「岩投擲攻撃状態」->「死亡状態」の自動遷移登録
 	RegisterStateTransition(STATE::Throw_Rock, STATE::Flying);
 
-
 #pragma endregion
 }
 
@@ -280,7 +281,7 @@ void GobKing::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const 
 		Damage(20);
 		
 		// ヒットストップ
-		TimeScale::GetIns().HitStop(4);
+		TimeScale::GetIns().HitStop(3);
 
 		// 死亡していたら不要
 		if (!IsDead()) { hitReact = true; }
@@ -294,7 +295,13 @@ void GobKing::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const 
 		if (!IsDead()) { hitReact = true; }
 	}
 
+	// プレイヤーのラッシュ攻撃
+	if (other.GetTag() == COLLIDER_TAG::PlayerRushSlash) {
+		RushDamage(20);
 
+		// 死亡していたら不要
+		if (!IsDead()) { hitReact = true; }
+	}
 }
 
 void GobKing::SubUpdate(void)
@@ -302,25 +309,13 @@ void GobKing::SubUpdate(void)
 	// 無敵猶予フレーム処理
 	if (invincibleFrame > 0 && GetTimeScale() > 0.0f) { invincibleFrame--; }
 
-	//static char type = 0;
-	//static bool prev = false, now = false;
-
-	//prev = now;
-	//now = CheckHitKey(KEY_INPUT_SPACE) == 1;
-
-	//if (!prev && now) {
-
-	//	if (++type > 1) { type = 0; }
-
-	//	switch (type) {
-	//	case 0: { CreateShader(new DefaultShader()); break; }
-	//	case 1: { CreateShader(new RimLightShader()); break; }
-	//	}
-	//}
-
 	// 死亡判定
 	if (IsDead()) { OnDeath(); isDie = true; }
+}
 
+void GobKing::SubDraw(void)
+{
+	DrawFormatString(500, 0, 0xffffff, "GobHP %d", hp);
 }
 
 #pragma region ダメージ関数
@@ -335,7 +330,16 @@ void GobKing::Damage(int damage) {
 
 }
 
+void GobKing::RushDamage(int damage)
+{
+	// 死亡後は受け付けない
+	if (IsDead()) { return; }
+
+	hp = (std::max)(0, hp - damage);
+}
+
 #pragma endregion
+
 void GobKing::OnDeath(void)
 {
 	if (isFlyEnd) {

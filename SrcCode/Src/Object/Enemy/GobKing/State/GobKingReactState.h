@@ -10,9 +10,13 @@ public:
 
 	GobKingReactState(
 		bool& hitReact,
+		bool& isDie,
+
 		std::function<void(void)> playAnimeReact,
 
 		std::function<bool(void)> isAnimeEnd,
+
+		std::function<void(void)> changeStateDie,
 
 		std::function<void(void)> changeStateIdle
 	);
@@ -36,16 +40,23 @@ private:
 #pragma region 定数
 #pragma endregion
 
+	// 攻撃をうけたか
+	bool& hitReact;
+
+	// 死亡したか
+	bool& isDie;
+
 	// リアクションアニメーションの再生関数のポインタ
 	const std::function<void(void)> playAnimeReact;
 
 	// アニメーションが終了したかどうかを取得する関数のポインタ
 	const std::function<bool(void)> isAnimeEnd;
 
+	// 死亡アニメーションに遷移するポインタ
+	const std::function<void(void)> changeStateDie;
+
 	// 待機状態に戻る関数のポインタ
 	const std::function<void(void)> changeStateIdle;
 
-	// 攻撃をうけたか
-	bool& hitReact;
 
 };

@@ -142,6 +142,8 @@ private:
 
 	void SubUpdate(void)override;
 
+	void SubDraw(void)override;
+
 #pragma region 受けとる参照
 
 	//座標参照
@@ -160,6 +162,8 @@ private:
 
 	// ダメージ
 	void Damage(int damage);
+	// ラッシュダメージ
+	void RushDamage(int damage);
 
 	// 死亡した際
 	void OnDeath(void)override;

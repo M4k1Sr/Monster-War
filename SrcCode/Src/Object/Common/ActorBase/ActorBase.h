@@ -150,7 +150,7 @@ protected:
 	// 横軸加速度の1フレームごとの減速量
 	float DECEL_RATE = 3.0f;
 	// 横軸加速度の最大値
-	float ACCEL_MAX = 30.0f;
+	float ACCEL_MAX = 100.0f;
 
 	// 接地判定(派生先で参照用)
 	const bool& isGround = isGroundMaster;

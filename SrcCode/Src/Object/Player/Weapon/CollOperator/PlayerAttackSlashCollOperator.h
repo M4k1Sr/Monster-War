@@ -11,6 +11,8 @@ public:
 		float COLL_RADIUS,
 		const Vector3& COLL_LOCAL_POS,
 
+		bool& isRush,
+
 		const Transform& playerTrans
 	);
 	~PlayerAttackSlashCollOperator()override = default;
@@ -24,14 +26,23 @@ public:
 
 private:
 
-	// 攻撃の判定を発生させる座標（プレイヤー座標からの相対座標）
+	// 攻撃の判定を発生させる座標
 	const Vector3 COLL_LOCAL_POS;
 
 	// プレイヤーのモデル制御情報の参照
 	const Transform& playerTrans;
 
 	// 生成するコライダー
+	// 通常攻撃
 	SphereCollider* attackColl;
+	// ラッシュ攻撃
+	SphereCollider* rushColl;
+
+	// 当たり判定を記録する変数
+	bool isHit;
+
+	// ラッシュ中か
+	bool& isRush;
 
 	// 更新処理
 	void SubUpdate(void)override;

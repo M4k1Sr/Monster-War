@@ -13,6 +13,8 @@ private:
 	TimeScale();
 	// デストラクタ
 	~TimeScale() = default;
+	
+	void DrawDebug(void);
 
 public:
 

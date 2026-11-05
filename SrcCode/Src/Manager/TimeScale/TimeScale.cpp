@@ -19,7 +19,7 @@ TimeScale::TimeScale() :
 
 void TimeScale::Update(void)
 {
-	// 
+	// グループごとの更新
 	UpdateGroups();
 
 	// 時間倍率変更中
@@ -124,6 +124,9 @@ void TimeScale::ChangeTimeScale(float targetTimeScale, unsigned short changeTime
 void TimeScale::TemporaryScale(float targetTimescale, unsigned short temporaryTime, unsigned short changeTime)
 {
 	if (isChangingTimeScale) { return; }
+
+	// すでに一時変更中なら重ねない
+	if (!temporaryOrderStack.empty()) { return; }
 
 	// 変更の処理
 	ChangeTimeScale(targetTimescale, changeTime);
