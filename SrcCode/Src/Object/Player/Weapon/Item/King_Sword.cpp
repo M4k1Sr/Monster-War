@@ -43,11 +43,11 @@ void King_Sword::Load(void)
 	trans.LoadModel("Weapon/King_Sword");
 
 	// 初期ローカル座標・角度
-	swordLocalPos = Vector3(9.5f, 8.5f, 10.5f);
-	swordLocalRot = Vector3(Deg2Rad(31.0f), Deg2Rad(176.0f), Deg2Rad(130.0f));
+	swordLocalPos = Vector3(0.0f,-11.0f,0.0f);
+	swordLocalRot = Vector3(Deg2Rad(0.0f), Deg2Rad(-90.0f), Deg2Rad(0.0f));
 
 	// モデルのスケール設定
-	trans.scale = 1.0f;
+	trans.scale = 0.7f;
 
 	// モデルの中心点のズレの補正
 	trans.centerDiff = Vector3(0.0f, -60.0f, 0.0f) * trans.scale;
@@ -55,7 +55,7 @@ void King_Sword::Load(void)
 	// モデルの角度のズレの補正
 	trans.SetLocalRotation(Quaternion::FromRotationY(Deg2Rad(0.0f)));
 
-	trans.pos = MV1GetFramePosition(trans.model, 23);
+	trans.pos = MV1GetFramePosition(trans.model, 21);
 
 #pragma endregion
 
@@ -76,8 +76,33 @@ void King_Sword::Load(void)
 
 void King_Sword::SubUpdate(void)
 {	
+#ifdef _DEBUG
+	// 握り位置の調整用（調整が終わったら無効化してOK）
+	const float MOVE = 0.5f;
+	const float ROT = Deg2Rad(1.0f);
+
+	if (CheckHitKey(KEY_INPUT_LSHIFT)) {
+		// Shift押しながら → 回転
+		if (CheckHitKey(KEY_INPUT_I)) swordLocalRot.x += ROT;
+		if (CheckHitKey(KEY_INPUT_K)) swordLocalRot.x -= ROT;
+		if (CheckHitKey(KEY_INPUT_J)) swordLocalRot.y += ROT;
+		if (CheckHitKey(KEY_INPUT_L)) swordLocalRot.y -= ROT;
+		if (CheckHitKey(KEY_INPUT_U)) swordLocalRot.z += ROT;
+		if (CheckHitKey(KEY_INPUT_O)) swordLocalRot.z -= ROT;
+	}
+	else {
+		// 何も押さない → 位置
+		if (CheckHitKey(KEY_INPUT_I)) swordLocalPos.x += MOVE;
+		if (CheckHitKey(KEY_INPUT_K)) swordLocalPos.x -= MOVE;
+		if (CheckHitKey(KEY_INPUT_J)) swordLocalPos.y += MOVE;
+		if (CheckHitKey(KEY_INPUT_L)) swordLocalPos.y -= MOVE;
+		if (CheckHitKey(KEY_INPUT_U)) swordLocalPos.z += MOVE;
+		if (CheckHitKey(KEY_INPUT_O)) swordLocalPos.z -= MOVE;
+	}
+#endif
+
 	// プレイヤーモデルの手フレームのワールド行列（アニメ反映済み）
-	MATRIX handMat = MV1GetFrameLocalWorldMatrix(playerTrans.model, 23);
+	MATRIX handMat = MV1GetFrameLocalWorldMatrix(playerTrans.model, 21);
 
 	// 剣のローカル変換（手に対するオフセット）
 	MATRIX scaleMat = MGetScale(VGet(trans.scale.x, trans.scale.y, trans.scale.z));
@@ -101,6 +126,6 @@ void King_Sword::SubUpdate(void)
 
 void King_Sword::SubDraw(void)
 {
-	DrawFormatString(10, 100, 0xffffff, "Pos(%.1f, %.1f, %.1f)", swordLocalPos.x, swordLocalPos.y, swordLocalPos.z);
-	DrawFormatString(10, 300, 0xffffff, "Rot(%.1f, %.1f, %.1f)", Rad2Deg(swordLocalRot.x), Rad2Deg(swordLocalRot.y), Rad2Deg(swordLocalRot.z));
+	//DrawFormatString(300, 330, 0xffffff, "Pos(%.1f, %.1f, %.1f)", swordLocalPos.x, swordLocalPos.y, swordLocalPos.z);
+	//DrawFormatString(300, 300, 0xffffff, "Rot(%.1f, %.1f, %.1f)", Rad2Deg(swordLocalRot.x), Rad2Deg(swordLocalRot.y), Rad2Deg(swordLocalRot.z));
 }

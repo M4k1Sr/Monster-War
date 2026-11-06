@@ -62,6 +62,9 @@ public:
 		// バク転
 		PlayerBackFlip,
 
+		// スカイライズ
+		PlayerSkyRise,
+
 #pragma endregion
 
 #pragma region カメラ操作

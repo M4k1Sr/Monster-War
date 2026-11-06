@@ -53,7 +53,7 @@ void Wings::Load(void)
 	// ƒ‚ƒfƒ‹‚ÌŠp“x‚ÌƒYƒŒ‚Ì•â³
 	trans.SetLocalRotation(Quaternion::FromRotationY(Deg2Rad(0.0f)));
 
-	trans.pos = MV1GetFramePosition(trans.model, 4);
+	trans.pos = MV1GetFramePosition(playerTrans.model, 4);
 
 #pragma endregion
 

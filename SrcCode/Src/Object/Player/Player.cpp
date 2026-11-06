@@ -31,6 +31,7 @@
 #include "State/PlayerIdleState.h"
 #include "State/PlayerMoveState.h"
 #include "State/PlayerJumpState.h"
+#include "State/PlayerSkyRiseState.h"
 #include "State/PlayerAttackSlashState.h"
 #include "State/PlayerRollingSlashState.h"
 #include "State/PlayerKickDownAttackState.h"
@@ -80,7 +81,7 @@ void Player::Load(void)
 	trans.scale = 1;
 
 	// モデルの中心点のズレの補正
-	trans.centerDiff = Vector3(0.0f, -90.0f, 0.0f) * trans.scale;
+	trans.centerDiff = Vector3(0.0f, -99.0f, 0.0f) * trans.scale;
 
 	// モデルの角度のズレの補正
 	trans.SetLocalRotation(Quaternion::FromRotationY(Deg2Rad(180.0f)));
@@ -146,11 +147,11 @@ void Player::Load(void)
 
 	AddChildActor(king_Sword);
 
-	// 翼クラス
-	Wings* wings =
-		new Wings(trans);
+	//// 翼クラス
+	//Wings* wings =
+	//	new Wings(trans);
 
-	AddChildActor(wings);
+	//AddChildActor(wings);
 
 #pragma endregion
 
@@ -177,15 +178,26 @@ void Player::Load(void)
 	);
 
 	// ジャンプ状態
-	// 後回し
 	AddState(
 		STATE::Jump,
 		new PlayerJumpState(
 			20.0f, velocity.y, isGround,
 			std::bind(&Player::MoveAccel, this, std::placeholders::_1),
-			[&]() { AnimePlay(ANIME_TYPE::JumpStart); },
+			[&]() { AnimePlay(ANIME_TYPE::Jump); },
 			[&]() { AnimePlay(ANIME_TYPE::Jumping); },
 			[&]() { AnimePlay(ANIME_TYPE::JumpEnd); },
+			std::bind(&Player::IsAnimeEnd, this),
+			[&]() { ChangeState(STATE::Idle); }
+		)
+	);
+
+	// スカイライズ状態
+	AddState(
+		STATE::SkyRise,
+		new PlayerSkyRiseState(
+			isCrouchHold, isGround,trans,
+			[&]() { AnimePlay(ANIME_TYPE::Crouch); },
+			[&]() {AnimePlay(ANIME_TYPE::Hover); },
 			std::bind(&Player::IsAnimeEnd, this),
 			[&]() { ChangeState(STATE::Idle); }
 		)
@@ -278,6 +290,9 @@ void Player::Load(void)
 	// 「回転攻撃状態」->「ジャンプ状態」の自動遷移登録
 	RegisterStateTransition(STATE::AttackRollingSlash, STATE::Jump);
 
+	// 「待機状態」->「スカイライズ状態」の自動遷移登録
+	RegisterStateTransition(STATE::Idle, STATE::SkyRise);
+
 	// 「待機状態」->「攻撃（斬撃）状態」の自動遷移登録
 	RegisterStateTransition(STATE::Idle, STATE::AttackSlash);
 	// 「移動状態」->「攻撃（斬撃）状態」の自動遷移登録
@@ -320,14 +335,14 @@ void Player::Load(void)
 
 void Player::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
 {
-	if (ownTag != COLLIDER_TAG::Enemy) { return; }
+	if (ownTag != COLLIDER_TAG::Player) { return; }
 
 	// 無敵中は無視
 	if (invincibleFrame > 0) { return; }
 
 	// ゴブリンキングのスイング攻撃
 	if (other.GetTag() == COLLIDER_TAG::GobKingSwing) {
-		Damage(50);
+		//Damage(50);
 
 		// 死亡していたら不要
 		if (!IsDead()) { hitReact = true; }
@@ -367,7 +382,9 @@ void Player::SubUpdate(void)
 //#pragma endregion
 
 
-	if (invincibleFrame > 0 && GetTimeScale() > 0.0f) { invincibleFrame--; }
+	if (invincibleFrame > 0 && GetTimeScale() > 0.0f) { 
+		invincibleFrame--; 
+	}
 	
 	if (InputManager::GetIns().GetInfo(KEY_TYPE::LockOn).now) {
 
@@ -390,26 +407,28 @@ void Player::SubUpdate(void)
 
 void Player::SubDraw(void)
 {
-	const float global = TimeScale::Get();
-	const float gPlayer = TimeScale::GetTimeScale(TimeScale::GROUP::Player);
-	const float gEnemy = TimeScale::GetTimeScale(TimeScale::GROUP::Enemy);
+	//DrawFormatString(300, 0, 0xffffff, "PlayerHP %d", hp);
 
-	DrawFormatString(0, 150, 0xffffff, "global:%.3f player:%.3f enemy:%.3f", global, gPlayer, gEnemy);
-	DrawFormatString(0, 170, 0xffffff, "state:%d phase:%d ratio:%.3f", GetState(), (int)justPhase, GetAnimeRatio());
+//	const float global = TimeScale::Get();
+//	const float gPlayer = TimeScale::GetTimeScale(TimeScale::GROUP::Player);
+//	const float gEnemy = TimeScale::GetTimeScale(TimeScale::GROUP::Enemy);
+//
+//	DrawFormatString(0, 150, 0xffffff, "global:%.3f player:%.3f enemy:%.3f", global, gPlayer, gEnemy);
+//	DrawFormatString(0, 170, 0xffffff, "state:%d phase:%d ratio:%.3f", GetState(), (int)justPhase, GetAnimeRatio());
 	DrawFormatString(0, 190, 0xffffff, "invincible:%.1f isGround:%d", (float)invincibleFrame, (int)isGround);
-
-	// 時間が完全に止まっている警告
-	if (gPlayer <= 0.0001f) {
-		DrawFormatString(0, 210, 0xff0000, "!!! PLAYER TIME STOPPED !!!");
-	}
-	if (global <= 0.0001f) {
-		DrawFormatString(0, 230, 0xff0000, "!!! GLOBAL TIME STOPPED !!!");
-	}
+//
+//	// 時間が完全に止まっている警告
+//	if (gPlayer <= 0.0001f) {
+//		DrawFormatString(0, 210, 0xff0000, "!!! PLAYER TIME STOPPED !!!");
+//	}
+//	if (global <= 0.0001f) {
+//		DrawFormatString(0, 230, 0xff0000, "!!! GLOBAL TIME STOPPED !!!");
+//	}
 }
 
 void Player::Damage(int damage) {
 
-	printfDx("player::hp:%d  IsDead:%d\n", hp, (int)IsDead());
+	//printfDx("player::hp:%d  IsDead:%d\n", hp, (int)IsDead());
 
 	// 死亡後・無敵中は受け付けない
 	if (IsDead() || invincibleFrame > 0) { return; }

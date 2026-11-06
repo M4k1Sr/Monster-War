@@ -151,6 +151,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Player\State\PlayerSkyRiseState.cpp" />
     <ClCompile Include="Src\Object\Player\Weapon\CollOperator\PlayerBackFlipCollOperator.cpp" />
     <ClCompile Include="Src\Manager\Camera\FollowAction\FollowActionCamera.cpp" />
     <ClCompile Include="Src\Object\Player\State\PlayerDieState.cpp" />
@@ -236,6 +237,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Object\Player\Weapon\Item\Wings.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Player\State\PlayerSkyRiseState.h" />
     <ClInclude Include="Src\Object\Player\Weapon\CollOperator\PlayerBackFlipCollOperator.h" />
     <ClInclude Include="Src\Manager\Camera\FollowAction\FollowActionCamera.h" />
     <ClInclude Include="Src\Object\Player\State\PlayerDieState.h" />

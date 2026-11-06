@@ -35,13 +35,13 @@ public:
 	/// <param name="fov">Ž‹–ìŠp</param>
 	FollowActionCamera(
 		const Vector3* targetPos,
-		const Vector3& cameraOffset = Vector3::Zonly(-300),
+		const Vector3& cameraOffset = Vector3::Zonly(-250),
 		const Vector3& lookAtOffset = Vector3(),
 		float ROT_POWER = 3.0f * (DX_PI_F / 180.0f),
-		float LOCK_DIST_BASE = 350.0f,
+		float LOCK_DIST_BASE = 300.0f,
 		float LOCK_DIST_RATE = 0.5f,
 		float LOCK_DIST_MIN = 200.0f,
-		float LOCK_DIST_MAX = 300.0f,
+		float LOCK_DIST_MAX = 350.0f,
 		float LOCK_HEIGHT = -20.0f,
 		float LOCK_HEIGHT_RATE = 0.01f,
 		float LOCK_LOOK_RATE = 0.3f,

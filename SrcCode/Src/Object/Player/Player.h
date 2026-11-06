@@ -29,6 +29,8 @@ private:
 		Idle,
 		Move,
 		Jump,
+		
+		SkyRise,
 
 		AttackSlash,
 		AttackRollingSlash,
@@ -65,31 +67,32 @@ private:
 		Walk,
 		Run,
 		FastRun,
-		WalkBack,
-		StepRight,
-		StepLeft,
 
-		InPlaceJump,
-		BackFlip,
+		Jump,
+		Jumping,
+		JumpEnd,
 
-		DrawSword,
-		WeaponIdle,
 		Slash_Down,
 		Slash_Up,
 		Slash_End,
 		Charge,
 		RollingSlash,
 
-		Block,
-		BlockIdle,
-		BlockHit,
+		BowStart,
+		BowAiming,
+		BowEnd,
 
+		React,
 		Flying,
 		GetUp,
+		Death,
 
-		JumpStart,
-		Jumping,
-		JumpEnd,
+		Crouch,
+		Hover,
+
+		Float,
+
+		BackFlip,
 
 		Max
 	};
@@ -102,32 +105,32 @@ private:
 		0.65f,	// Walk
 		0.65f,	// Run
 		0.65f,	// FastRun
-		0.65f,	// WalkBack
-		0.65f,	// StepRight
-		0.65f,	// StepLeft
 
-		1.0f,	// InPlaceJump
-		0.8f,	// BackFlip
-
-		0.65f,	// DrawSword
-		0.65f,	// WeaponIdle
-		0.65f,	// Slash_Down
-		0.65f,	// Slash_Up
-		0.65f,	// Slahs_End
-		0.65f,	// Charge
-		0.65f,	// RollingSlash
-
-		0.65f,	// Block
-		0.65f,	// BlockIdle
-		0.65f,	// BlockHit
-
-		0.65f,	// Flying
-		0.65f,	// GetUp
-
-		0.65f,	// JumpStart
+		0.65f,	// Jump
 		0.65f,	// Jumping
 		0.65f,	// JumpEnd
 
+		0.65f,	// Slash_Down
+		0.65f,	// Slash_Up
+		0.65f,	// Slash_End
+		0.65f,	// Charge
+		0.65f,	// RollingSlash
+
+		0.65f,	// BowStart
+		0.65f,	// BowAiming
+		0.65f,	// BowEnd
+
+		0.65f,	// React
+		0.65f,	// Flying
+		0.65f,	// GetUp
+		0.65f,	// Death
+
+		0.65f,	// Crouch
+		0.65f,	// Hover
+
+		0.65f,	// Float
+
+		0.8f,	// BackFlip
 	};
 
 	// アニメーションループ再生フラグテーブル
@@ -138,32 +141,33 @@ private:
 		true,	// Walk
 		true,	// Run
 		true,	// FastRun
-		true,	// WalkBack
-		true,	// StepRight
-		true,	// StepLeft
-		false,	// InPlaceJump
-		false,	// BackFlip
 
-		false,	// DrawSword
-		true,	// WeaponIdle
-		false,	// Slash_Down
-		false,	// Slash_Up
-		false,	// Slahs_End
-		false,	// Charge
-		false,	// RollingSlash
-
-		false,	// Block
-		true,	// BlockIdle
-		false,	// BlockHit
-		false,	// Flying
-		false,	// GetUp
-
-		false,	// JumpStart
+		false,	// Jump
 		true,	// Jumping
 		false,	// JumpEnd
 
-	};
+		false,	// Slash_Down
+		false,	// Slash_Up
+		false,	// Slash_End
+		false,	// Charge
+		false,	// RollingSlash
 
+		false,	// BowStart
+		true,	// BowAiming（構え中はループ）
+		false,	// BowEnd
+
+		false,	// React
+		false,	// Flying
+		false,	// GetUp
+		false,	// Death（最後のポーズで止める）
+
+		false,	// Crouch（しゃがみ待機ならループ。しゃがむ動作だけなら false）
+		true,	// Hover（滞空中ずっと再生するならループ）
+
+		true,	// Float
+
+		false,	// BackFlip
+	};
 #pragma endregion
 
 #pragma region ジャスト回避・ラッシュ攻撃系定義
@@ -202,8 +206,11 @@ private:
 	// 死亡したか
 	bool isDie;
 
-	// 敵が吹っ飛び終わったか
+	// 自身が吹っ飛び終わったか
 	bool isFlyEnd;
+
+	// 無敵検知
+	bool isNoDamage;
 
 	// ダメージ
 	void Damage(int damage);
@@ -245,4 +252,10 @@ private:
 
 #pragma endregion
 
+#pragma region スカイライズスキル系変数
+	
+	// ジャンプボタンがホールドされているか検知
+	bool isCrouchHold;
+
+#pragma endregion
 };

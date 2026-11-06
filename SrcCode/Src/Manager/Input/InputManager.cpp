@@ -63,6 +63,9 @@ void InputManager::Init(void)
 	// 攻撃(斬撃)
 	SET_MOUSE_BUTTON(KEY_TYPE::PlayerAttackSlash, MOUSE_INPUT_LEFT);
 
+	// スカイライズ
+	SET_KEYBOARD(KEY_TYPE::PlayerSkyRise, KEY_INPUT_R);
+
 #pragma endregion
 
 #pragma region カメラ操作
