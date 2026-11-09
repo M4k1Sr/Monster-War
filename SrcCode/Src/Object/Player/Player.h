@@ -185,6 +185,11 @@ private:
 	const float ENEMY_SLOW_SCALE = 0.05f;
 	const int HOLD_LONG = 9999;
 
+	// バク転の無敵が切れる再生割合
+	const float BACKFLIP_INVINCIBLE_END = 0.85f;
+	// ジャスト回避終了直後の猶予フレーム
+	const int JUST_END_GRACE_FRAME = 30;
+
 #pragma endregion
 
 	// 初期化処理
@@ -217,6 +222,9 @@ private:
 
 	// 死亡した際
 	void OnDeath(void)override;
+
+	// 被ダメージを受け付けない状態か
+	bool IsInvincible(void) const;
 
 #pragma endregion
 

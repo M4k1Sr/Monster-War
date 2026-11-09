@@ -337,12 +337,14 @@ void Player::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const C
 {
 	if (ownTag != COLLIDER_TAG::Player) { return; }
 
+	if (IsInvincible()) { return; }
+
 	// 無敵中は無視
 	if (invincibleFrame > 0) { return; }
 
 	// ゴブリンキングのスイング攻撃
 	if (other.GetTag() == COLLIDER_TAG::GobKingSwing) {
-		//Damage(50);
+		Damage(50);
 
 		// 死亡していたら不要
 		if (!IsDead()) { hitReact = true; }
@@ -400,14 +402,14 @@ void Player::SubUpdate(void)
 	// カメラへ反映（nullptrなら通常モードに戻る）
 	CurrentCamera::Get().SetLockOnTarget(lockOnTarget);
 
-		// 死亡判定
-	if (IsDead()) { OnDeath(); isDie = true; }
+	// 死亡判定
+	if (IsDead()) { OnDeath(); }
 
 }
 
 void Player::SubDraw(void)
 {
-	//DrawFormatString(300, 0, 0xffffff, "PlayerHP %d", hp);
+	DrawFormatString(300, 0, 0xffffff, "PlayerHP %d", hp);
 
 //	const float global = TimeScale::Get();
 //	const float gPlayer = TimeScale::GetTimeScale(TimeScale::GROUP::Player);
@@ -415,7 +417,7 @@ void Player::SubDraw(void)
 //
 //	DrawFormatString(0, 150, 0xffffff, "global:%.3f player:%.3f enemy:%.3f", global, gPlayer, gEnemy);
 //	DrawFormatString(0, 170, 0xffffff, "state:%d phase:%d ratio:%.3f", GetState(), (int)justPhase, GetAnimeRatio());
-	DrawFormatString(0, 190, 0xffffff, "invincible:%.1f isGround:%d", (float)invincibleFrame, (int)isGround);
+//  DrawFormatString(0, 190, 0xffffff, "invincible:%.1f isGround:%d", (float)invincibleFrame, (int)isGround);
 //
 //	// 時間が完全に止まっている警告
 //	if (gPlayer <= 0.0001f) {
@@ -437,17 +439,41 @@ void Player::Damage(int damage) {
 
 	invincibleFrame = 60;
 
+	if (IsDead() || IsInvincible()) { return; } 
+	
 	if (IsDead()) { OnDeath(); }
 }
 
 void Player::OnDeath(void)
 {
+	if (isDie) { return; }
+	isDie = true;
+
+	EndJustDodgeSlow();
+
 	SceneManager::GetIns().ChangeSceneFade(SCENE_ID::GameOver);
+}
+
+bool Player::IsInvincible(void) const
+{
+	// 被弾後の通常の無敵
+	if (invincibleFrame > 0) { return true; }
+
+	// ジャスト回避の演出中(スロー開始からラッシュ終了まで)
+	if (justPhase != JUST_PHASE::None) { return true; }
+
+	// バク転の回避動作中
+	if (GetState() == (int)STATE::BackFlip &&
+		GetAnimeRatio() <= BACKFLIP_INVINCIBLE_END) {
+		return true;
+	}
+
+	return false;
 }
 
 void Player::UpdateJustDodge(void)
 {
-	// ジャスト成立の検知（CollOperatorが立てたフラグ）
+	// ジャスト成立の検知(CollOperatorが立てたフラグ)
 	if (isJustDodge) {
 		isJustDodge = false;
 		if (justPhase == JUST_PHASE::None) { 
@@ -506,4 +532,6 @@ void Player::EndJustDodgeSlow(void)
 
 	// ラッシュ攻撃しない
 	isRush = false;
+
+	if (invincibleFrame < JUST_END_GRACE_FRAME) { invincibleFrame = JUST_END_GRACE_FRAME; }
 }
