@@ -6,9 +6,14 @@
 #include "../../../Manager/Camera/CurrentCamera.h"
 
 PlayerSkyRiseState::PlayerSkyRiseState(
+	float UP_POWER,
+
 	const bool& isCrouchHold,
 
+	float& velocityY,
 	const bool& isGround,
+
+	std::function<void(const Vector3&)> moveAccel,
 
 	const Transform& playerTrans,
 
@@ -19,11 +24,16 @@ PlayerSkyRiseState::PlayerSkyRiseState(
 
 	std::function<void(void)> changeStateIdle
 ) :
+	UP_POWER(UP_POWER),
+
 	HOLD_FRAME(60),
-	CHARGE_COMPLETE_FRAME(180),
+	CHARGE_COMPLETE_FRAME(120),
 	isCrouchHold(isCrouchHold),
 
+	velocityY(velocityY),
 	isGround(isGround),
+
+	moveAccel(moveAccel),
 
 	playerTrans(playerTrans),
 
@@ -84,6 +94,12 @@ void PlayerSkyRiseState::Update(void)
 				// ステップを上昇へ
 				step = STEP::Rise;
 
+				// 上昇値加算
+				velocityY = UP_POWER;
+
+				// ホバーアニメーションに切り替え
+				playAnimeHover();
+
 			}
 			else {
 				// チャージ不足なら待機状態へ遷移
@@ -96,13 +112,10 @@ void PlayerSkyRiseState::Update(void)
 	case PlayerSkyRiseState::STEP::Rise: {
 		// 上昇
 
-		// ホバーアニメーションに切り替え
-		playAnimeHover();
-
 		HoverMove();
 
 		// 上昇マックス
-		if (isGround) {
+		if (playerTrans.pos.y > 1000.0f) {
 
 			// 次のステップへ
 			step = STEP::Stop;
@@ -113,6 +126,7 @@ void PlayerSkyRiseState::Update(void)
 
 	case PlayerSkyRiseState::STEP::Stop: {
 		// 上昇停止
+		velocityY = 0.0f;
 
 		// アニメーション終了
 		if (isAnimeEnd()) {
@@ -129,5 +143,25 @@ void PlayerSkyRiseState::Update(void)
 
 void PlayerSkyRiseState::HoverMove(void)
 {
+	// コントローラーの入力を取得
+	Vector3 vec = Input::GetIns().GetLeftStickVec(false).ToVector3XZInvertY();
 
+	// 入力がなければ次にキーボードの入力を取得
+	if (vec == 0.0f) {
+		if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveRight).now) { vec.x++; }
+		if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveLeft).now) { vec.x--; }
+		if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveFront).now) { vec.z++; }
+		if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveBack).now) { vec.z--; }
+		vec.Normalize();
+	}
+
+	// 最終的に入力があれば移動させる
+	if (vec != 0.0f) {
+
+		// 移動方向をカメラで回転させる
+		vec.TransMatOwn(MGetRotY(CurrentCamera::Get().GetAngle().y));
+
+		// 移動
+		moveAccel(vec);
+	}
 }

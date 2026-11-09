@@ -195,7 +195,10 @@ void Player::Load(void)
 	AddState(
 		STATE::SkyRise,
 		new PlayerSkyRiseState(
-			isCrouchHold, isGround,trans,
+			20.0f, 
+			isCrouchHold, velocity.y, isGround,
+			std::bind(&Player::MoveAccel, this, std::placeholders::_1),
+			trans,
 			[&]() { AnimePlay(ANIME_TYPE::Crouch); },
 			[&]() {AnimePlay(ANIME_TYPE::Hover); },
 			std::bind(&Player::IsAnimeEnd, this),

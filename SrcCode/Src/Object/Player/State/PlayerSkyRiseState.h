@@ -11,9 +11,14 @@ class PlayerSkyRiseState : public CharacterStateBase
 public:
 
 	PlayerSkyRiseState(
+		float UP_POWER,
+
 		const bool& isCrouchHold,
 
+		float& velocityY,
 		const bool& isGround,
+
+		std::function<void(const Vector3&)> moveAccel,
 
 		const Transform& playerTrans,
 
@@ -44,6 +49,9 @@ private:
 	// スカイライズのチャージ完了に必要なフレーム数
 	const int CHARGE_COMPLETE_FRAME;
 
+	// 上昇力
+	float UP_POWER;
+
 #pragma endregion
 
 #pragma region 受け取る参照変数・関数
@@ -51,8 +59,14 @@ private:
 	// しゃがみホールドされているか検知
 	const bool& isCrouchHold;
 
+	// Y軸加速度
+	float& velocityY;
+
 	// 地面と設置しているか
 	const bool& isGround;
+
+	// 移動関数のポインタ
+	const std::function<void(const Vector3&)> moveAccel;
 
 	// プレイヤーのモデル制御情報の参照
 	const Transform& playerTrans;
