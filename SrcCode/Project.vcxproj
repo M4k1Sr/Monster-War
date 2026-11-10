@@ -151,6 +151,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Player\State\PlayerParaseilMoveState.cpp" />
     <ClCompile Include="Src\Object\Player\State\PlayerSkyRiseState.cpp" />
     <ClCompile Include="Src\Object\Player\Weapon\CollOperator\PlayerBackFlipCollOperator.cpp" />
     <ClCompile Include="Src\Manager\Camera\FollowAction\FollowActionCamera.cpp" />
@@ -220,6 +221,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Object\Player\State\PlayerJumpState.cpp" />
     <ClCompile Include="Src\Object\Player\State\PlayerKickDownAttackState.cpp" />
     <ClCompile Include="Src\Object\Player\State\PlayerMoveState.cpp" />
+    <ClCompile Include="Src\Object\Player\Weapon\Item\Paraseil.cpp" />
     <ClCompile Include="Src\Scene\Common\PostEffect\CRTPostEffect\CRTPostEffect.cpp" />
     <ClCompile Include="Src\Scene\Common\PostEffect\FocusLinesPostEffect\FocusLinesPostEffect.cpp" />
     <ClCompile Include="Src\Scene\Common\PostEffect\GrayScalePostEffect\GrayScalePostEffect.cpp" />
@@ -234,9 +236,9 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Scene\Title\TitleScene.cpp" />
     <ClCompile Include="Src\Object\Stage\Stage.cpp" />
     <ClCompile Include="Src\Scene\StageSelect\StageSelectScene.cpp" />
-    <ClCompile Include="Src\Object\Player\Weapon\Item\Wings.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Player\State\PlayerParaseilMoveState.h" />
     <ClInclude Include="Src\Object\Player\State\PlayerSkyRiseState.h" />
     <ClInclude Include="Src\Object\Player\Weapon\CollOperator\PlayerBackFlipCollOperator.h" />
     <ClInclude Include="Src\Manager\Camera\FollowAction\FollowActionCamera.h" />
@@ -323,6 +325,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Object\Player\State\PlayerJumpState.h" />
     <ClInclude Include="Src\Object\Player\State\PlayerKickDownAttackState.h" />
     <ClInclude Include="Src\Object\Player\State\PlayerMoveState.h" />
+    <ClInclude Include="Src\Object\Player\Weapon\Item\Paraseil.h" />
     <ClInclude Include="Src\Object\Water.h" />
     <ClInclude Include="Src\pch.h" />
     <ClInclude Include="Src\Scene\Common\PostEffect\CRTPostEffect\CRTPostEffect.h" />
@@ -344,7 +347,6 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Utility\Utility.h" />
     <ClInclude Include="Src\Object\Stage\Stage.h" />
     <ClInclude Include="Src\Scene\StageSelect\StageSelectScene.h" />
-    <ClInclude Include="Src\Object\Player\Weapon\Item\Wings.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Shader\Common\Pixel\ModelFog.hlsli" />

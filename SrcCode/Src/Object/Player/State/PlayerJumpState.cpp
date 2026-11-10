@@ -81,37 +81,16 @@ void PlayerJumpState::Update(void)
 	case PlayerJumpState::STEP::Jumping: {
 		// 滞空
 
-		// コントローラーの入力を取得
-		Vector3 vec = Input::GetIns().GetLeftStickVec(false).ToVector3XZInvertY();
+		isGround;
+		//// 着地
+		//if (isGround) {
 
-		// 入力がなければ次にキーボードの入力を取得
-		if (vec == 0.0f) {
-			if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveRight).now) { vec.x++; }
-			if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveLeft).now) { vec.x--; }
-			if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveFront).now) { vec.z++; }
-			if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveBack).now) { vec.z--; }
-			vec.Normalize();
-		}
+		//	// 着地のアニメーションを再生
+		//	playAnimeJumpEnd();
 
-		// 最終的に入力があれば移動させる
-		if (vec != 0.0f) {
-
-			// 移動方向をカメラで回転させる
-			vec.TransMatOwn(MGetRotY(CurrentCamera::Get().GetAngle().y));
-
-			// 移動
-			moveAccel(vec);
-		}
-
-		// 着地
-		if (isGround) {
-
-			// 着地のアニメーションを再生
-			playAnimeJumpEnd();
-
-			// 次のステップへ
-			step = STEP::JumpEnd;
-		}
+		//	// 次のステップへ
+		//	step = STEP::JumpEnd;
+		//}
 
 		break;
 	}

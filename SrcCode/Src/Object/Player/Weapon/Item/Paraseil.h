@@ -2,12 +2,12 @@
 
 #include "../../../Common/ActorBase/ActorBase.h"
 
-class Wings : public ActorBase
+class Paraseil : public ActorBase
 {
 public:
 
-	Wings(const Transform& playerTrans);
-	~Wings()override = default;
+	Paraseil(const Transform& playerTrans);
+	~Paraseil()override = default;
 
 	// 読み込み処理
 	void Load(void)override;
@@ -15,8 +15,8 @@ public:
 private:
 
 	// 翼ローカル座標・角度
-	Vector3 wingsLocalPos = Vector3(0.0f, 0.0f, 0.0f);
-	Vector3 wingsLocalRot = Vector3(0.0f, 0.0f, 0.0f);
+	Vector3 paraseilLocalPos = Vector3(0.0f, 0.0f, 0.0f);
+	Vector3 paraseilLocalRot = Vector3(0.0f, 0.0f, 0.0f);
 
 	// プレイヤーのモデル制御情報の参照
 	const Transform& playerTrans;

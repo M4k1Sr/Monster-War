@@ -5,12 +5,17 @@
 #include "../../../Manager/Input/InputManager.h"
 #include "../../../Manager/Camera/CurrentCamera.h"
 
+#include "../../Common/ActorBase/ActorBase.h"
+
 PlayerSkyRiseState::PlayerSkyRiseState(
 	float UP_POWER,
 
 	const bool& isCrouchHold,
 
 	float& velocityY,
+
+	bool& isGravity,
+
 	const bool& isGround,
 
 	std::function<void(const Vector3&)> moveAccel,
@@ -18,19 +23,28 @@ PlayerSkyRiseState::PlayerSkyRiseState(
 	const Transform& playerTrans,
 
 	std::function<void(void)> playAnimeCrouch,
-	std::function<void(void)> playAnimeHover,
+	std::function<void(void)> playAnimeHang,
 
 	std::function<bool(void)> isAnimeEnd,
 
-	std::function<void(void)> changeStateIdle
+	std::function<void(bool)> setParaseilDraw,
+
+	std::function<void(void)> setGravityFlg,
+
+	std::function<void(void)> changeStateIdle,
+	std::function<void(void)> changeStateParaseilMove
 ) :
 	UP_POWER(UP_POWER),
 
 	HOLD_FRAME(60),
 	CHARGE_COMPLETE_FRAME(120),
+
 	isCrouchHold(isCrouchHold),
 
 	velocityY(velocityY),
+
+	isGravity(isGravity),
+
 	isGround(isGround),
 
 	moveAccel(moveAccel),
@@ -38,13 +52,22 @@ PlayerSkyRiseState::PlayerSkyRiseState(
 	playerTrans(playerTrans),
 
 	playAnimeCrouch(playAnimeCrouch),
-	playAnimeHover(playAnimeHover),
+	playAnimeHang(playAnimeHang),
 
 	isAnimeEnd(isAnimeEnd),
 
-	changeStateIdle(changeStateIdle),
+	setParaseilDraw(setParaseilDraw),
 
-	step(STEP::Crouch)
+	setGravityFlg(setGravityFlg),
+
+	changeStateIdle(changeStateIdle),
+	changeStateParaseilMove(changeStateParaseilMove),
+
+	step(STEP::Crouch),
+
+	chargeCompleteFlg(false),
+
+	chargeFrame(0.0f)
 {
 }
 
@@ -94,11 +117,18 @@ void PlayerSkyRiseState::Update(void)
 				// ステップを上昇へ
 				step = STEP::Rise;
 
+				// 重力付与×
+				isGravity = false;
+				setGravityFlg();
+
 				// 上昇値加算
 				velocityY = UP_POWER;
 
+				// 描画判定をtrue
+				setParaseilDraw(true);
+
 				// ホバーアニメーションに切り替え
-				playAnimeHover();
+				playAnimeHang();
 
 			}
 			else {
@@ -107,15 +137,17 @@ void PlayerSkyRiseState::Update(void)
 			}
 		}
 	}
-		break;
+										 break;
 
 	case PlayerSkyRiseState::STEP::Rise: {
 		// 上昇
 
-		HoverMove();
-
 		// 上昇マックス
 		if (playerTrans.pos.y > 1000.0f) {
+
+			// 重力付与〇
+			isGravity = true;
+			setGravityFlg();
 
 			// 次のステップへ
 			step = STEP::Stop;
@@ -129,10 +161,10 @@ void PlayerSkyRiseState::Update(void)
 		velocityY = 0.0f;
 
 		// アニメーション終了
-		if (isAnimeEnd()) {
+		if (velocityY == 0.0f) {
 
-			// 待機状態に戻り終了
-			changeStateIdle();
+			//// 待機状態に戻り終了
+			//changeStateIdle();
 		}
 
 		break;
@@ -141,27 +173,11 @@ void PlayerSkyRiseState::Update(void)
 	}
 }
 
-void PlayerSkyRiseState::HoverMove(void)
+void PlayerSkyRiseState::Exit(void)
 {
-	// コントローラーの入力を取得
-	Vector3 vec = Input::GetIns().GetLeftStickVec(false).ToVector3XZInvertY();
-
-	// 入力がなければ次にキーボードの入力を取得
-	if (vec == 0.0f) {
-		if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveRight).now) { vec.x++; }
-		if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveLeft).now) { vec.x--; }
-		if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveFront).now) { vec.z++; }
-		if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveBack).now) { vec.z--; }
-		vec.Normalize();
-	}
-
-	// 最終的に入力があれば移動させる
-	if (vec != 0.0f) {
-
-		// 移動方向をカメラで回転させる
-		vec.TransMatOwn(MGetRotY(CurrentCamera::Get().GetAngle().y));
-
-		// 移動
-		moveAccel(vec);
+	// 重力を必ず付与
+	if (!isGravity) {
+		isGravity = true;
+		setGravityFlg();
 	}
 }

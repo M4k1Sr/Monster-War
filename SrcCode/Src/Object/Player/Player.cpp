@@ -26,10 +26,11 @@
 #include "Weapon/CollOperator/PlayerKickDownAttackCollOperator.h"
 
 #include "Weapon/Item/King_Sword.h"
-#include "Weapon/Item/Wings.h"
+#include "Weapon/Item/Paraseil.h"
 
 #include "State/PlayerIdleState.h"
 #include "State/PlayerMoveState.h"
+#include "State/PlayerParaseilMoveState.h"
 #include "State/PlayerJumpState.h"
 #include "State/PlayerSkyRiseState.h"
 #include "State/PlayerAttackSlashState.h"
@@ -39,12 +40,17 @@
 #include "State/PlayerReactState.h"
 #include "State/PlayerDieState.h"
 
-Player::Player() : CharacterBase("Data/Parameter/Player/"),
+Player::Player() 
+	: 
+	CharacterBase("Data/Parameter/Player/"),
+	isGravity(true),
 	hitReact(false),
 	isDie(false),
 	isFlyEnd(false),
 	isJustDodge(false),
-	justPhase(JUST_PHASE::None)
+	justPhase(JUST_PHASE::None),
+	king_Sword(nullptr),
+	paraseil(nullptr)
 {
 	hp = 100;
 	invincibleFrame = 60.0f;
@@ -61,7 +67,7 @@ void Player::Load(void)
 	SetDynamicFlg(true);
 
 	// 重力を有効にする
-	SetGravityFlg(true);
+	SetGravityFlg(isGravity);
 
 	// 当たり判定による押し出しを有効にする
 	SetPushFlg(true);
@@ -142,16 +148,14 @@ void Player::Load(void)
 #pragma region 下位アクターの生成(武器)
 
 	// 武器クラス
-	King_Sword* king_Sword = 
-		new King_Sword(-20.0f, trans);
+	king_Sword = new King_Sword(-20.0f, trans);
 
 	AddChildActor(king_Sword);
 
-	//// 翼クラス
-	//Wings* wings =
-	//	new Wings(trans);
+	// 翼クラス
+	paraseil = new Paraseil(trans);
 
-	//AddChildActor(wings);
+	AddChildActor(paraseil);
 
 #pragma endregion
 
@@ -177,6 +181,17 @@ void Player::Load(void)
 		)
 	);
 
+	// パラセール移動状態
+	AddState(
+		STATE::ParaseilMove,
+		new PlayerParaseilMoveState(
+			10.0f,
+			std::bind(&Player::MoveAccel, this, std::placeholders::_1),
+			ACCEL_MAX,
+			[&]() {AnimePlay(ANIME_TYPE::Hang); }
+		)
+	);
+
 	// ジャンプ状態
 	AddState(
 		STATE::Jump,
@@ -190,18 +205,21 @@ void Player::Load(void)
 			[&]() { ChangeState(STATE::Idle); }
 		)
 	);
-
+	
 	// スカイライズ状態
 	AddState(
 		STATE::SkyRise,
 		new PlayerSkyRiseState(
-			20.0f, 
-			isCrouchHold, velocity.y, isGround,
+			10.0f,
+			isCrouchHold, velocity.y,
+			isGravity,isGround,
 			std::bind(&Player::MoveAccel, this, std::placeholders::_1),
 			trans,
 			[&]() { AnimePlay(ANIME_TYPE::Crouch); },
-			[&]() {AnimePlay(ANIME_TYPE::Hover); },
+			[&]() {AnimePlay(ANIME_TYPE::Hang); },
 			std::bind(&Player::IsAnimeEnd, this),
+			[&](bool draw) { paraseil->SetIsDraw(draw); },
+			[&]() { SetGravityFlg(isGravity); },
 			[&]() { ChangeState(STATE::Idle); }
 		)
 	);
@@ -429,6 +447,8 @@ void Player::SubDraw(void)
 //	if (global <= 0.0001f) {
 //		DrawFormatString(0, 230, 0xff0000, "!!! GLOBAL TIME STOPPED !!!");
 //	}
+
+	
 }
 
 void Player::Damage(int damage) {

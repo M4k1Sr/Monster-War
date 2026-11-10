@@ -16,6 +16,9 @@ public:
 		const bool& isCrouchHold,
 
 		float& velocityY,
+
+		bool& isGravity,
+
 		const bool& isGround,
 
 		std::function<void(const Vector3&)> moveAccel,
@@ -23,11 +26,16 @@ public:
 		const Transform& playerTrans,
 
 		std::function<void(void)> PlayAnimeCrouch,
-		std::function<void(void)> PlayAnimeHover,
+		std::function<void(void)> playAnimeHang,
 
 		std::function<bool(void)> isAnimeEnd,
 
-		std::function<void(void)> changeStateIdle
+		std::function<void(bool)> setParaseilDraw,
+
+		std::function<void(void)> setGravityFlg,
+
+		std::function<void(void)> changeStateIdle,
+		std::function<void(void)> changeStateParaseilMove
 	);
 
 	~PlayerSkyRiseState()override = default;
@@ -39,6 +47,8 @@ public:
 	void Enter(void)override;
 	// 更新処理
 	void Update(void)override;
+	// 状態遷移前1度行う終了処理
+	void Exit(void)override;
 
 private:
 
@@ -62,6 +72,9 @@ private:
 	// Y軸加速度
 	float& velocityY;
 
+	// 重力のかかり
+	bool& isGravity;
+
 	// 地面と設置しているか
 	const bool& isGround;
 
@@ -73,14 +86,22 @@ private:
 
 	// しゃがみアニメーションの再生関数のポインタ
 	const std::function<void(void)> playAnimeCrouch;
-	// ホバーアニメーションの再生関数のポインタ
-	const std::function<void(void)> playAnimeHover;
+	// ハングアニメーションの再生関数のポインタ
+	const std::function<void(void)> playAnimeHang;
 
 	// アニメーション終了取得関数のポインタ
 	const std::function<bool(void)> isAnimeEnd;
 
+	// パラセールの描画設定関数のポインタ
+	std::function<void(bool)> setParaseilDraw;
+
+	// 重力の設定関数のポインタ
+	const std::function<void(void)> setGravityFlg;
+
 	// 待機状態に戻る関数のポインタ
 	const std::function<void(void)> changeStateIdle;
+	// パラセール移動状態に行く関数のポインタ
+	const std::function<void(void)> changeStateParaseilMove;
 
 #pragma endregion
 
@@ -106,6 +127,6 @@ private:
 	// チャージ完了フラグ
 	bool chargeCompleteFlg;
 
-	// ホバー更新処理
-	void HoverMove(void);
+	// 上昇更新処理
+	void SkyRiseMove(void);
 };

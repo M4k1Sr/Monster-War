@@ -77,51 +77,58 @@ void King_Sword::Load(void)
 void King_Sword::SubUpdate(void)
 {	
 #ifdef _DEBUG
-	// 握り位置の調整用（調整が終わったら無効化してOK）
-	const float MOVE = 0.5f;
-	const float ROT = Deg2Rad(1.0f);
+	//// 握り位置の調整用（調整が終わったら無効化してOK）
+	//const float MOVE = 0.5f;
+	//const float ROT = Deg2Rad(1.0f);
 
-	if (CheckHitKey(KEY_INPUT_LSHIFT)) {
-		// Shift押しながら → 回転
-		if (CheckHitKey(KEY_INPUT_I)) swordLocalRot.x += ROT;
-		if (CheckHitKey(KEY_INPUT_K)) swordLocalRot.x -= ROT;
-		if (CheckHitKey(KEY_INPUT_J)) swordLocalRot.y += ROT;
-		if (CheckHitKey(KEY_INPUT_L)) swordLocalRot.y -= ROT;
-		if (CheckHitKey(KEY_INPUT_U)) swordLocalRot.z += ROT;
-		if (CheckHitKey(KEY_INPUT_O)) swordLocalRot.z -= ROT;
-	}
-	else {
-		// 何も押さない → 位置
-		if (CheckHitKey(KEY_INPUT_I)) swordLocalPos.x += MOVE;
-		if (CheckHitKey(KEY_INPUT_K)) swordLocalPos.x -= MOVE;
-		if (CheckHitKey(KEY_INPUT_J)) swordLocalPos.y += MOVE;
-		if (CheckHitKey(KEY_INPUT_L)) swordLocalPos.y -= MOVE;
-		if (CheckHitKey(KEY_INPUT_U)) swordLocalPos.z += MOVE;
-		if (CheckHitKey(KEY_INPUT_O)) swordLocalPos.z -= MOVE;
-	}
+	//if (CheckHitKey(KEY_INPUT_LSHIFT)) {
+	//	// Shift押しながら → 回転
+	//	if (CheckHitKey(KEY_INPUT_I)) swordLocalRot.x += ROT;
+	//	if (CheckHitKey(KEY_INPUT_K)) swordLocalRot.x -= ROT;
+	//	if (CheckHitKey(KEY_INPUT_J)) swordLocalRot.y += ROT;
+	//	if (CheckHitKey(KEY_INPUT_L)) swordLocalRot.y -= ROT;
+	//	if (CheckHitKey(KEY_INPUT_U)) swordLocalRot.z += ROT;
+	//	if (CheckHitKey(KEY_INPUT_O)) swordLocalRot.z -= ROT;
+	//}
+	//else {
+	//	// 何も押さない → 位置
+	//	if (CheckHitKey(KEY_INPUT_I)) swordLocalPos.x += MOVE;
+	//	if (CheckHitKey(KEY_INPUT_K)) swordLocalPos.x -= MOVE;
+	//	if (CheckHitKey(KEY_INPUT_J)) swordLocalPos.y += MOVE;
+	//	if (CheckHitKey(KEY_INPUT_L)) swordLocalPos.y -= MOVE;
+	//	if (CheckHitKey(KEY_INPUT_U)) swordLocalPos.z += MOVE;
+	//	if (CheckHitKey(KEY_INPUT_O)) swordLocalPos.z -= MOVE;
+	//}
 #endif
 
-	// プレイヤーモデルの手フレームのワールド行列（アニメ反映済み）
-	MATRIX handMat = MV1GetFrameLocalWorldMatrix(playerTrans.model, 21);
+	// 最新の位置、向きなどをセット
+	MV1SetMatrix(playerTrans.model, playerTrans.GetWorldMatrix());
 
-	// 剣のローカル変換（手に対するオフセット）
-	MATRIX scaleMat = MGetScale(VGet(trans.scale.x, trans.scale.y, trans.scale.z));
-	MATRIX rotMat = MGetRotX(swordLocalRot.x);     // 必要に応じてXYZ合成
-	rotMat = MMult(rotMat, MGetRotY(swordLocalRot.y));
-	rotMat = MMult(rotMat, MGetRotZ(swordLocalRot.z));
-	MATRIX transMat = MGetTranslate(VGet(swordLocalPos.x, swordLocalPos.y, swordLocalPos.z));
+	// 手のワールド行列を取得
+	const MATRIX handMat = MV1GetFrameLocalWorldMatrix(playerTrans.model, 21);
 
-	MATRIX localMat = MMult(MMult(scaleMat, rotMat), transMat);
+	// パラセールのローカル行列
+	MATRIX localMat = MGetScale(trans.scale.ToVECTOR());
+	localMat = MMult(localMat, MatrixAllMultXYZ({ swordLocalRot }));
+	localMat = MMult(localMat, MGetTranslate(swordLocalPos.ToVECTOR()));
 
-	// 子(剣) × 親(手) の順で合成
-	MATRIX mat = MMult(localMat, handMat);
+	// 手とパラセールの行列を合成
+	const MATRIX mat = MMult(localMat, handMat);
 
-	// 行列をTransformに渡す（Draw → Attach で適用される）
+	// 描画用
 	trans.useMatrix = true;
 	trans.matrix = mat;
+	trans.pos = Vector3(mat.m[3][0], mat.m[3][1], mat.m[3][2]);
 
-	// 当たり判定用に位置を保存
-	trans.pos = VTransform(VGet(0, 0, 0), mat);
+	// 向き
+	MATRIX rotOnly = MGetIdent();
+	for (int i = 0; i < 3; i++) {
+		const Vector3 row = Vector3(mat.m[i][0], mat.m[i][1], mat.m[i][2]).Normalized();
+		rotOnly.m[i][0] = row.x;
+		rotOnly.m[i][1] = row.y;
+		rotOnly.m[i][2] = row.z;
+	}
+	trans.rotation = Quaternion::FromMatrix(rotOnly);	trans.pos = VTransform(VGet(0, 0, 0), mat);
 }
 
 void King_Sword::SubDraw(void)

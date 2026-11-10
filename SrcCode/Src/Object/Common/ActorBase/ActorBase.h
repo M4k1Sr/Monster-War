@@ -81,6 +81,13 @@ public:
 		return TimeScale::GetTimeScale(timeGroup)* ownTimeScale;
 	}
 
+	// 描画判定の取得（true = 「描画する」、false = 「描画しない」）
+	bool GetIsDraw(void)const { return isDraw; }
+	// 描画判定の設定（true = 「描画する」、false = 「描画しない」）
+	void SetIsDraw(bool flg) { isDraw = flg; }
+	// 描画判定の設定（引数省略で現在の逆にスイッチ）
+	void SetIsDraw(void) { isDraw = !isDraw; }
+
 private:
 
 	// 当たり判定情報
@@ -266,12 +273,6 @@ protected:
 	// 重力の設定の状態を取得
 	bool GetGravityFlg(void)const { return gravityFlg; }
 
-	// 描画判定の取得（true = 「描画する」、false = 「描画しない」）
-	bool GetIsDraw(void)const { return isDraw; }
-	// 描画判定の設定（true = 「描画する」、false = 「描画しない」）
-	void SetIsDraw(bool flg) { isDraw = flg; }
-	// 描画判定の設定（引数省略で現在の逆にスイッチ）
-	void SetIsDraw(void) { isDraw = !isDraw; }
 
 	// 描画タイプの設定
 	void SetDrawType(const ACTOR_DRAW_TYPE& type) { drawType = type; }

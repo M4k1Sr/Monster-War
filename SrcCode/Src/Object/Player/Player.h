@@ -4,6 +4,9 @@
 
 class EnemyManager;
 
+class Paraseil;
+class King_Sword;
+
 class Player : public CharacterBase
 {
 public:
@@ -28,6 +31,7 @@ private:
 
 		Idle,
 		Move,
+		ParaseilMove,
 		Jump,
 		
 		SkyRise,
@@ -94,6 +98,8 @@ private:
 
 		BackFlip,
 
+		Hang,
+
 		Max
 	};
 
@@ -131,6 +137,8 @@ private:
 		0.65f,	// Float
 
 		0.8f,	// BackFlip
+
+		0.65f,	// Hang
 	};
 
 	// アニメーションループ再生フラグテーブル
@@ -167,7 +175,19 @@ private:
 		true,	// Float
 
 		false,	// BackFlip
+
+		true,	// Hang
 	};
+#pragma endregion
+
+#pragma region 武器・パラセールなどのクラス
+
+	// キングソード
+	King_Sword* king_Sword;
+
+	// パラセール
+	Paraseil* paraseil;
+
 #pragma endregion
 
 #pragma region ジャスト回避・ラッシュ攻撃系定義
@@ -261,6 +281,12 @@ private:
 #pragma endregion
 
 #pragma region スカイライズスキル系変数
+	
+	// パラセール描画判定
+	bool isParaseilDraw;
+
+	// 重力付与判定
+	bool isGravity;
 	
 	// ジャンプボタンがホールドされているか検知
 	bool isCrouchHold;
