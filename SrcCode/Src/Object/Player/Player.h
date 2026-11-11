@@ -1,6 +1,9 @@
 #pragma once
+#include <functional>
 
 #include "../Common/CharacterBase/CharacterBase.h"
+
+#include "GroundInfo.h"
 
 class EnemyManager;
 
@@ -22,8 +25,10 @@ public:
 	// エネミー座標渡し
 	void SetEnemyManager(EnemyManager* manager) { enemyManager = manager; }
 
-private:
+	void SetGroundRay(std::function<GroundInfo(const Vector3&, float)> func) { groundRay = func; }
 
+private:
+	
 	// 状態定義
 	enum class STATE
 	{
@@ -180,6 +185,20 @@ private:
 	};
 #pragma endregion
 
+#pragma region 真下までのレイ情報などの変数や定数
+
+	// カプセル最下点までのオフセット（60 + 半径30）
+	static constexpr float FOOT_OFFSET = 90.0f;
+	static constexpr float GROUND_RAY_LENGTH = 5000.0f;
+
+	std::function<GroundInfo(const Vector3&, float)> groundRay;
+	GroundInfo groundInfo;
+
+	// 足元から地面までの高さ
+	float footHeight = 99999.0f;
+
+#pragma endregion
+
 #pragma region 武器・パラセールなどのクラス
 
 	// キングソード
@@ -222,6 +241,8 @@ private:
 	void SubUpdate(void)override;
 
 	void SubDraw(void)override;
+
+	bool isOpenParaseil;
 
 #pragma region ダメージ関係変数・関数
 

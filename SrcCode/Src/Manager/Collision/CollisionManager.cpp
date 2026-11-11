@@ -2494,6 +2494,75 @@ void CollisionManager::MoveCollider(ColliderBase* ownCollider, const Vector3& pu
 	if (pushNormal.y > 0.5f) { ownCollider->CallOnGrounded(ownCollider->GetTag(), otherCollider); }
 }
 
+bool CollisionManager::RayDownToBox(const Vector3& origin, float maxLength, BoxCollider* box, float& outT, Vector3& outN)
+{
+	const Vector3 dir = Vector3::Yonly(-1.0f);
+	const Vector3 rel = origin - box->GetPos();
+	const std::array<Vector3, 3> axes = box->GetAxes();
+	const Vector3 half = box->GetHalfSize();
+	const float h[3] = { half.x, half.y, half.z };
+
+	float tMin = 0.0f;
+	float tMax = maxLength;
+	Vector3 hitN = axes[1];
+
+	for (int i = 0; i < 3; i++) {
+		const float p = rel.Dot(axes[i]);
+		const float v = dir.Dot(axes[i]);
+
+		// 軸と平行：範囲外なら外れ
+		if (std::abs(v) < COLLISION_EPSILON) {
+			if (p < -h[i] || p > h[i]) { return false; }
+			continue;
+		}
+
+		float t1 = (-h[i] - p) / v;
+		float t2 = (h[i] - p) / v;
+		float sign = -1.0f;
+		if (t1 > t2) { std::swap(t1, t2); sign = 1.0f; }
+
+		if (t1 > tMin) { tMin = t1; hitN = axes[i] * sign; }
+		tMax = (std::min)(tMax, t2);
+		if (tMin > tMax) { return false; }
+	}
+
+	outT = tMin;
+	outN = hitN;
+	return true;
+}
+
+bool CollisionManager::RayDownToMesh(const Vector3& origin, float maxLength, MeshCollider* mesh, float& outT, Vector3& outN)
+{
+	const Vector3 end = origin + Vector3::Yonly(-maxLength);
+
+	// レイ周りの細い柱でBVHを絞る
+	const ColliderBase::AABB column(
+		Vector3(origin.x - 1.0f, end.y, origin.z - 1.0f),
+		Vector3(origin.x + 1.0f, origin.y, origin.z + 1.0f)
+	);
+	mesh->QueryTriangles(column, meshQueryBufferA);
+
+	bool isHit = false;
+	float nearestRate = FLT_MAX;
+
+	for (unsigned int index : meshQueryBufferA) {
+		Vector3 p0, p1, p2, tn;
+		mesh->GetWorldTriangle(index, p0, p1, p2, tn);
+
+		float rate = 0.0f;
+		Vector3 hitPoint, hitNormal;
+		if (!SegmentToTriangle(origin, end, p0, p1, p2, rate, hitPoint, hitNormal)) { continue; }
+		if (rate >= nearestRate) { continue; }
+
+		nearestRate = rate;
+		outN = (hitNormal.y < 0.0f) ? -hitNormal : hitNormal;	// 上向きに揃える
+		isHit = true;
+	}
+
+	if (isHit) { outT = nearestRate * maxLength; }
+	return isHit;
+}
+
 void CollisionManager::ApplyPush(ColliderBase* a, ColliderBase* b, const Vector3& normal, float overlap)const
 {
 	ApplyPush(a, b, normal * overlap);
@@ -2575,6 +2644,42 @@ void CollisionManager::DrawChunkGrid(const Vector3& cameraPos) const
 			);
 		}
 	}
+}
+
+GroundInfo CollisionManager::RayCastDown(const Vector3& origin, float maxLength)
+{
+	GroundInfo best;
+	float bestT = maxLength;
+
+	for (ColliderBase* c : groupColliders[(int)COLLIDER_GROUP::Stage].colliders) {
+		if (!c || !c->GetJudgeFlg()) { continue; }
+
+		float t = 0.0f;
+		Vector3 n;
+		bool hit = false;
+
+		switch (c->GetShape()) {
+		case COLLIDER_SHAPE::Box:
+			hit = RayDownToBox(origin, maxLength, static_cast<BoxCollider*>(c), t, n);
+			break;
+		case COLLIDER_SHAPE::Mesh:
+			hit = RayDownToMesh(origin, maxLength, static_cast<MeshCollider*>(c), t, n);
+			break;
+		default:
+			break;
+		}
+
+		if (!hit || t >= bestT) { continue; }
+
+		bestT = t;
+		best.hit = true;
+		best.distance = t;
+		best.point = origin + Vector3::Yonly(-t);
+		best.normal = n;
+		best.tag = c->GetTag();
+	}
+
+	return best;
 }
 
 

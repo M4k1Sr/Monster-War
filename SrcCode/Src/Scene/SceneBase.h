@@ -140,6 +140,9 @@ protected:
 	// 当たり判定管理クラスを使用するかどうか
 	virtual bool UseCollisionManager(void)const { return true; }
 
+	// 
+	CollisionManager* GetCollision(void) const { return collision; }
+
 private:
 
 	// 二重Load / 二重Releaseを防止する「状態」

@@ -6,6 +6,8 @@
 
 #include "../../Object/Common/Collider/ColliderBase.h"
 
+#include "../../Object/Player/GroundInfo.h"
+
 class LineCollider;
 class SphereCollider;
 class CapsuleCollider;
@@ -117,6 +119,9 @@ public:
 			colliders.colliders.clear();
 		}
 	}
+
+	// 真下レイ（Stageグループだけ見る）
+	GroundInfo RayCastDown(const Vector3& origin, float maxLength);
 
 private:
 
@@ -317,4 +322,9 @@ private:
 	void MoveCollider(ColliderBase* ownCollider, const Vector3& pushVector, const ColliderBase& otherCollider)const;
 #pragma endregion
 
+	// レイ × ボックス
+	bool RayDownToBox(const Vector3& origin, float maxLength, BoxCollider* box, float& outT, Vector3& outN);
+	
+	// レイ × メッシュ
+	bool RayDownToMesh(const Vector3& origin, float maxLength, MeshCollider* mesh, float& outT, Vector3& outN);
 };

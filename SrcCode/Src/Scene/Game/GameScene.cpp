@@ -9,6 +9,8 @@
 #include "../../Manager/Sound/SoundManager.h"
 #include "../../Manager/Font/FontManager.h"
 
+#include "../../Manager/Collision/CollisionManager.h"
+
 #include "../../Manager/Camera/FollowRemote/FollowRemoteCamera.h"
 #include "../../Manager/Camera/FollowAction/FollowActionCamera.h"
 #include "../../Manager/Camera/FollowYaw/FollowYawCamera.h"
@@ -54,6 +56,14 @@ void GameScene::SubPostLoad(void)
 
 	// プレイヤーに敵管理クラスを渡す（これを追加）
 	ActorSerch<Player>(actors)->SetEnemyManager(ActorSerch<EnemyManager>(actors));
+
+	// プレイヤーに真下レイの関数を渡す（追加）
+	ActorSerch<Player>(actors)->SetGroundRay(
+		[this](const Vector3& origin, float length) {
+			CollisionManager* col = GetCollision();
+			return col ? col->RayCastDown(origin, length) : GroundInfo();
+		}
+	);
 
 	AddActor(new Stage);
 

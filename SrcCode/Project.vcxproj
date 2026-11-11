@@ -238,6 +238,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Scene\StageSelect\StageSelectScene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Player\GroundInfo.h" />
     <ClInclude Include="Src\Object\Player\State\PlayerParaseilMoveState.h" />
     <ClInclude Include="Src\Object\Player\State\PlayerSkyRiseState.h" />
     <ClInclude Include="Src\Object\Player\Weapon\CollOperator\PlayerBackFlipCollOperator.h" />

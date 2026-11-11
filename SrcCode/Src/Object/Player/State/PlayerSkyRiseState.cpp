@@ -137,7 +137,7 @@ void PlayerSkyRiseState::Update(void)
 			}
 		}
 	}
-										 break;
+	break;
 
 	case PlayerSkyRiseState::STEP::Rise: {
 		// 上昇
@@ -158,14 +158,10 @@ void PlayerSkyRiseState::Update(void)
 
 	case PlayerSkyRiseState::STEP::Stop: {
 		// 上昇停止
-		velocityY = 0.0f;
+		velocityY = 0;
 
-		// アニメーション終了
-		if (velocityY == 0.0f) {
-
-			//// 待機状態に戻り終了
-			//changeStateIdle();
-		}
+		// パラセール移動状態に遷移し終了
+		changeStateParaseilMove();
 
 		break;
 	}
@@ -175,6 +171,8 @@ void PlayerSkyRiseState::Update(void)
 
 void PlayerSkyRiseState::Exit(void)
 {
+	setParaseilDraw(false);
+
 	// 重力を必ず付与
 	if (!isGravity) {
 		isGravity = true;

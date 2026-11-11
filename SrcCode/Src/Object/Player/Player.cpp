@@ -43,6 +43,7 @@
 Player::Player() 
 	: 
 	CharacterBase("Data/Parameter/Player/"),
+	isOpenParaseil(false),
 	isGravity(true),
 	hitReact(false),
 	isDie(false),
@@ -186,9 +187,16 @@ void Player::Load(void)
 		STATE::ParaseilMove,
 		new PlayerParaseilMoveState(
 			10.0f,
+			300.0f,
+			velocity.y,
+			footHeight, isGround,isOpenParaseil,
 			std::bind(&Player::MoveAccel, this, std::placeholders::_1),
 			ACCEL_MAX,
-			[&]() {AnimePlay(ANIME_TYPE::Hang); }
+			[&]() {AnimePlay(ANIME_TYPE::Hang); },
+			[&]() {AnimePlay(ANIME_TYPE::JumpEnd); },
+			[&]() {return IsAnimeEnd(); },
+			[&](bool draw) { paraseil->SetIsDraw(draw); },
+			[&]() { ChangeState(STATE::Idle); }
 		)
 	);
 
@@ -196,7 +204,7 @@ void Player::Load(void)
 	AddState(
 		STATE::Jump,
 		new PlayerJumpState(
-			20.0f, velocity.y, isGround,
+			50.0f, velocity.y, isGround,
 			std::bind(&Player::MoveAccel, this, std::placeholders::_1),
 			[&]() { AnimePlay(ANIME_TYPE::Jump); },
 			[&]() { AnimePlay(ANIME_TYPE::Jumping); },
@@ -220,7 +228,8 @@ void Player::Load(void)
 			std::bind(&Player::IsAnimeEnd, this),
 			[&](bool draw) { paraseil->SetIsDraw(draw); },
 			[&]() { SetGravityFlg(isGravity); },
-			[&]() { ChangeState(STATE::Idle); }
+			[&]() { ChangeState(STATE::Idle); },
+			[&]() { ChangeState(STATE::ParaseilMove); }
 		)
 	);
 
@@ -314,6 +323,15 @@ void Player::Load(void)
 	// 「待機状態」->「スカイライズ状態」の自動遷移登録
 	RegisterStateTransition(STATE::Idle, STATE::SkyRise);
 
+	// 「待機状態」->「パラセール移動状態」の自動遷移登録
+	RegisterStateTransition(STATE::Idle, STATE::ParaseilMove);
+	// 「移動状態」->「パラセール移動状態」の自動遷移登録
+	RegisterStateTransition(STATE::Move, STATE::ParaseilMove);
+	// 「ジャンプ状態」->「パラセール移動状態」の自動遷移登録
+	RegisterStateTransition(STATE::Jump, STATE::ParaseilMove);
+	// 「スカイライズ状態」->「パラセール移動状態」の自動遷移登録
+	RegisterStateTransition(STATE::SkyRise, STATE::ParaseilMove);
+
 	// 「待機状態」->「攻撃（斬撃）状態」の自動遷移登録
 	RegisterStateTransition(STATE::Idle, STATE::AttackSlash);
 	// 「移動状態」->「攻撃（斬撃）状態」の自動遷移登録
@@ -375,6 +393,12 @@ void Player::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const C
 
 void Player::SubUpdate(void)
 {
+	// 真下へのレイ計算
+	if (groundRay) {
+		groundInfo = groundRay(trans.pos, GROUND_RAY_LENGTH);
+		footHeight = groundInfo.hit ? (std::max)(0.0f, groundInfo.distance - FOOT_OFFSET) : 99999.0f;
+	}
+
 	// ジャスト回避
 	UpdateJustDodge();
 
@@ -430,6 +454,14 @@ void Player::SubUpdate(void)
 
 void Player::SubDraw(void)
 {
+	if (App::GetIns().IsDrawDebug()) {
+		const unsigned int color = groundInfo.hit ? 0x00ff00 : 0xff0000;
+		const Vector3 to = groundInfo.hit ? groundInfo.point : trans.pos + Vector3::Yonly(-GROUND_RAY_LENGTH);
+		DrawLine3D(trans.pos.ToVECTOR(), to.ToVECTOR(), color);
+		if (groundInfo.hit) { DrawSphere3D(groundInfo.point.ToVECTOR(), 8.0f, 8, color, color, true); }
+		DrawFormatString(300, 20, 0xffffff, "footHeight %.1f", footHeight);
+	}
+
 	DrawFormatString(300, 0, 0xffffff, "PlayerHP %d", hp);
 
 //	const float global = TimeScale::Get();
@@ -448,7 +480,6 @@ void Player::SubDraw(void)
 //		DrawFormatString(0, 230, 0xff0000, "!!! GLOBAL TIME STOPPED !!!");
 //	}
 
-	
 }
 
 void Player::Damage(int damage) {

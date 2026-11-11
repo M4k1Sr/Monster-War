@@ -43,6 +43,7 @@ PlayerJumpState::PlayerJumpState(
 void PlayerJumpState::OwnStateConditionUpdate(void)
 {
 	// ジャンプキーのダウントリガーで遷移
+	if (!isGround) { return; }
 	if (Input::GetIns().GetInfo(KEY_TYPE::PlayerJump).down) { OwnChangeState(); }
 }
 
@@ -81,16 +82,15 @@ void PlayerJumpState::Update(void)
 	case PlayerJumpState::STEP::Jumping: {
 		// 滞空
 
-		isGround;
-		//// 着地
-		//if (isGround) {
+		// 着地
+		if (isGround) {
 
-		//	// 着地のアニメーションを再生
-		//	playAnimeJumpEnd();
+			// 着地のアニメーションを再生
+			playAnimeJumpEnd();
 
-		//	// 次のステップへ
-		//	step = STEP::JumpEnd;
-		//}
+			// 次のステップへ
+			step = STEP::JumpEnd;
+		}
 
 		break;
 	}
@@ -98,7 +98,7 @@ void PlayerJumpState::Update(void)
 	case PlayerJumpState::STEP::JumpEnd: {
 		// 着地
 
-		// この時点から入力によって再度ジャンプが可能にしておく
+		// この時点から入力によって再度ジャンプを可能にしておく
 		OwnStateConditionUpdate();
 
 		// アニメーション終了
