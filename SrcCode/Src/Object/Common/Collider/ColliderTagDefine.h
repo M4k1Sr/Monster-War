@@ -34,6 +34,7 @@ enum class COLLIDER_TAG
 	GobKingSwing,
 
 	Stage,
+	WindMill,
 	IceStage,
 	Water,
 

@@ -91,11 +91,12 @@
     <ClCompile Include="Src\Object\Player\Weapon\Item\Paraseil.cpp" />
     <ClCompile Include="Src\Manager\Collision\ContactSolver.cpp" />
     <ClCompile Include="Src\Manager\Collision\CurrentCollisionManager.cpp" />
-    <ClCompile Include="Src\Object\Common\MotionController\GroundMotionController.cpp" />
-    <ClCompile Include="Src\Object\Common\PhysicsBody\PhysicsBody.cpp" />
     <ClCompile Include="Src\Object\Common\SkyBox\SkyBox.cpp" />
-    <ClCompile Include="Src\Object\Common\Shader\GoalFieldShader.cpp" />
     <ClCompile Include="Src\Object\Common\Shader\ModelDamageFlashShader.cpp" />
+    <ClCompile Include="Src\Object\Common\Shader\GoalFieldShader.cpp" />
+    <ClCompile Include="Src\Object\Common\PhysicsBody\PhysicsBody.cpp" />
+    <ClCompile Include="Src\Object\Common\MotionController\GroundMotionController.cpp" />
+    <ClCompile Include="Src\Object\Stage\WindMill.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\resource.h" />
@@ -213,13 +214,14 @@
     <ClInclude Include="Src\Object\Player\GroundInfo.h" />
     <ClInclude Include="Src\Manager\Collision\ContactSolver.h" />
     <ClInclude Include="Src\Manager\Collision\CurrentCollisionManager.h" />
+    <ClInclude Include="Src\Object\Common\SkyBox\SkyBox.h" />
+    <ClInclude Include="Src\Object\Common\Shader\ModelDamageFlashShader.h" />
+    <ClInclude Include="Src\Object\Common\Shader\GoalFieldShader.h" />
+    <ClInclude Include="Src\Object\Common\PhysicsBody\PhysicsBody.h" />
     <ClInclude Include="Src\Object\Common\DebugObject\IceBoxDebugObject.h" />
     <ClInclude Include="Src\Object\Common\MotionController\GroundMotionController.h" />
     <ClInclude Include="Src\Object\Common\MotionController\MotionControllerBase.h" />
-    <ClInclude Include="Src\Object\Common\PhysicsBody\PhysicsBody.h" />
-    <ClInclude Include="Src\Object\Common\SkyBox\SkyBox.h" />
-    <ClInclude Include="Src\Object\Common\Shader\GoalFieldShader.h" />
-    <ClInclude Include="Src\Object\Common\Shader\ModelDamageFlashShader.h" />
+    <ClInclude Include="Src\Object\Stage\WindMill.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Shader\Common\Pixel\ModelFog.hlsli" />
@@ -269,27 +271,28 @@
     <None Include="Data\Shader\RimLightPS.cso" />
     <None Include="Data\Shader\RimLightVS_1Frame.cso" />
     <None Include="Data\Shader\RimLightVS_4Frame.cso" />
+    <None Include="Data\Shader\RimLightVS_8Frame.cso" />
     <None Include="Data\Shader\RimLightVS_NMap1Frame.cso" />
     <None Include="Data\Shader\RimLightVS_NMap4Frame.cso" />
-    <None Include="Data\Shader\ScanNoisePS.cso" />
-    <None Include="Data\Shader\ShadowPS.cso" />
-    <None Include="Data\Shader\ShadowVS_8Frame.cso" />
-    <None Include="Data\Shader\ShadowVS_NMap4Frame.cso" />
-    <None Include="Data\Shader\VignettePS.cso" />
-    <None Include="Data\Shader\WaterVS.cso" />
-    <None Include="Data\Shader\WavePS.cso" />
-    <None Include="Data\Shader\WaterPS.cso" />
-    <None Include="Data\Shader\ShadowVS_NMap8Frame.cso" />
-    <None Include="Data\Shader\ShadowVS_NMap1Frame.cso" />
-    <None Include="Data\Shader\ShadowVS_4Frame.cso" />
-    <None Include="Data\Shader\ShadowVS_1Frame.cso" />
-    <None Include="Data\Shader\SepiaPS.cso" />
     <None Include="Data\Shader\RimLightVS_NMap8Frame.cso" />
-    <None Include="Data\Shader\RimLightVS_8Frame.cso" />
-    <None Include="Data\Sound\SoundTable.csv" />
-    <None Include="Data\Sound\SoundTableEdit.xlsm" />
+    <None Include="Data\Shader\ScanNoisePS.cso" />
+    <None Include="Data\Shader\SepiaPS.cso" />
+    <None Include="Data\Shader\ShadowPS.cso" />
+    <None Include="Data\Shader\ShadowVS_1Frame.cso" />
+    <None Include="Data\Shader\ShadowVS_4Frame.cso" />
+    <None Include="Data\Shader\ShadowVS_8Frame.cso" />
+    <None Include="Data\Shader\ShadowVS_NMap1Frame.cso" />
+    <None Include="Data\Shader\ShadowVS_NMap4Frame.cso" />
+    <None Include="Data\Shader\ShadowVS_NMap8Frame.cso" />
     <None Include="Data\Shader\SkyBoxPS.cso" />
     <None Include="Data\Shader\SkyBoxVS.cso" />
+    <None Include="Data\Shader\VignettePS.cso" />
+    <None Include="Data\Shader\WaterPS.cso" />
+    <None Include="Data\Shader\WaterVS.cso" />
+    <None Include="Data\Shader\WavePS.cso" />
+    <None Include="Project.exe" />
+    <None Include="Project.exp" />
+    <None Include="Project.pdb" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shader\Depth\DepthPS.hlsl" />
@@ -340,5 +343,11 @@
     <FxCompile Include="Src\Shader\Default\DefaultVS_NMap1Frame.hlsl" />
     <FxCompile Include="Src\Shader\Default\DefaultVS_NMap4Frame.hlsl" />
     <FxCompile Include="Src\Shader\Default\DefaultVS_NMap8Frame.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Log.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="Project.lib" />
   </ItemGroup>
 </Project>

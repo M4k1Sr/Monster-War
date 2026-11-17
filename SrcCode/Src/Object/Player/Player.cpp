@@ -56,7 +56,7 @@ Player::Player()
 	king_Sword(nullptr),
 	paraseil(nullptr)
 {
-	hp = 100;
+	hp = 1000;
 	invincibleFrame = 60.0f;
 	isRush = false;
 	SetTimeGroup(TimeScale::GROUP::Player);
@@ -510,6 +510,7 @@ void Player::SubDraw(void)
 
 	DrawFormatString(300, 0, 0xffffff, "PlayerHP %d", hp);
 
+	DrawFormatString(800, 150, 0xffffff, "posX:%.3f posY:%.3f posZ:%.3f", trans.pos.x, trans.pos.y, trans.pos.z);
 //	const float global = TimeScale::Get();
 //	const float gPlayer = TimeScale::GetTimeScale(TimeScale::GROUP::Player);
 //	const float gEnemy = TimeScale::GetTimeScale(TimeScale::GROUP::Enemy);

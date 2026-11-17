@@ -72,7 +72,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(ProjectDir)</OutDir>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -229,6 +229,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Object\Player\State\PlayerKickDownAttackState.cpp" />
     <ClCompile Include="Src\Object\Player\State\PlayerMoveState.cpp" />
     <ClCompile Include="Src\Object\Player\Weapon\Item\Paraseil.cpp" />
+    <ClCompile Include="Src\Object\Stage\WindMill.cpp" />
     <ClCompile Include="Src\Scene\Common\PostEffect\CRTPostEffect\CRTPostEffect.cpp" />
     <ClCompile Include="Src\Scene\Common\PostEffect\FocusLinesPostEffect\FocusLinesPostEffect.cpp" />
     <ClCompile Include="Src\Scene\Common\PostEffect\GrayScalePostEffect\GrayScalePostEffect.cpp" />
@@ -343,6 +344,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Object\Player\State\PlayerKickDownAttackState.h" />
     <ClInclude Include="Src\Object\Player\State\PlayerMoveState.h" />
     <ClInclude Include="Src\Object\Player\Weapon\Item\Paraseil.h" />
+    <ClInclude Include="Src\Object\Stage\WindMill.h" />
     <ClInclude Include="Src\Object\Water.h" />
     <ClInclude Include="Src\pch.h" />
     <ClInclude Include="Src\Scene\Common\PostEffect\CRTPostEffect\CRTPostEffect.h" />
@@ -416,8 +418,9 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <None Include="Data\Shader\WaterPS.cso" />
     <None Include="Data\Shader\WaterVS.cso" />
     <None Include="Data\Shader\WavePS.cso" />
-    <None Include="Data\Sound\SoundTable.csv" />
-    <None Include="Data\Sound\SoundTableEdit.xlsm" />
+    <None Include="Project.exe" />
+    <None Include="Project.exp" />
+    <None Include="Project.pdb" />
     <None Include="Src\Shader\Common\Pixel\ModelFog.hlsli" />
     <None Include="Src\Shader\Common\Pixel\ModelLighting.hlsli" />
     <None Include="Src\Shader\Common\Pixel\ModelPixelCommon.hlsli" />
@@ -628,6 +631,12 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Log.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="Project.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
