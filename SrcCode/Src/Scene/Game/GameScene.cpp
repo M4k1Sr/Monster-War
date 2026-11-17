@@ -33,7 +33,7 @@
 
 #include "../../Object/Stage/Stage.h"
 
-#include "../../Object/Stage/WindMill.h"
+#include "../../Object/Stage/Wind/WindMill.h"
 
 #include "../../Object/Water.h"
 

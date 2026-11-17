@@ -41,6 +41,7 @@
 #include "State/PlayerKickDownAttackState.h"
 #include "State/PlayerBackFlipState.h"
 #include "State/PlayerReactState.h"
+#include "State/PlayerFlyingState.h"
 #include "State/PlayerDieState.h"
 
 Player::Player() 
@@ -327,7 +328,22 @@ void Player::Load(void)
 	//	)
 	//);
 
-	//// 死亡(吹っ飛び)状態
+	// 吹っ飛び状態
+	AddState(
+		STATE::Flying,
+		new PlayerFlyingState(
+			isImpact, 
+			isFlyEnd,
+			[&]() { return trans.rotation.Rotate(Vector3(0.0f, 0.0f, 1.0f)); },   // 前方向
+			[&](const Vector3& v) {GetPhysicsBody()->AddVelocity(v); },
+			[&]() { AnimePlay(ANIME_TYPE::Flying); },
+			[&]() { AnimePlay(ANIME_TYPE::GetUp); },
+			[&]() { return IsAnimeEnd(); }
+		)
+	);
+
+
+	//// 死亡状態
 	//AddState(
 	//	STATE::Flying,
 	//	new PlayerDieState(
@@ -382,6 +398,19 @@ void Player::Load(void)
 	// 「移動状態」->「回避状態」の自動遷移登録
 	RegisterStateTransition(STATE::Move, STATE::BackFlip);
 
+	// 「待機状態」->「吹っ飛び状態」の自動遷移登録
+	RegisterStateTransition(STATE::Idle, STATE::Flying);
+	// 「移動状態」->「吹っ飛び状態」の自動遷移登録
+	RegisterStateTransition(STATE::Move, STATE::Flying);
+	// 「攻撃(斬撃)状態」->「吹っ飛び状態」の自動遷移登録
+	RegisterStateTransition(STATE::AttackSlash, STATE::Flying);
+	// 「回転攻撃状態」->「吹っ飛び状態」の自動遷移登録
+	RegisterStateTransition(STATE::AttackRollingSlash, STATE::Flying);
+	// 「パラセール移動状態」->「吹っ飛び状態」の自動遷移登録
+	RegisterStateTransition(STATE::ParaseilMove, STATE::Flying);
+	// 「スカイライズ状態」->「吹っ飛び状態」の自動遷移登録
+	RegisterStateTransition(STATE::SkyRise, STATE::Flying);
+
 
 	//// 「待機状態」->「ヒットリアクション状態」の自動遷移登録
 	//RegisterStateTransition(STATE::Idle, STATE::React);
@@ -422,6 +451,11 @@ void Player::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const C
 		if (!IsDead()) { hitReact = true; }
 	}
 
+	// プロペラの当たり判定
+	if (other.GetTag() == COLLIDER_TAG::WindMill) {
+		isImpact = true;
+		Damage(10);
+	}
 }
 
 void Player::SubUpdate(void)

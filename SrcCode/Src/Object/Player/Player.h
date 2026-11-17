@@ -49,6 +49,7 @@ private:
 		React,
 		Flying,
 
+		Die,
 		Max
 	};
 	
@@ -254,6 +255,9 @@ private:
 
 	// €–S‚µ‚½‚©
 	bool isDie;
+
+	// ‚Á”ò‚Ô‚Ù‚Ç‚ÌÕŒ‚‚ğó‚¯‚½‚©
+	bool isImpact;
 
 	// ©g‚ª‚Á”ò‚ÑI‚í‚Á‚½‚©
 	bool isFlyEnd;

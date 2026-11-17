@@ -96,7 +96,9 @@
     <ClCompile Include="Src\Object\Common\Shader\GoalFieldShader.cpp" />
     <ClCompile Include="Src\Object\Common\PhysicsBody\PhysicsBody.cpp" />
     <ClCompile Include="Src\Object\Common\MotionController\GroundMotionController.cpp" />
-    <ClCompile Include="Src\Object\Stage\WindMill.cpp" />
+    <ClCompile Include="Src\Object\Stage\Wind\WindMill.cpp" />
+    <ClCompile Include="Src\Object\Stage\Wind\WindZone.cpp" />
+    <ClCompile Include="Src\Object\Player\State\PlayerFlyingState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\resource.h" />
@@ -221,7 +223,9 @@
     <ClInclude Include="Src\Object\Common\DebugObject\IceBoxDebugObject.h" />
     <ClInclude Include="Src\Object\Common\MotionController\GroundMotionController.h" />
     <ClInclude Include="Src\Object\Common\MotionController\MotionControllerBase.h" />
-    <ClInclude Include="Src\Object\Stage\WindMill.h" />
+    <ClInclude Include="Src\Object\Stage\Wind\WindMill.h" />
+    <ClInclude Include="Src\Object\Stage\Wind\WindZone.h" />
+    <ClInclude Include="Src\Object\Player\State\PlayerFlyingState.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Shader\Common\Pixel\ModelFog.hlsli" />

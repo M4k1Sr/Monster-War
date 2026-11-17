@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Common/ActorBase/ActorBase.h"
+#include "../../../Object/Common/ActorBase/ActorBase.h"
 
 // プロペラの構造体
 struct WindMillParam {
@@ -18,7 +18,6 @@ public:
 	WindMill(const WindMillParam& param);
 	~WindMill()override = default;
 
-	// 読み込み処理
 	void Load(void)override;
 
 private:
@@ -34,7 +33,6 @@ private:
 	// 羽の回転角
 	float spinAngle;
 	Quaternion baseQuaternion;
-
 
 	// 更新
 	void SubUpdate(void)override;
