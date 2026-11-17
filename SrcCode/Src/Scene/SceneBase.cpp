@@ -13,12 +13,15 @@
 #include "../Manager/Camera/CameraBase.h"
 #include "../Manager/Collision/CollisionManager.h"
 #include "../Object/Common/ActorBase/ActorBase.h"
+#include "../Object/Common/SkyBox/SkyBox.h"
 
 #include "Common/PostEffect/PostEffectBase.h"
 
 SceneBase::SceneBase(void) :
 
 	state(STATE::Created),
+
+	skyBox(nullptr),
 
 	mainScreen(-1),
 	tempScreen(),
@@ -54,6 +57,9 @@ void SceneBase::Load(void)
 	// シーンごとに独立したカメラを生成する
 	CreateCamera();
 
+	// スカイボックスを生成
+	if (UseSkyBox()) { skyBox = new SkyBox(); }
+
 	// 全Actorが追加された後、巨大な静的オブジェクト等のチャンクを一度構築する
 	if (collision != nullptr) { collision->InitBuildChunks(); }
 
@@ -69,6 +75,9 @@ void SceneBase::Init(void)
 
 	// カメラ初期化
 	if (camera != nullptr) { camera->Init(); }
+
+	// スカイボックス初期化
+	if (skyBox != nullptr) { skyBox->Init(); }
 
 	// シーンが所有するActorをすべて初期化する
 	for (ActorBase* actor : actors) { actor->Init(); }
@@ -102,6 +111,9 @@ void SceneBase::Update(void)
 	// カメラ更新
 	if (camera != nullptr) { camera->Update(); }
 
+	// スカイボックス更新
+	if (skyBox != nullptr) { skyBox->Update(); }
+
 	// ポストエフェクト更新
 	for (PostEffectBase* postEffect : postEffects) { postEffect->Update(); }
 }
@@ -123,9 +135,12 @@ void SceneBase::Draw(void)
 
 #pragma region メイン描画
 
+	// スカイボックス描画
+	if (skyBox != nullptr) { skyBox->Draw(); }
+
 	// 通常描画
 	SubPreDraw();
-	ActorsDraw(actors, ACTOR_DRAW_TYPE::Normal);
+	ActorsDraw(actors, ACTOR_DRAW_TYPE::Default);
 	SubPostDraw();
 
 	// 半透明描画
@@ -181,6 +196,8 @@ void SceneBase::Draw(void)
 
 	if (camera != nullptr) { camera->DrawDebug(); }
 
+	if (collision != nullptr) { collision->DrawCheckLog(); }
+
 #pragma endregion
 }
 
@@ -207,6 +224,13 @@ void SceneBase::Release(void)
 		actor = nullptr;
 	}
 	actors.clear();
+
+	// スカイボックス解放
+	if (skyBox != nullptr) {
+		skyBox->Release();
+		delete skyBox;
+		skyBox = nullptr;
+	}
 
 	// 当たり判定管理解放
 	if (collision != nullptr) {

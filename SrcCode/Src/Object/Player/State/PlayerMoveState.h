@@ -3,6 +3,7 @@
 #include "../../Common/CharacterBase/CharacterStateBase.h"
 
 struct Vector3;
+class GroundMotionController;
 
 class PlayerMoveState : public CharacterStateBase
 {
@@ -10,8 +11,7 @@ public:
 
 	PlayerMoveState(
 		float ACCEL_MAX, float DASH_SPEED_RATE, short DASH_STAMINA_MAX,
-		std::function<void(const Vector3&)> moveAccel,
-		float& accelMax,
+		GroundMotionController& motion,
 		std::function<void(void)> playAnimeWalk,
 		std::function<void(void)> playAnimeRun,
 		std::function<void(void)> playAnimeFastRun
@@ -54,11 +54,8 @@ private:
 
 #pragma region 受け取る参照変数・関数
 
-	// 移動関数のポインタ
-	const std::function<void(const Vector3&)> moveAccel;
-
-	// 横軸加速度の最大値の参照
-	float& accelMax;
+	// 移動制御（速度・向き・最大移動速度を管理する）
+	GroundMotionController& motion;
 
 	// 歩きアニメーションの再生関数のポインタ
 	const std::function<void(void)> playAnimeWalk;

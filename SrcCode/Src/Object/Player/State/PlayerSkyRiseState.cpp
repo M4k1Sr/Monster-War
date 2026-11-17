@@ -6,19 +6,18 @@
 #include "../../../Manager/Camera/CurrentCamera.h"
 
 #include "../../Common/ActorBase/ActorBase.h"
+#include "../../Common/MotionController/GroundMotionController.h"
 
 PlayerSkyRiseState::PlayerSkyRiseState(
 	float UP_POWER,
 
 	const bool& isCrouchHold,
 
-	float& velocityY,
+	GroundMotionController& motion,
 
 	bool& isGravity,
 
 	const bool& isGround,
-
-	std::function<void(const Vector3&)> moveAccel,
 
 	const Transform& playerTrans,
 
@@ -41,13 +40,11 @@ PlayerSkyRiseState::PlayerSkyRiseState(
 
 	isCrouchHold(isCrouchHold),
 
-	velocityY(velocityY),
+	motion(motion),
 
 	isGravity(isGravity),
 
 	isGround(isGround),
-
-	moveAccel(moveAccel),
 
 	playerTrans(playerTrans),
 
@@ -122,7 +119,7 @@ void PlayerSkyRiseState::Update(void)
 				setGravityFlg();
 
 				// ã¸’l‰ÁZ
-				velocityY = UP_POWER;
+				motion.SetVerticalVelocity(UP_POWER);
 
 				// •`‰æ”»’è‚ğtrue
 				setParaseilDraw(true);
@@ -158,7 +155,7 @@ void PlayerSkyRiseState::Update(void)
 
 	case PlayerSkyRiseState::STEP::Stop: {
 		// ã¸’â~
-		velocityY = 0;
+		motion.SetVerticalVelocity(0.0f);
 
 		// ƒpƒ‰ƒZ[ƒ‹ˆÚ“®ó‘Ô‚É‘JˆÚ‚µI—¹
 		changeStateParaseilMove();

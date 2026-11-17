@@ -28,6 +28,9 @@ private:
 
 	void CreateCamera(void)override;
 
+	// スカイボックスを使用する
+	bool UseSkyBox(void)const override { return true; }
+
 	// 操作対象
 	ActorBase* operatorObject;
 

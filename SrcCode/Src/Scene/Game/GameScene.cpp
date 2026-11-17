@@ -60,12 +60,34 @@ void GameScene::SubPostLoad(void)
 	// プレイヤーに真下レイの関数を渡す（追加）
 	ActorSerch<Player>(actors)->SetGroundRay(
 		[this](const Vector3& origin, float length) {
+			GroundInfo info;
+
 			CollisionManager* col = GetCollision();
-			return col ? col->RayCastDown(origin, length) : GroundInfo();
+			if (col == nullptr) { return info; }
+
+			// 真下へレイを飛ばす（プレイヤー自身のコライダーは判定対象外）
+			const RaycastHit hit = col->Raycast(origin, Vector3::Yonly(-1.0f), length);
+			if (!hit.IsHit()) { return info; }
+
+			info.hit = true;
+			info.distance = hit.distance;
+			info.point = hit.point;
+			info.normal = hit.normal;
+			info.tag = hit.collider->GetTag();
+			return info;
 		}
 	);
 
 	AddActor(new Stage);
+//
+//#ifdef _DEBUG
+//	// 物理挙動の確認用オブジェクト（Debugビルドのみ）
+//	// プレイヤーの前方に置く。体当たりして、押し出し・質量差・摩擦を確認できる
+//	AddActor(new BoxDebugObject(Vector3(120.0f), Vector3(-300.0f, 200.0f, -600.0f)));      // 動く箱（質量10）
+//	AddActor(new BoxDebugObject(Vector3(300.0f, 200.0f, 300.0f), Vector3(300.0f, 300.0f, -800.0f)));  // 大きい箱
+//	AddActor(new SphereDebugObject(80.0f, Vector3(0.0f, 300.0f, -900.0f)));                // 転がる球
+//	AddActor(new BoxDebugObject(Vector3(800.0f, 300.0f, 60.0f), Vector3(0.0f, 0.0f, -1400.0f))); // 動かない壁
+//#endif
 
 	//AddActor(new Water);
 

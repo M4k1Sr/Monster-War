@@ -5,6 +5,7 @@
 #include "../../../../Common/Vector3.h"
 
 struct Vector3;
+class GroundMotionController;
 
 class GobKingMoveState : public CharacterStateBase
 {
@@ -15,8 +16,7 @@ public:
 		float SEARCH_RANGE,
 		float ATTACK_RANGE,
 
-		std::function<void(const Vector3&)> moveAccel,
-		float& accelMax,
+		GroundMotionController& motion,
 
 		const Vector3& gobPos,
 		const Vector3*& playerPos,
@@ -58,17 +58,14 @@ private:
 
 #pragma region 受け取る参照変数・関数
 
-	// 移動関数のポインタ
-	const std::function<void(const Vector3&)> moveAccel;
+	// 移動制御（速度・向き・最大移動速度を管理する）
+	GroundMotionController& motion;
 
 	//ゴブリンキング座標
 	const Vector3& gobPos;
 
 	//プレイヤー座標参照
 	const Vector3* const& playerPos;
-
-	// 横軸加速度の最大値の参照
-	float& accelMax;
 
 	// 歩きアニメーションの再生関数のポインタ
 	const std::function<void(void)> playAnimeWalk;

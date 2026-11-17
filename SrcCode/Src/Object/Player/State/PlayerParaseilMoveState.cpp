@@ -6,22 +6,19 @@
 #include "../../../Manager/Camera/CurrentCamera.h"
 
 #include "../../Common/ActorBase/ActorBase.h"
+#include "../../Common/MotionController/GroundMotionController.h"
 
 PlayerParaseilMoveState::PlayerParaseilMoveState(
 	const float ACCEL_MAX,
 	const float PARASEIL_OPEN_HEIGHT,
 
-	float& velocityY,
+	GroundMotionController& motion,
 
 	const float& footHeight,
 
 	const bool& isGround,
 
 	bool& isOpenParaseil,
-
-	std::function<void(const Vector3&)> moveAccel,
-
-	float& accelMax,
 
 	std::function<void(void)> playAnimeHang,
 	std::function<void(void)> playAnimeJumpEnd,
@@ -35,17 +32,13 @@ PlayerParaseilMoveState::PlayerParaseilMoveState(
 	ACCEL_MAX(ACCEL_MAX),
 	PARASEIL_OPEN_HEIGHT(PARASEIL_OPEN_HEIGHT),
 
-	velocityY(velocityY),
+	motion(motion),
 
 	footHeight(footHeight),
 
 	isGround(isGround),
 
 	isOpenParaseil(isOpenParaseil),
-
-	moveAccel(moveAccel),
-
-	accelMax(accelMax),
 
 	playAnimeHang(playAnimeHang),
 	playAnimeJumpEnd(playAnimeJumpEnd),
@@ -86,7 +79,8 @@ void PlayerParaseilMoveState::Enter(void)
 
 void PlayerParaseilMoveState::Update(void)
 {
-	velocityY = 0;
+	// 落下速度を毎フレーム0にして、重力による緩やかな降下だけにする
+	motion.SetVerticalVelocity(0.0f);
 
 	switch (step) {
 
@@ -97,7 +91,7 @@ void PlayerParaseilMoveState::Update(void)
 		Vector3 inputVec = InputVec();
 
 		// 移動量の最大値を更新する
-		accelMax = ACCEL_MAX * inputVec.Length();
+		motion.SetMoveSpeed(ACCEL_MAX * inputVec.Length());
 
 		// 最終的に入力があれば加速度に加算する
 		if (inputVec != 0.0f) {
@@ -106,7 +100,7 @@ void PlayerParaseilMoveState::Update(void)
 			inputVec.TransMatOwn(MGetRotY(CurrentCamera::Get().GetAngle().y));
 
 			// 移動
-			moveAccel(inputVec);
+			motion.ApplyInput(inputVec);
 
 		}
 
@@ -157,7 +151,7 @@ void PlayerParaseilMoveState::Update(void)
 
 void PlayerParaseilMoveState::Exit(void)
 {
-	accelMax = ACCEL_MAX;
+	motion.SetMoveSpeed(ACCEL_MAX);
 	isOpenParaseil = false;
 	setParaseilDraw(false);
 }

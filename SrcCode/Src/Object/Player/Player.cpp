@@ -8,6 +8,9 @@
 
 #include "../Common/Collider/CapsuleCollider.h"
 
+#include "../Common/PhysicsBody/PhysicsBody.h"
+#include "../Common/MotionController/GroundMotionController.h"
+
 #include "../Common/Shader/DefaultShader.h"
 #include "../Common/Shader/RimLightShader.h"
 #include "../Common/Shader/WaterShader.h"
@@ -65,16 +68,52 @@ void Player::Load(void)
 #pragma region オブジェクト設定
 
 	// 動的オブジェクトとしての処理を有効にする
-	SetDynamicFlg(true);
+	SetColliderMobility(COLLIDER_MOBILITY::Movable);
 
-	// 重力を有効にする
-	SetGravityFlg(isGravity);
+	// 物理挙動の有効化
+	EnablePhysics();
+
+	// 重力を設定する
+	GetPhysicsBody()->SetGravityEnabled(isGravity);
+
+	// キャラクター用の物理挙動に設定する
+	GetPhysicsBody()->SetMode(PhysicsBody::MotionMode::Character);
 
 	// 当たり判定による押し出しを有効にする
-	SetPushFlg(true);
+	SetContactResponseEnabled(true);
 
-	// 押し出しだしによる重みを設定
-	SetPushWeight(50);
+	// 物理衝突時の重さを設定
+	GetPhysicsBody()->SetMass(20.0f);
+
+	// 着地時に跳ね返らないようにする（0=反発なし、1=完全に跳ね返る）
+	GetPhysicsBody()->SetRestitution(0.0f);
+
+	// 接触面の摩擦（0=氷のように滑る）。ここを下げると滑りやすくなる
+	GetPhysicsBody()->SetStaticFriction(0.65f);
+	GetPhysicsBody()->SetDynamicFriction(0.5f);
+
+	// 移動・ジャンプ・攻撃などで共有する移動制御を生成
+	GroundMotionController* groundMotionController = new GroundMotionController();
+
+	// アクターにMotionControllerを登録
+	AddMotionController(groundMotionController);
+
+	// モデル制御情報を設定
+	groundMotionController->SetTransform(&trans);
+	// 接地判定の参照先を設定
+	groundMotionController->SetGroundedSource(&isGround);
+	// 接地時の加速度を設定
+	groundMotionController->SetGroundAcceleration(3.0f);
+	// 空中時の加速度を設定
+	groundMotionController->SetAirAcceleration(3.0f);
+	// 慣性操作の強さを設定
+	groundMotionController->SetMomentumSteering(0.2f);
+	// 慣性操作が効く速度の閾値を設定
+	groundMotionController->SetMomentumThreshold(40.0f);
+	// 地面での減速（大きいほどすぐ止まる、小さいほど滑る）
+	groundMotionController->SetGroundDrag(0.65f);
+	// 空中での減速（大きいほど空中ですぐ止まる）
+	groundMotionController->SetAirDrag(0.08f);
 
 #pragma endregion
 
@@ -174,8 +213,7 @@ void Player::Load(void)
 		STATE::Move,
 		new PlayerMoveState(
 			10.0f, 1.5f, 300,
-			std::bind(&Player::MoveAccel, this, std::placeholders::_1),
-			ACCEL_MAX,
+			*groundMotionController,
 			[&]() { AnimePlay(ANIME_TYPE::Walk); },
 			[&]() { AnimePlay(ANIME_TYPE::Run); },
 			[&]() { AnimePlay(ANIME_TYPE::FastRun); }
@@ -188,10 +226,8 @@ void Player::Load(void)
 		new PlayerParaseilMoveState(
 			10.0f,
 			300.0f,
-			velocity.y,
+			*groundMotionController,
 			footHeight, isGround,isOpenParaseil,
-			std::bind(&Player::MoveAccel, this, std::placeholders::_1),
-			ACCEL_MAX,
 			[&]() {AnimePlay(ANIME_TYPE::Hang); },
 			[&]() {AnimePlay(ANIME_TYPE::JumpEnd); },
 			[&]() {return IsAnimeEnd(); },
@@ -204,8 +240,7 @@ void Player::Load(void)
 	AddState(
 		STATE::Jump,
 		new PlayerJumpState(
-			50.0f, velocity.y, isGround,
-			std::bind(&Player::MoveAccel, this, std::placeholders::_1),
+			20.0f, *groundMotionController,
 			[&]() { AnimePlay(ANIME_TYPE::Jump); },
 			[&]() { AnimePlay(ANIME_TYPE::Jumping); },
 			[&]() { AnimePlay(ANIME_TYPE::JumpEnd); },
@@ -219,15 +254,14 @@ void Player::Load(void)
 		STATE::SkyRise,
 		new PlayerSkyRiseState(
 			10.0f,
-			isCrouchHold, velocity.y,
+			isCrouchHold, *groundMotionController,
 			isGravity,isGround,
-			std::bind(&Player::MoveAccel, this, std::placeholders::_1),
 			trans,
 			[&]() { AnimePlay(ANIME_TYPE::Crouch); },
 			[&]() {AnimePlay(ANIME_TYPE::Hang); },
 			std::bind(&Player::IsAnimeEnd, this),
 			[&](bool draw) { paraseil->SetIsDraw(draw); },
-			[&]() { SetGravityFlg(isGravity); },
+			[&]() { GetPhysicsBody()->SetGravityEnabled(isGravity); },
 			[&]() { ChangeState(STATE::Idle); },
 			[&]() { ChangeState(STATE::ParaseilMove); }
 		)
@@ -240,8 +274,7 @@ void Player::Load(void)
 			0.3f, 0.5f, 0.6f,
 			trans.pos,
 			lockOnTarget,
-			std::bind(&Player::MoveAccel, this, std::placeholders::_1),
-			ACCEL_MAX,
+			*groundMotionController,
 			isRush,
 			*attackSlashCollOperator,
 			[&]() {AnimePlay(ANIME_TYPE::Slash_Down); },
@@ -272,7 +305,7 @@ void Player::Load(void)
 		STATE::BackFlip,
 		new PlayerBackFlipState(
 			0.05f, 0.3f,
-			6.0f,12.0f, velocity, isGround,
+			6.0f,12.0f, *groundMotionController, isGround,
 			[&]() {return trans.VTrans(Vector3::Zonly(-1.0f)); },
 			*backFlipCollOperator,
 			lockOnTarget,
@@ -460,6 +493,19 @@ void Player::SubDraw(void)
 		DrawLine3D(trans.pos.ToVECTOR(), to.ToVECTOR(), color);
 		if (groundInfo.hit) { DrawSphere3D(groundInfo.point.ToVECTOR(), 8.0f, 8, color, color, true); }
 		DrawFormatString(300, 20, 0xffffff, "footHeight %.1f", footHeight);
+
+		// 物理挙動のデバッグ表示
+		if (PhysicsBody* body = GetPhysicsBody()) {
+			const Vector3 v = body->GetVelocity();
+			const float speedXZ = std::sqrt(v.x * v.x + v.z * v.z);
+
+			DrawFormatString(300, 40, 0xffffff, "速度XZ %.2f  縦速度 %.2f", speedXZ, v.y);
+			DrawFormatString(300, 60, 0xffffff, "接地 %s  タイムスケール %.2f", isGround ? "ON" : "OFF", GetTimeScale());
+
+			// 速度ベクトルを線で表示（見やすいように10倍）
+			const Vector3 velEnd = trans.pos + v * 10.0f;
+			DrawLine3D(trans.pos.ToVECTOR(), velEnd.ToVECTOR(), 0x00ffff);
+		}
 	}
 
 	DrawFormatString(300, 0, 0xffffff, "PlayerHP %d", hp);

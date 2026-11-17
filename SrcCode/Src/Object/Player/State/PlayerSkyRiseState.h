@@ -5,6 +5,7 @@
 struct Transform;
 
 struct Vector3;
+class GroundMotionController;
 
 class PlayerSkyRiseState : public CharacterStateBase
 {
@@ -15,13 +16,11 @@ public:
 
 		const bool& isCrouchHold,
 
-		float& velocityY,
+		GroundMotionController& motion,
 
 		bool& isGravity,
 
 		const bool& isGround,
-
-		std::function<void(const Vector3&)> moveAccel,
 
 		const Transform& playerTrans,
 
@@ -69,17 +68,14 @@ private:
 	// しゃがみホールドされているか検知
 	const bool& isCrouchHold;
 
-	// Y軸加速度
-	float& velocityY;
+	// 移動制御（上下方向の速度を設定する）
+	GroundMotionController& motion;
 
 	// 重力のかかり
 	bool& isGravity;
 
 	// 地面と設置しているか
 	const bool& isGround;
-
-	// 移動関数のポインタ
-	const std::function<void(const Vector3&)> moveAccel;
 
 	// プレイヤーのモデル制御情報の参照
 	const Transform& playerTrans;

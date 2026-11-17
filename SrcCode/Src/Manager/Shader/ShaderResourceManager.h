@@ -23,9 +23,9 @@ public:
 	static void CreateIns(void) { if (ins == nullptr)ins = new ShaderResourceManager(); }
 	static ShaderResourceManager& GetIns(void) { return *ins; }
 	static void DeleteIns(void) {
-		if (ins != nullptr) { 
+		if (ins != nullptr) {
 			ins->ReleaseAllShader();
-			delete ins; 
+			delete ins;
 			ins = nullptr;
 		}
 	}
@@ -99,6 +99,33 @@ private:
 
 	#pragma region リムライト
 		{
+			VERTEX_SHADER_TYPE::ModelDamageFlash1Frame,
+			"ModelDamageFlashVS_1Frame"
+		},
+		{
+			VERTEX_SHADER_TYPE::ModelDamageFlash4Frame,
+			"ModelDamageFlashVS_4Frame"
+		},
+		{
+			VERTEX_SHADER_TYPE::ModelDamageFlash8Frame,
+			"ModelDamageFlashVS_8Frame"
+		},
+		{
+			VERTEX_SHADER_TYPE::ModelDamageFlashNMap1Frame,
+			"ModelDamageFlashVS_NMap1Frame"
+		},
+		{
+			VERTEX_SHADER_TYPE::ModelDamageFlashNMap4Frame,
+			"ModelDamageFlashVS_NMap4Frame"
+		},
+		{
+			VERTEX_SHADER_TYPE::ModelDamageFlashNMap8Frame,
+			"ModelDamageFlashVS_NMap8Frame"
+		},
+	#pragma endregion
+
+	#pragma region ダメージ（モデル）
+		{
 			VERTEX_SHADER_TYPE::RimLight1Frame,
 			"RimLightVS_1Frame"
 		},
@@ -124,10 +151,43 @@ private:
 		},
 	#pragma endregion
 
+	#pragma region ゴール
+		{
+			VERTEX_SHADER_TYPE::GoalField1Frame,
+			"GoalFieldVS_1Frame"
+		},
+		{
+			VERTEX_SHADER_TYPE::GoalField4Frame,
+			"GoalFieldVS_4Frame"
+		},
+		{
+			VERTEX_SHADER_TYPE::GoalField8Frame,
+			"GoalFieldVS_8Frame"
+		},
+		{
+			VERTEX_SHADER_TYPE::GoalFieldNMap1Frame,
+			"GoalFieldVS_NMap1Frame"
+		},
+		{
+			VERTEX_SHADER_TYPE::GoalFieldNMap4Frame,
+			"GoalFieldVS_NMap4Frame"
+		},
+		{
+			VERTEX_SHADER_TYPE::GoalFieldNMap8Frame,
+			"GoalFieldVS_NMap8Frame"
+		},
+	#pragma endregion
+
 		// 水面
 		{
 			VERTEX_SHADER_TYPE::Water,
 			"WaterVS"
+		},
+
+		// スカイボックス
+		{
+			VERTEX_SHADER_TYPE::SkyBox,
+			"SkyBoxVS"
 		},
 	};
 
@@ -150,6 +210,18 @@ private:
 			"RimLightPS"
 		},
 
+		// ダメージ（モデル）
+		{
+			PIXEL_SHADER_TYPE::ModelDamageFlash,
+			"ModelDamageFlashPS"
+		},
+
+		// ゴール
+		{
+			PIXEL_SHADER_TYPE::GoalField,
+			"GoalFieldPS"
+		},
+
 		// 水面
 		{
 			PIXEL_SHADER_TYPE::Water,
@@ -170,8 +242,49 @@ private:
 			"FocusLinesPS"
 		},
 
+		// 集中線
+		{
+			PIXEL_SHADER_TYPE::UnderWater,
+			"UnderWaterPS"
+		},
 
-	#pragma endregion 
+		// ゴゴゴゴ…エフェクト
+		{
+			PIXEL_SHADER_TYPE::Menacing,
+			"MenacingPS"
+		},
+
+		// 炎ポストエフェクト
+		{
+			PIXEL_SHADER_TYPE::PurpleFlame,
+			"PurpleFlamePS"
+		},
+
+		// ダメージフラッシュポストエフェクト
+		{
+			PIXEL_SHADER_TYPE::DamageFlash,
+			"DamageFlashPS"
+		},
+
+		// 時間停止ポストエフェクト
+		{
+			PIXEL_SHADER_TYPE::TimeFreeze,
+			"TimeFreezePS"
+		},
+
+		// 照準ポストエフェクト
+		{
+			PIXEL_SHADER_TYPE::AimCrosshair,
+			"AimCrosshairPS"
+		},
+
+	#pragma endregion
+
+		// スカイボックス
+		{
+			PIXEL_SHADER_TYPE::SkyBox,
+			"SkyBoxPS"
+		},
 
 	};
 

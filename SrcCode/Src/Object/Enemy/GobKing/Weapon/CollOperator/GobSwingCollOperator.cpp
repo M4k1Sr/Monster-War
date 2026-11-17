@@ -21,13 +21,10 @@ void GobSwingCollOperator::Load(void)
 #pragma region オブジェクト設定
 
 	// 動的オブジェクトとしての処理を有効にする
-	SetDynamicFlg(true);
-
-	// 重力を無効にする
-	SetGravityFlg(false);
+	SetColliderMobility(COLLIDER_MOBILITY::Movable);
 
 	// 当たり判定による押し出しを無効にする
-	SetPushFlg(false);
+	SetContactResponseEnabled(false);
 
 #pragma endregion
 

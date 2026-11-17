@@ -10,6 +10,9 @@
 
 #include "../../Common/Collider/CapsuleCollider.h"
 
+#include "../../Common/PhysicsBody/PhysicsBody.h"
+#include "../../Common/MotionController/GroundMotionController.h"
+
 #include "../../Common/Shader/DefaultShader.h"
 #include "../../Common/Shader/RimLightShader.h"
 #include "../../Common/Shader/WaterShader.h"
@@ -33,16 +36,40 @@ void GobKing::Load(void)
 #pragma region オブジェクト設定
 
 	// 動的オブジェクトとしての処理を有効にする
-	SetDynamicFlg(true);
+	SetColliderMobility(COLLIDER_MOBILITY::Movable);
+
+	// 物理挙動の有効化
+	EnablePhysics();
 
 	// 重力を有効にする
-	SetGravityFlg(true);
+	GetPhysicsBody()->SetGravityEnabled(true);
+
+	// キャラクター用の物理挙動に設定する
+	GetPhysicsBody()->SetMode(PhysicsBody::MotionMode::Character);
 
 	// 当たり判定による押し出しを有効にする
-	SetPushFlg(true);
+	SetContactResponseEnabled(true);
 
-	// 押し出しだしによる重みを設定
-	SetPushWeight(50);
+	// 物理衝突時の重さを設定
+	GetPhysicsBody()->SetMass(100.0f);
+
+	// 着地時に跳ね返らないようにする
+	GetPhysicsBody()->SetRestitution(0.5f);
+
+	// 移動制御を生成
+	GroundMotionController* groundMotionController = new GroundMotionController();
+
+	// アクターにMotionControllerを登録
+	AddMotionController(groundMotionController);
+
+	// モデル制御情報を設定
+	groundMotionController->SetTransform(&trans);
+	// 接地判定の参照先を設定
+	groundMotionController->SetGroundedSource(&isGround);
+	// 接地時の加速度を設定
+	groundMotionController->SetGroundAcceleration(3.0f);
+	// 空中時の加速度を設定
+	groundMotionController->SetAirAcceleration(3.0f);
 
 #pragma endregion
 
@@ -62,7 +89,7 @@ void GobKing::Load(void)
 	trans.SetLocalRotation(Quaternion::FromRotationY(Deg2Rad(180.0f)));
 
 	// 初期座標
-	trans.pos = Vector3(VGet(0.0f, 0.0f, -2500.0f));
+	trans.pos = Vector3(VGet(0.0f, 0.0f, -1000.0f));
 
 	//// シェーダー登録
 	//CreateShader(new DefaultShader());
@@ -158,8 +185,7 @@ void GobKing::Load(void)
 		STATE::Move,
 		new GobKingMoveState(
 			5.0f,SEARCH_RANGE,ATTACK_RANGE,
-			std::bind(&GobKing::MoveAccel, this, std::placeholders::_1),
-			ACCEL_MAX,
+			*groundMotionController,
 			trans.pos,
 			playerPos,
 			[&]() { AnimePlay(ANIME_TYPE::Walk); }
@@ -221,6 +247,8 @@ void GobKing::Load(void)
 		new GobKingDieState(
 			isDie,
 			isFlyEnd,
+			[&]() { return trans.rotation.Rotate(Vector3(0.0f, 0.0f, 1.0f)); },   // 前方向
+			[&](const Vector3& v) {GetPhysicsBody()->AddVelocity(v); },
 			[&]() {AnimePlay(ANIME_TYPE::Flying); },
 			std::bind(&GobKing::IsAnimeEnd, this)
 		)
@@ -302,6 +330,7 @@ void GobKing::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const 
 		// 死亡していたら不要
 		if (!IsDead()) { hitReact = true; }
 	}
+
 }
 
 void GobKing::SubUpdate(void)
@@ -311,6 +340,10 @@ void GobKing::SubUpdate(void)
 
 	// 死亡判定
 	if (IsDead()) { OnDeath(); isDie = true; }
+
+	if(CheckHitKey(KEY_INPUT_0)) {
+		Damage(200);
+	}
 }
 
 void GobKing::SubDraw(void)

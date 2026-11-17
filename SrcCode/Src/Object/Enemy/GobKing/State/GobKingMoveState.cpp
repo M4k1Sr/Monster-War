@@ -5,14 +5,14 @@
 #include "../../../../Manager/Input/InputManager.h"
 #include "../../../../Manager/Camera/CurrentCamera.h"
 
+#include "../../../Common/MotionController/GroundMotionController.h"
+
 GobKingMoveState::GobKingMoveState(
 	float ACCEL_MAX,
 	float SEARCH_RANGE,
 	float ATTACK_RANGE,
 
-	std::function<void(const Vector3&)> moveAccel,
-
-	float& accelMax,
+	GroundMotionController& motion,
 
 	const Vector3& gobPos,
 	const Vector3*& playerPos,
@@ -26,9 +26,7 @@ GobKingMoveState::GobKingMoveState(
 	SEARCH_RANGE(SEARCH_RANGE),
 	ATTACK_RANGE(ATTACK_RANGE),
 
-	moveAccel(moveAccel),
-
-	accelMax(accelMax),
+	motion(motion),
 
 	playAnimeWalk(playAnimeWalk),
 
@@ -77,10 +75,10 @@ void GobKingMoveState::Update(void)
 	dir = dir.Normalized();   // 関数名は自分のVector3に合わせて
 
 	// 移動量の最大値を設定
-	accelMax = ACCEL_MAX;
+	motion.SetMoveSpeed(ACCEL_MAX);
 
 	// その方向に加速
-	moveAccel(dir);
+	motion.ApplyInput(dir);
 
 	// 移動状態の更新(スタミナにより状態変化)
 	UpdateMove();
@@ -89,7 +87,7 @@ void GobKingMoveState::Update(void)
 
 void GobKingMoveState::Exit(void)
 {
-	accelMax = ACCEL_MAX;
+	motion.SetMoveSpeed(ACCEL_MAX);
 }
 
 void GobKingMoveState::AlwaysUpdate(void)

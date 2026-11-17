@@ -5,6 +5,7 @@
 #include "../../../Common/Vector3.h"
 
 class PlayerBackFlipCollOperator;
+class GroundMotionController;
 
 class PlayerBackFlipState : public CharacterStateBase
 {
@@ -17,7 +18,7 @@ public:
 		float BACKFLIP_POWER,
 		float UP_POWER,
 
-		Vector3& velocity,
+		GroundMotionController& motion,
 
 		const bool& isGround,
 
@@ -83,8 +84,8 @@ private:
 
 #pragma region 受け取る参照変数・関数
 
-	// プレイヤーのベクトル
-	Vector3& velocity;
+	// 移動制御（水平方向の速度を設定する）
+	GroundMotionController& motion;
 
 	// 地面と設置しているか
 	const bool& isGround;

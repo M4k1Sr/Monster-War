@@ -14,6 +14,7 @@ class ActorBase;
 struct Vector2I;
 
 class PostEffectBase;
+class SkyBox;
 
 class SceneBase
 {
@@ -140,6 +141,9 @@ protected:
 	// 当たり判定管理クラスを使用するかどうか
 	virtual bool UseCollisionManager(void)const { return true; }
 
+	// スカイボックスを使用するかどうか
+	virtual bool UseSkyBox(void)const { return false; }
+
 	// 
 	CollisionManager* GetCollision(void) const { return collision; }
 
@@ -150,6 +154,9 @@ private:
 
 	// 当たり判定管理
 	CollisionManager* collision;
+
+	// スカイボックス
+	SkyBox* skyBox;
 
 	// ポストエフェクト配列
 	std::vector<PostEffectBase*> postEffects;

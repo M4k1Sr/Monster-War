@@ -19,8 +19,28 @@ enum class VERTEX_SHADER_TYPE
     RimLightNMap4Frame,
     RimLightNMap8Frame,
 
-	// 水面
+    // ダメージ（モデル）
+    ModelDamageFlash1Frame,
+    ModelDamageFlash4Frame,
+    ModelDamageFlash8Frame,
+    ModelDamageFlashNMap1Frame,
+    ModelDamageFlashNMap4Frame,
+    ModelDamageFlashNMap8Frame,
+
+    // ゴール
+    GoalField1Frame,
+    GoalField4Frame,
+    GoalField8Frame,
+    GoalFieldNMap1Frame,
+    GoalFieldNMap4Frame,
+    GoalFieldNMap8Frame,
+
+    // 水面
     Water,
+
+
+    // スカイボックス
+    SkyBox,
 };
 
 // ピクセルシェーダーの種類
@@ -32,12 +52,18 @@ enum class PIXEL_SHADER_TYPE
     // リムライト
     RimLight,
 
+    // ダメージ（モデル）
+    ModelDamageFlash,
+
+    // ゴール
+    GoalField,
+
     // 水面
     Water,
 
 #pragma region ポストエフェクト
 
-	// グレースケールポストエフェクト
+    // グレースケールポストエフェクト
     GrayScale,
 
     // ブラウン管ポストエフェクト
@@ -46,7 +72,28 @@ enum class PIXEL_SHADER_TYPE
     // 集中線ポストエフェクト
     FocusLines,
 
+    // 水中ポストエフェクト
+    UnderWater,
+
+    // ゴゴゴゴ…エフェクト
+    Menacing,
+
+    // 炎ポストエフェクト
+    PurpleFlame,
+
+    // ダメージフラッシュポストエフェクト
+    DamageFlash,
+
+	// 時間停止ポストエフェクト
+    TimeFreeze,
+
+	// 照準ポストエフェクト
+    AimCrosshair,
+
 #pragma endregion
+
+    // スカイボックス
+    SkyBox,
 };
 
 // 頂点タイプ

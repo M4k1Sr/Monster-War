@@ -5,13 +5,12 @@
 #include "../../../Manager/Input/InputManager.h"
 #include "../../../Manager/Camera/CurrentCamera.h"
 
+#include "../../Common/MotionController/GroundMotionController.h"
+
 PlayerJumpState::PlayerJumpState(
 	float JUMP_POWER,
 
-	float& velocityY,
-	const bool& isGround,
-
-	std::function<void(const Vector3&)> moveAccel,
+	GroundMotionController& motion,
 
 	std::function<void(void)> playAnimeJumpStart,
 	std::function<void(void)> playAnimeJumping,
@@ -23,10 +22,7 @@ PlayerJumpState::PlayerJumpState(
 ):
 	JUMP_POWER(JUMP_POWER),
 
-	velocityY(velocityY),
-	isGround(isGround),
-
-	moveAccel(moveAccel),
+	motion(motion),
 
 	playAnimeJumpStart(playAnimeJumpStart),
 	playAnimeJumping(playAnimeJumping),
@@ -38,12 +34,14 @@ PlayerJumpState::PlayerJumpState(
 
 	step(STEP::Start)
 {
+	// ジャンプ力を設定
+	motion.SetJumpSpeed(JUMP_POWER);
 }
 
 void PlayerJumpState::OwnStateConditionUpdate(void)
 {
 	// ジャンプキーのダウントリガーで遷移
-	if (!isGround) { return; }
+	if (!motion.IsGrounded()) { return; }
 	if (Input::GetIns().GetInfo(KEY_TYPE::PlayerJump).down) { OwnChangeState(); }
 }
 
@@ -66,8 +64,8 @@ void PlayerJumpState::Update(void)
 		// アニメーション終了
 		if (isAnimeEnd()) {
 
-			// 加速度加算
-			velocityY = JUMP_POWER;
+			// 上向きの速度を与える（接地中のみ成功する）
+			motion.TryJump();
 
 			// 滞空アニメーションを再生
 			playAnimeJumping();
@@ -83,7 +81,7 @@ void PlayerJumpState::Update(void)
 		// 滞空
 
 		// 着地
-		if (isGround) {
+		if (motion.IsGrounded()) {
 
 			// 着地のアニメーションを再生
 			playAnimeJumpEnd();

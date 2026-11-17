@@ -614,7 +614,7 @@ void SceneManager::Init3D(void)
 	SetLightDirection(mainDirection);
 	SetLightEnable(true);
 	SetLightDifColor(GetColorF(1.0f, 1.0f, 1.0f, 1.0f));
-	SetLightAmbColor(GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
+	SetLightAmbColor(GetColorF(0.30f, 0.30f, 0.30f, 1.0f));
 	SetLightSpcColor(GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
 
 #pragma endregion
@@ -625,7 +625,7 @@ void SceneManager::Init3D(void)
 
 	if (fillLight >= 0) {
 		SetLightDifColorHandle(fillLight, GetColorF(0.20f, 0.20f, 0.20f, 1.0f));
-		SetLightAmbColorHandle(fillLight, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
+		SetLightAmbColorHandle(fillLight, GetColorF(0.20f, 0.20f, 0.20f, 1.0f));
 		SetLightSpcColorHandle(fillLight, GetColorF(0.0f, 0.0f, 0.0f, 1.0f));
 		SetLightEnableHandle(fillLight, true);
 	}

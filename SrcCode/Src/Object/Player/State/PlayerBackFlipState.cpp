@@ -8,6 +8,8 @@
 
 #include "../../../Manager/TimeScale/TimeScale.h"
 
+#include "../../Common/MotionController/GroundMotionController.h"
+
 #include "../Weapon/CollOperator/PlayerBackFlipCollOperator.h"
 
 PlayerBackFlipState::PlayerBackFlipState(
@@ -17,7 +19,7 @@ PlayerBackFlipState::PlayerBackFlipState(
 	float BACKFLIP_POWER,
 	float UP_POWER,
 
-	Vector3& velocity,
+	GroundMotionController& motion,
 
 	const bool& isGround,
 
@@ -41,7 +43,7 @@ PlayerBackFlipState::PlayerBackFlipState(
 	BACKFLIP_POWER(BACKFLIP_POWER),
 	UP_POWER(UP_POWER),
 
-	velocity(velocity),
+	motion(motion),
 
 	isGround(isGround),
 	
@@ -113,8 +115,7 @@ void PlayerBackFlipState::Update(void)
 
 		// XZ値の移動処理
 		const Vector3 back = getVec();
-		velocity.x = back.x * speed;
-		velocity.z = back.z * speed;
+		motion.SetHorizontalVelocity(back * speed);
 
 		// スロー演出状態の間に攻撃(斬撃)キーが押されたら遷移
 		if (InputManager::GetIns().GetInfo(KEY_TYPE::PlayerAttackSlash).now) {

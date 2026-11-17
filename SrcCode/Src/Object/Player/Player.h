@@ -240,6 +240,9 @@ private:
 
 	void SubUpdate(void)override;
 
+	// スキンメッシュ用の頂点シェーダー（骨8本影響）を使う
+	SHADER_VERTEX_TYPE ShaderVertexType(void)const override { return SHADER_VERTEX_TYPE::Frame8; }
+
 	void SubDraw(void)override;
 
 	bool isOpenParaseil;

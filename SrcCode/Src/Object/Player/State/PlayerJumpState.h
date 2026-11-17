@@ -3,6 +3,7 @@
 #include "../../Common/CharacterBase/CharacterStateBase.h"
 
 struct Vector3;
+class GroundMotionController;
 
 class PlayerJumpState : public CharacterStateBase
 {
@@ -11,10 +12,7 @@ public:
 	PlayerJumpState(
 		float JUMP_POWER,
 
-		float& velocityY,
-		const bool& isGround,
-
-		std::function<void(const Vector3&)> moveAccel,
+		GroundMotionController& motion,
 
 		std::function<void(void)> PlayAnimeJumpStart,
 		std::function<void(void)> PlayAnimeJuming,
@@ -46,14 +44,8 @@ private:
 
 #pragma region 受け取る参照変数・関数
 
-	// Y軸加速度
-	float& velocityY;
-
-	// 地面と設置しているか
-	const bool& isGround;
-
-	// 移動関数のポインタ
-	const std::function<void(const Vector3&)> moveAccel;
+	// 移動制御（ジャンプと接地判定）
+	GroundMotionController& motion;
 
 	// ジャンプ開始アニメーションの再生関数のポインタ
 	const std::function<void(void)> playAnimeJumpStart;

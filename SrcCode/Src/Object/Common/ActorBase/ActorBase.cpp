@@ -9,28 +9,32 @@
 
 #include "../../../Manager/TimeScale/TimeScale.h"
 
+#include "../../../Manager/Collision/CurrentCollisionManager.h"
+
+#include "../PhysicsBody/PhysicsBody.h"
+
 #include "../Collider/ColliderBase.h"
 
 #include "../Shader/ShaderBase.h"
+#include "../Shader/DefaultShader.h"
+#include "../Shader/RimLightShader.h"
 
 #include "../DataLoad/ParameterLoad.h"
 
 ActorBase::ActorBase() :
 	trans(),
+	physicsBody(nullptr),
 	colliders(),
 
-	dynamicFlg(true),
-	gravityFlg(false),
+	colliderMobility(COLLIDER_MOBILITY::Movable),
 
-	pushFlg(true),
-	pushWeight(0),
+	contactResponseEnabled(true),
 
-	velocity(),
 
 	isGroundMaster(false),
 
 	isDraw(true),
-	drawType(ACTOR_DRAW_TYPE::Normal),
+	drawType(ACTOR_DRAW_TYPE::Default),
 
 	shader(nullptr),
 
@@ -42,20 +46,18 @@ ActorBase::ActorBase() :
 
 ActorBase::ActorBase(const std::string& parameterPath) :
 	trans(),
+	physicsBody(nullptr),
 	colliders(),
 
-	dynamicFlg(true),
-	gravityFlg(false),
+	colliderMobility(COLLIDER_MOBILITY::Movable),
 
-	pushFlg(true),
-	pushWeight(0),
+	contactResponseEnabled(true),
 
-	velocity(),
 
 	isGroundMaster(false),
 
 	isDraw(true),
-	drawType(ACTOR_DRAW_TYPE::Normal),
+	drawType(ACTOR_DRAW_TYPE::Default),
 
 	shader(nullptr),
 
@@ -67,6 +69,9 @@ ActorBase::ActorBase(const std::string& parameterPath) :
 
 void ActorBase::Init(void)
 {
+	// デフォルトのシェーダーを生成
+	DefaultCreateShader();
+
 	// 最終派生固有
 	SubInit();
 
@@ -78,6 +83,9 @@ void ActorBase::Init(void)
 
 	// モデル制御情報の適用
 	trans.Attach();
+
+	// コライダーの初期化
+	for (ColliderBase* collider : colliders) { collider->Init(); }
 	
 	// パラメータの解放
 	if (parameter != nullptr) {
@@ -87,32 +95,51 @@ void ActorBase::Init(void)
 	}
 }
 
+
 void ActorBase::Update(void)
 {
-	// 1フレーム前の加速度を保持
-	Vector3 prevVelocity = velocity;
-	// 動的オブジェクトの場合1フレーム前の座標を保持
-	if (dynamicFlg) { trans.prevPos = trans.pos; }
+	// 現在座標を前フレーム座標として保存する
+	trans.prevPos = trans.pos;
 
-	// 最終派生固有
+	// 描画タイプを、このActorのデフォルト設定に戻す
+	SetDrawType(DefaultDrawType());
+
+	// 最終派生クラス固有の更新処理を実行する
 	SubUpdate();
 
-	// 中間基底固有
+	// 中間基底クラス固有の更新処理を実行する
 	BaseUpdate();
 
-	if (dynamicFlg) {
-		// 加速度更新
-		VelocityUpdate(velocity == prevVelocity);
+	// PhysicsBodyが登録されているActorのみ物理挙動を更新する。
+	if (physicsBody != nullptr) {
 
-		// 接地判定のリセット
-		isGroundMaster = false;
+		// このアクターの時間倍率（グループ込み）で物理を進める
+		const float timeScale = GetTimeScale();
+
+		// 取得した移動量を現在座標に加算する
+		trans.pos += physicsBody->Step(timeScale);
+
+		// 「回転軸」の計算結果を受け取るための変数
+		Vector3 rotationAxis(0.0f);
+		// 「回転角度（ラジアン）」の計算結果を受け取るための変数
+		float rotationAngle = 0.0f;
+
+		// PhysicsBodyの角速度から、このフレームの回転量を計算する
+		if (physicsBody->StepRotation(rotationAxis, rotationAngle, timeScale)) {
+
+			// 物理演算によって発生した回転量を追加する
+			trans.SetRotation(Quaternion::FromAxisAngle(rotationAxis, rotationAngle) * trans.rotation);
+		}
 	}
 
-	// 子アクターの更新
+	// このActorが所有している子Actorを順番に更新する
 	for (ActorBase* child : childActors) { child->Update(); }
 
-	// シェーダーの更新
+	// シェーダーが登録されている場合、その更新処理を実行する
 	if (shader != nullptr) { shader->Update(); }
+
+	// 接地フラグをリセットする
+	isGroundMaster = false;
 }
 
 void ActorBase::Draw(void)
@@ -132,9 +159,21 @@ void ActorBase::Draw(void)
 	// モデルの描画
 	trans.Draw();
 
-	// シェーダーのリセット
-	if (shader != nullptr) { shader->ResetApply(); }
+	// シェーダーのリセット（次に描画するActorへシェーダー設定が漏れないようにする）
+	if (shader != nullptr) {
+		shader->ResetApply();
+
+		// ついでにシェーダーの終了判定
+		if (shader->IsEnd()) {
+			// シェーダーを消去
+			ResetShader();
+
+			// デフォルトのシェーダーを生成
+			DefaultCreateShader();
+		}
+	}
 }
+
 
 void ActorBase::Release(void)
 {
@@ -162,6 +201,10 @@ void ActorBase::Release(void)
 		parameter = nullptr;
 	}
 
+	// 物理挙動を解放
+	delete physicsBody;
+	physicsBody = nullptr;
+
 	// 当たり判定情報を解放
 	for (ColliderBase*& collider : colliders) {
 		if (!collider) { continue; }
@@ -172,6 +215,11 @@ void ActorBase::Release(void)
 
 	// モデル制御情報の解放
 	trans.Release();
+}
+
+void ActorBase::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
+{
+	if (other.GetTag() == COLLIDER_TAG::CameraLine) { SetDrawType(ACTOR_DRAW_TYPE::Alpha); }
 }
 
 std::vector<ColliderBase*> ActorBase::GetColliders(void) const
@@ -194,65 +242,73 @@ void ActorBase::DrawColliderDebug(void) const
 	}
 }
 
-void ActorBase::Gravity(void)
+Vector3 ActorBase::VelSteal(void)
 {
-	if (!gravityFlg) { return; }
+    if (physicsBody == nullptr) { return Vector3(0.0f); }
 
-	velocity.y += GRAVITY * GetTimeScale();
-	if (velocity.y < GRAVITY_MAX) { velocity.y = GRAVITY_MAX; }
+    const Vector3 taken = physicsBody->StealVelocity();
+    
+    return taken;
 }
 
-void ActorBase::VelocityUpdate(bool	deceleration)
+void ActorBase::VelGive(const Vector3& vel)
 {
-	// このアクターの倍率（グループ × 個別）
-	const float timeScale = GetTimeScale();
+	if (physicsBody == nullptr) { return; }
 
-	// 重力処理
-	Gravity();
+    physicsBody->GiveVelocity(vel);
+}
 
-#pragma region 横軸（X,Z）
-	// 横軸のみの加速度の大きさを求める
-	float widthAccelLen = sqrt(velocity.x * velocity.x + velocity.z * velocity.z);
+void ActorBase::OnTargeted()
+{
+	// リムライトをつける
+	CreateShader(new RimLightShader(ShaderVertexType()));
+}
 
-	// 横軸の加速度がある場合
-	if (widthAccelLen > 0.0f) {
+void ActorBase::OnUntargeted()
+{
+	// 現在のシェーダー破棄
+	ResetShader();
+	// デフォルトシェーダーに戻す
+	DefaultCreateShader();
+}
 
-		// 補正倍率
-		float scale = 1.0f;
+void ActorBase::EnablePhysics(void)
+{
+	// すでにPhysicsBodyが生成されている場合は何もしない
+    if (physicsBody != nullptr) { return; }
 
-		// 減速処理
-		if (deceleration) {
-			// 横軸の加速度が減速の半分以下の場合は、横軸の加速度を0にする
-			if (widthAccelLen <= (DECEL_RATE * timeScale) * 0.5f) { velocity.x = velocity.z = 0.0f; }
+	// PhysicsBodyを 生成/保持
+    physicsBody = new PhysicsBody();
 
-			// 減速
-			scale = (widthAccelLen - (DECEL_RATE * timeScale)) / widthAccelLen;
-		}
+    // 従来のActorBaseと同様、明示的に有効化するまで重力は無効。
+    physicsBody->SetGravityEnabled(false);
+}
 
-		// 最大加速制限～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+void ActorBase::SetColliderMobility(COLLIDER_MOBILITY value)
+{
+	// メンバ変数
+	colliderMobility = value;
 
-		// 最大加速を超えていれば、超過分を打ち消す補正倍率を組み込む
-		if (widthAccelLen > ACCEL_MAX) { scale = ACCEL_MAX / widthAccelLen; }
+	// モデル制御情報の動的フラグ
+	trans.dynamicFlg = (value == COLLIDER_MOBILITY::Movable);
 
-		// 実際に補正
-		velocity.x *= scale;
-		velocity.z *= scale;
-		// ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～最大加速制限
+	// コライダーの動的フラグ
+	for (ColliderBase* collider : colliders) {
+		if (collider != nullptr) { collider->SetMobility(value); }
 	}
-#pragma endregion
-
-	// 加速度を座標に反映
-	if (velocity != 0.0f) { trans.pos += velocity * timeScale; }
+	// チャンク区分変更時だけ静的・動的チャンクを再構築
+	// （初期化前に呼ばれる可能性があるため、登録済みColliderがある場合のみ）
+	// 登録タイミングが不明なため、ここでは再構築を呼ばず、Manager側の明示更新に委ねる。
 }
 
+// Actor側からPhysicsBodyを操作するための初期設定API。
+// すべて既存のPhysicsBody setterへ委譲し、物理計算は変更しない。
 void ActorBase::AddCollider(ColliderBase* newCollider)
 {
-	newCollider->SetTransformPtr(&trans);
-	newCollider->SetDynamicFlgPtr(&dynamicFlg);
-	newCollider->SetPushFlgPtr(&pushFlg);
-	newCollider->SetPushWeightPtr(&pushWeight);
+	newCollider->SetActorPtr(this);
+	newCollider->SetMobility(colliderMobility);
 	newCollider->SetOnCollisionFunc([this](COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result) { this->OnCollision(ownTag, other, result); });
-	newCollider->SetOnGroundedFunc([this](COLLIDER_TAG ownTag, const ColliderBase& other) { this->OnGrounded(ownTag, other); });
+	newCollider->SetOnPushedFunc([this](COLLIDER_TAG ownTag, const ColliderBase& other, const Vector3& pushVec) { this->OnPushed(ownTag, other, pushVec); });
 	colliders.emplace_back(newCollider);
 }
 
@@ -274,6 +330,12 @@ void ActorBase::ResetShader()
 		delete shader;
 		shader = nullptr;
 	}
+}
+
+void ActorBase::DefaultCreateShader(void)
+{
+	// デフォルトシェーダーを生成
+	CreateShader(new DefaultShader(ShaderVertexType()));
 }
 
 #pragma region パラメーター外部ファイル管理に関する関数
@@ -339,27 +401,12 @@ void ActorBase::SetJudgeFlg(bool flg)
 	}
 }
 
-void ActorBase::MoveAccel(const Vector3& vec)
+// 位置拘束の角度補正。角速度には加算しない。
+void ActorBase::ApplyPhysicsRotation(const Vector3& rotationVector)
 {
-	if (vec == 0.0f) { return; }
-
-	const float timeScale = GetTimeScale();
-
-	// 入力量に応じて加速
-	velocity += (vec * ACCEL_RATE) * timeScale;
-
-	// 移動方向から目標のY軸回転を取得
-	const float targetAngle = atan2f(vec.x, vec.z);
-
-	// 目標回転
-	const Quaternion targetRotation = Quaternion::FromRotationY(targetAngle);
-
-	// 現在の回転から目標回転へ補間
-	trans.SetRotation(
-		Quaternion::Slerp(
-			trans.rotation,
-			targetRotation,
-			0.25f * timeScale
-		)
-	);
+    const float angle = rotationVector.Length();
+    if (angle <= 1.0e-7f) return;
+    trans.SetRotation(
+        (Quaternion::FromAxisAngle(rotationVector / angle, angle) * trans.rotation).Normalized()
+    );
 }

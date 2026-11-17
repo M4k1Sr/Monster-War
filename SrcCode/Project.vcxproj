@@ -151,6 +151,13 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Manager\Collision\ContactSolver.cpp" />
+    <ClCompile Include="Src\Manager\Collision\CurrentCollisionManager.cpp" />
+    <ClCompile Include="Src\Object\Common\MotionController\GroundMotionController.cpp" />
+    <ClCompile Include="Src\Object\Common\PhysicsBody\PhysicsBody.cpp" />
+    <ClCompile Include="Src\Object\Common\Shader\GoalFieldShader.cpp" />
+    <ClCompile Include="Src\Object\Common\Shader\ModelDamageFlashShader.cpp" />
+    <ClCompile Include="Src\Object\Common\SkyBox\SkyBox.cpp" />
     <ClCompile Include="Src\Object\Player\State\PlayerParaseilMoveState.cpp" />
     <ClCompile Include="Src\Object\Player\State\PlayerSkyRiseState.cpp" />
     <ClCompile Include="Src\Object\Player\Weapon\CollOperator\PlayerBackFlipCollOperator.cpp" />
@@ -238,6 +245,15 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Scene\StageSelect\StageSelectScene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Manager\Collision\ContactSolver.h" />
+    <ClInclude Include="Src\Manager\Collision\CurrentCollisionManager.h" />
+    <ClInclude Include="Src\Object\Common\DebugObject\IceBoxDebugObject.h" />
+    <ClInclude Include="Src\Object\Common\MotionController\GroundMotionController.h" />
+    <ClInclude Include="Src\Object\Common\MotionController\MotionControllerBase.h" />
+    <ClInclude Include="Src\Object\Common\PhysicsBody\PhysicsBody.h" />
+    <ClInclude Include="Src\Object\Common\Shader\GoalFieldShader.h" />
+    <ClInclude Include="Src\Object\Common\Shader\ModelDamageFlashShader.h" />
+    <ClInclude Include="Src\Object\Common\SkyBox\SkyBox.h" />
     <ClInclude Include="Src\Object\Player\GroundInfo.h" />
     <ClInclude Include="Src\Object\Player\State\PlayerParaseilMoveState.h" />
     <ClInclude Include="Src\Object\Player\State\PlayerSkyRiseState.h" />
@@ -350,6 +366,58 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Scene\StageSelect\StageSelectScene.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Data\Shader\BrightPassPS.cso" />
+    <None Include="Data\Shader\ChromaticAberrationPS.cso" />
+    <None Include="Data\Shader\CompositePS.cso" />
+    <None Include="Data\Shader\CopyPS.cso" />
+    <None Include="Data\Shader\CRT_PS.cso" />
+    <None Include="Data\Shader\DamageFlashPS.cso" />
+    <None Include="Data\Shader\DefaultPS.cso" />
+    <None Include="Data\Shader\DefaultVS_1Frame.cso" />
+    <None Include="Data\Shader\DefaultVS_4Frame.cso" />
+    <None Include="Data\Shader\DefaultVS_8Frame.cso" />
+    <None Include="Data\Shader\DefaultVS_NMap1Frame.cso" />
+    <None Include="Data\Shader\DefaultVS_NMap4Frame.cso" />
+    <None Include="Data\Shader\DefaultVS_NMap8Frame.cso" />
+    <None Include="Data\Shader\DepthPS.cso" />
+    <None Include="Data\Shader\DepthVS_1Frame.cso" />
+    <None Include="Data\Shader\DepthVS_4Frame.cso" />
+    <None Include="Data\Shader\DepthVS_8Frame.cso" />
+    <None Include="Data\Shader\DepthVS_NMap1Frame.cso" />
+    <None Include="Data\Shader\DepthVS_NMap4Frame.cso" />
+    <None Include="Data\Shader\DepthVS_NMap8Frame.cso" />
+    <None Include="Data\Shader\FocusLinesPS.cso" />
+    <None Include="Data\Shader\GaussianBlurHPS.cso" />
+    <None Include="Data\Shader\GaussianBlurVPS.cso" />
+    <None Include="Data\Shader\GrayScalePS.cso" />
+    <None Include="Data\Shader\NegativePS.cso" />
+    <None Include="Data\Shader\OldFilmPS.cso" />
+    <None Include="Data\Shader\PixelatePS.cso" />
+    <None Include="Data\Shader\PosterizePS.cso" />
+    <None Include="Data\Shader\RimLightPS.cso" />
+    <None Include="Data\Shader\RimLightVS_1Frame.cso" />
+    <None Include="Data\Shader\RimLightVS_4Frame.cso" />
+    <None Include="Data\Shader\RimLightVS_8Frame.cso" />
+    <None Include="Data\Shader\RimLightVS_NMap1Frame.cso" />
+    <None Include="Data\Shader\RimLightVS_NMap4Frame.cso" />
+    <None Include="Data\Shader\RimLightVS_NMap8Frame.cso" />
+    <None Include="Data\Shader\ScanNoisePS.cso" />
+    <None Include="Data\Shader\SepiaPS.cso" />
+    <None Include="Data\Shader\ShadowPS.cso" />
+    <None Include="Data\Shader\ShadowVS_1Frame.cso" />
+    <None Include="Data\Shader\ShadowVS_4Frame.cso" />
+    <None Include="Data\Shader\ShadowVS_8Frame.cso" />
+    <None Include="Data\Shader\ShadowVS_NMap1Frame.cso" />
+    <None Include="Data\Shader\ShadowVS_NMap4Frame.cso" />
+    <None Include="Data\Shader\ShadowVS_NMap8Frame.cso" />
+    <None Include="Data\Shader\SkyBoxPS.cso" />
+    <None Include="Data\Shader\SkyBoxVS.cso" />
+    <None Include="Data\Shader\VignettePS.cso" />
+    <None Include="Data\Shader\WaterPS.cso" />
+    <None Include="Data\Shader\WaterVS.cso" />
+    <None Include="Data\Shader\WavePS.cso" />
+    <None Include="Data\Sound\SoundTable.csv" />
+    <None Include="Data\Sound\SoundTableEdit.xlsm" />
     <None Include="Src\Shader\Common\Pixel\ModelFog.hlsli" />
     <None Include="Src\Shader\Common\Pixel\ModelLighting.hlsli" />
     <None Include="Src\Shader\Common\Pixel\ModelPixelCommon.hlsli" />

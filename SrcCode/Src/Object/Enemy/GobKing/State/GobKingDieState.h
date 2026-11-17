@@ -11,7 +11,12 @@ public:
 	GobKingDieState(
 		bool& isDie,
 		bool& isFlyEnd,
-		std::function<void(void)> playAnimeReact,
+
+		std::function<Vector3(void)> getForward,
+
+		std::function<void(const Vector3&)> setAddVelocity,
+
+		std::function<void(void)> playAnimeDie,
 
 		std::function<bool(void)> isAnimeEnd
 		);
@@ -33,7 +38,17 @@ public:
 private:
 
 #pragma region 定数
+
+	// 吹っ飛ぶ高さ
+	const float VELOCTY_Y = 30.0f;
+
 #pragma endregion
+
+	// 前方の向き
+	const std::function<Vector3(void)> getForward;
+
+	// 吹っ飛ぶ量
+	std::function<void(const Vector3&)> setAddVelocity;
 
 	// 死亡アニメーションの再生関数のポインタ
 	const std::function<void(void)> playAnimeDie;
@@ -46,5 +61,6 @@ private:
 
 	// Hpがなくなったか
 	bool& isDie;
+
 
 };

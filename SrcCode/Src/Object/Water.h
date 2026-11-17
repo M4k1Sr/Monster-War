@@ -11,7 +11,7 @@ public:
 	~Water()override = default;
 
 	void Load(void)override {
-		SetDynamicFlg(false);
+		SetColliderMobility(COLLIDER_MOBILITY::Static);
 
 		trans.LoadModel("Water/WaterWaveCube");
 

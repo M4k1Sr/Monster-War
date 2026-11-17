@@ -5,6 +5,7 @@
 struct Transform;
 
 struct Vector3;
+class GroundMotionController;
 
 class PlayerParaseilMoveState : public CharacterStateBase
 {
@@ -13,12 +14,10 @@ public:
 	PlayerParaseilMoveState(
 		const float ACCEL_MAX,
 		const float PARASEIL_OPEN_HEIGHT,
-		float& velocityY,
+		GroundMotionController& motion,
 		const float& footHeight,
 		const bool& isGround,
 		bool& isOpenParaseil,
-		std::function<void(const Vector3&)> moveAccel,
-		float& accelMax,
 		std::function<void(void)> playAnimeHang,
 		std::function<void(void)> playAnimeJumpEnd,
 		std::function<bool(void)> isAnimeEnd,
@@ -55,8 +54,8 @@ private:
 
 #pragma region 受け取る参照変数・関数
 
-	// Y軸加速度
-	float& velocityY;
+	// 移動制御（速度・向き・最大移動速度を管理する）
+	GroundMotionController& motion;
 
 	// 足元の高さ
 	const float& footHeight;
@@ -66,12 +65,6 @@ private:
 
 	// パラセールを開いたか
 	bool& isOpenParaseil;
-
-	// 移動関数のポインタ
-	const std::function<void(const Vector3&)> moveAccel;
-
-	// 横軸加速度の最大値の参照
-	float& accelMax;
 
 	// ハングアニメーションの再生関数のポインタ
 	const std::function<void(void)> playAnimeHang;

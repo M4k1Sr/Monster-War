@@ -9,6 +9,7 @@ struct Transform;
 struct Vector3;
 
 class PlayerAttackSlashCollOperator;
+class GroundMotionController;
 
 class PlayerAttackSlashState : public CharacterStateBase
 {
@@ -36,9 +37,7 @@ public:
 
 		const Vector3* const& lockOnTarget,
 
-		const std::function<void(const Vector3&)> moveAccel,
-
-		float& accelMax,
+		GroundMotionController& motion,
 
 		const bool& isRush,
 
@@ -112,11 +111,8 @@ private:
 	// 攻撃する対象
 	const Vector3* const& lockOnTarget;
 
-	// 移動関数のポインタ
-	const std::function<void(const Vector3&)> moveAccel;
-
-	// 横軸加速度の最大値の参照
-	float& accelMax;
+	// 移動制御（踏み込み移動と停止に使う）
+	GroundMotionController& motion;
 
 	// ラッシュ攻撃をしているか
 	const bool& isRush;
@@ -162,5 +158,14 @@ private:
 
 	// 攻撃したときの座標補正
 	void attackMoveOffset(void);
+
+	// 通常攻撃の踏み込み速度
+	static constexpr float NORMAL_MOVE_SPEED = 0.5f;
+	// ラッシュ攻撃の踏み込み速度（速度/フレーム）
+	static constexpr float RUSH_MOVE_SPEED = 40.0f;
+	// 踏み込まない時の減速度（速度/フレーム）
+	static constexpr float NORMAL_BRAKE = 3.0f;
+	// ラッシュ攻撃の踏み込み後の減速度（速度/フレーム）
+	static constexpr float RUSH_BRAKE = 10.0f;
 
 };

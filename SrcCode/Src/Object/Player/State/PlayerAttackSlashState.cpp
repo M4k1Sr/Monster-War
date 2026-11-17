@@ -8,6 +8,8 @@
 
 #include "../../../Manager/Camera/CurrentCamera.h"
 
+#include "../../Common/MotionController/GroundMotionController.h"
+
 #include "../Weapon/CollOperator/PlayerAttackSlashCollOperator.h"
 
 PlayerAttackSlashState::PlayerAttackSlashState(
@@ -19,9 +21,7 @@ PlayerAttackSlashState::PlayerAttackSlashState(
 
 	const Vector3* const& lockOnTarget,
 
-	std::function<void(const Vector3&)> moveAccel,
-
-	float& accelMax,
+	GroundMotionController& motion,
 
 	const bool& isRush,
 
@@ -45,9 +45,7 @@ PlayerAttackSlashState::PlayerAttackSlashState(
 
 	lockOnTarget(lockOnTarget),
 
-	moveAccel(moveAccel),
-
-	accelMax(accelMax),
+	motion(motion),
 
 	isRush(isRush),
 
@@ -263,16 +261,24 @@ void PlayerAttackSlashState::attackMoveOffset(void)
 	}
 
 	// 止まる距離 = 敵のコライダー半径 + 攻撃が届く距離
-	const float stopDist = 150.0f + 100.0f;
+	const float stopDist = 150.0f + 50.0f;
 
-	if (lockOnTarget != nullptr && dist > stopDist) {
-		// ラッシュ中は速く、そうでなければ通常の上限
-		accelMax = isRush ? 0.5f * 1000.0f : 0.5f ;
+	if (/*lockOnTarget != nullptr && */dist > stopDist) {
 
-		// 移動(向き補正もMoveAccel内のSlerpでかかる)
-		moveAccel(dir);
+		if (isRush) {
+			// ラッシュ中は敵へ向かって素早く踏み込む
+			motion.FaceDirection(dir);
+			motion.SetHorizontalVelocity(dir * RUSH_MOVE_SPEED);
+		}
+		else {
+			// 通常攻撃はわずかに踏み込む(向き補正もApplyInput内でかかる)
+			motion.SetMoveSpeed(NORMAL_MOVE_SPEED);
+			motion.ApplyInput(dir);
+		}
 	}
 	else {
-		accelMax = 0.0f;
+		// 踏み込まない・踏み込み終わったら減速する
+		motion.SetMoveSpeed(0.0f);
+		motion.Brake(isRush ? RUSH_BRAKE : NORMAL_BRAKE);
 	}
 }

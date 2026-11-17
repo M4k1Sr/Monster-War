@@ -23,16 +23,10 @@ void King_Sword::Load(void)
 #pragma region オブジェクト設定
 
 	// 動的オブジェクトとしての処理を有効にする
-	SetDynamicFlg(true);
-
-	// 重力を有効にする
-	SetGravityFlg(false);
+	SetColliderMobility(COLLIDER_MOBILITY::Movable);
 
 	// 当たり判定による押し出しを有効にする
-	SetPushFlg(false);
-
-	// 押し出しだしによる重みを設定
-	SetPushWeight(0);
+	SetContactResponseEnabled(false);
 
 #pragma endregion
 

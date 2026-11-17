@@ -6,6 +6,8 @@
 
 class CharacterStateBase;
 
+class MotionControllerBase;
+
 class AnimationController;
 
 class CharacterBase : public ActorBase
@@ -27,6 +29,9 @@ private:
 
 	// ステート管理用マップ（キー：ステート番号、値：状態クラスのポインタ）
 	std::map<int, CharacterStateBase*> stateMap;
+
+	// モーションコントローラーのインスタンス
+	MotionControllerBase* motionController; // CharacterBaseが所有し、解放する
 
 	// ステートの追加
 	void AddState(int stateNum, CharacterStateBase* stateIns);
@@ -68,6 +73,16 @@ protected:
 	// 指定のステートインスタンスをゲットする関数
 	template<typename StateEnum>
 	CharacterStateBase& GetStateIns(StateEnum state) { return GetStateIns(static_cast<int>(state)); }
+
+#pragma endregion
+
+#pragma region モーションコントローラー
+
+	// モーションコントローラーを生成
+	void AddMotionController(MotionControllerBase* controller);
+
+	// モーションコントローラー取得
+	MotionControllerBase* GetMotionController(void)const { return motionController; }
 
 #pragma endregion
 
