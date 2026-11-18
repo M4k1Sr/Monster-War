@@ -10,7 +10,9 @@ class PlayerMoveState : public CharacterStateBase
 public:
 
 	PlayerMoveState(
-		float ACCEL_MAX, float DASH_SPEED_RATE, short DASH_STAMINA_MAX,
+		float ACCEL_MAX, 
+		float UNDASH_SPEED_RATE,float DASH_SPEED_RATE,
+		short DASH_STAMINA_MAX,
 		GroundMotionController& motion,
 		std::function<void(void)> playAnimeWalk,
 		std::function<void(void)> playAnimeRun,
@@ -41,8 +43,11 @@ private:
 
 #pragma region 定数
 
-	// 非ダッシュ時の最大移動速度
-	const float ACCEL_MAX;
+	// 最大移動速度
+	float ACCEL_MAX;
+
+	// 非ダッシュ時の移動量倍率
+	float UNDASH_SPEED_RATE;
 
 	// ダッシュの移動量倍率
 	const float DASH_SPEED_RATE;

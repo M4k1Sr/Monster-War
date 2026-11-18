@@ -8,6 +8,11 @@ class PlayerFlyingState : public CharacterStateBase
 {
 public:
 
+	enum class FLYING_STEP {
+		Flying,
+		GetUp,
+	};
+
 	PlayerFlyingState(
 		bool& isImpact,
 		bool& isFlyEnd,
@@ -19,7 +24,9 @@ public:
 		std::function<void(void)> playAnimeFlying,
 		std::function<void(void)> playAnimeGetUp,
 
-		std::function<bool(void)> isAnimeEnd
+		std::function<bool(void)> isAnimeEnd,
+
+		std::function<void(void)> changeStateIdle
 	);
 
 	~PlayerFlyingState()override = default;
@@ -65,4 +72,8 @@ private:
 	// アニメーションが終了したかどうかを取得する関数のポインタ
 	const std::function<bool(void)> isAnimeEnd;
 
+	// 待機状態に戻る関数のポインタ
+	const std::function<void(void)> changeStateIdle;
+
+	FLYING_STEP step;
 };

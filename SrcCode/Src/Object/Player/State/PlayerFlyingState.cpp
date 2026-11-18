@@ -15,7 +15,9 @@ PlayerFlyingState::PlayerFlyingState(
 	std::function<void(void)> playAnimeFlying,
 	std::function<void(void)> playAnimeGetUp,
 
-	std::function<bool(void)> isAnimeEnd
+	std::function<bool(void)> isAnimeEnd,
+
+	std::function<void(void)> changeStateIdle
 ) :
 	isImpact(isImpact),
 	isFlyEnd(isFlyEnd),
@@ -23,12 +25,15 @@ PlayerFlyingState::PlayerFlyingState(
 	setAddVelocity(setAddVelocity),
 	playAnimeFlying(playAnimeFlying),
 	playAnimeGetUp(playAnimeGetUp),
-	isAnimeEnd(isAnimeEnd)
+	isAnimeEnd(isAnimeEnd),
+	changeStateIdle(changeStateIdle),
+	step()
 {
 }
 
 void PlayerFlyingState::OwnStateConditionUpdate(void)
 {
+	// インパクトのある攻撃を受けたら遷移
 	if (isImpact) {
 		OwnChangeState();
 	}
@@ -36,6 +41,9 @@ void PlayerFlyingState::OwnStateConditionUpdate(void)
 
 void PlayerFlyingState::Enter(void)
 {
+	// 吹っ飛ぶ
+	step = FLYING_STEP::Flying;
+
 	isFlyEnd = false;
 	playAnimeFlying();
 
@@ -43,21 +51,44 @@ void PlayerFlyingState::Enter(void)
 	back.y = 0.0f;
 	back = back.Normalized();
 
-	Vector3 knock = back * 25.0f;
-	knock.y = 20.0f;
+	Vector3 knock = back * 20.0f;
+	knock.y = 25.0f;
 	setAddVelocity(knock);
 
 }
 
 void PlayerFlyingState::Update(void)
 {
-	if (isAnimeEnd()) {
+	// ステップ別更新
+	switch (step) {
 
-		playAnimeGetUp();
+	case PlayerFlyingState::FLYING_STEP::Flying: {
+		// 前隙
 
-		isFlyEnd = true;
+		if (isAnimeEnd()) {
+
+			playAnimeGetUp();
+
+			isFlyEnd = true;
+
+			step = FLYING_STEP::GetUp;
+
+		}
+
+		break;
+	}
+	case PlayerFlyingState::FLYING_STEP::GetUp: {
+
+		if (isAnimeEnd()) {
+
+			changeStateIdle();
+
+		}
+		
+		break;
 	}
 
+	}
 }
 
 void PlayerFlyingState::Exit(void)

@@ -213,7 +213,7 @@ void Player::Load(void)
 	AddState(
 		STATE::Move,
 		new PlayerMoveState(
-			10.0f, 1.5f, 300,
+			10.0f,1.0f, 1.5f, 300,
 			*groundMotionController,
 			[&]() { AnimePlay(ANIME_TYPE::Walk); },
 			[&]() { AnimePlay(ANIME_TYPE::Run); },
@@ -338,7 +338,8 @@ void Player::Load(void)
 			[&](const Vector3& v) {GetPhysicsBody()->AddVelocity(v); },
 			[&]() { AnimePlay(ANIME_TYPE::Flying); },
 			[&]() { AnimePlay(ANIME_TYPE::GetUp); },
-			[&]() { return IsAnimeEnd(); }
+			[&]() { return IsAnimeEnd(); },
+			[&]() {ChangeState(STATE::Idle); }
 		)
 	);
 
