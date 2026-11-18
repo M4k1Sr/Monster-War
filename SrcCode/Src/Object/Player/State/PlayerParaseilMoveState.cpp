@@ -168,6 +168,7 @@ Vector3 PlayerParaseilMoveState::InputVec(void) const
 	// コントローラーの入力を取得
 	vec = Input::GetIns().GetLeftStickVec(false).ToVector3XZInvertY();
 
+	// 倒し量によって移動量変化してる
 	// 入力がなければ次にキーボードの入力を取得
 	if (vec == 0.0f) {
 		if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveRight).now) { vec.x++; }

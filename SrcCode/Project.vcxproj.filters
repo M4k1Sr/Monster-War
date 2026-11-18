@@ -99,6 +99,7 @@
     <ClCompile Include="Src\Object\Stage\Wind\WindMill.cpp" />
     <ClCompile Include="Src\Object\Stage\Wind\WindZone.cpp" />
     <ClCompile Include="Src\Object\Player\State\PlayerFlyingState.cpp" />
+    <ClCompile Include="Src\Object\Common\MotionController\ParaseilMotionController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\resource.h" />
@@ -226,6 +227,7 @@
     <ClInclude Include="Src\Object\Stage\Wind\WindMill.h" />
     <ClInclude Include="Src\Object\Stage\Wind\WindZone.h" />
     <ClInclude Include="Src\Object\Player\State\PlayerFlyingState.h" />
+    <ClInclude Include="Src\Object\Common\MotionController\ParaseilMotionController.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Shader\Common\Pixel\ModelFog.hlsli" />
