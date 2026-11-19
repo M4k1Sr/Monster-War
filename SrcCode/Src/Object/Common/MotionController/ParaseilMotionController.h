@@ -16,6 +16,9 @@ public:
 	// 通常移動の最大速度を設定
 	void SetMoveSpeed(float value) { moveSpeed = value; }
 
+    // 通常移動の後退速度を設定
+    void SetBackSpeed(float value) { backSpeed = value; }
+
     // 空中の加速度を設定
     void SetAirAcceleration(float value) { airAcceleration = value; }
 
@@ -65,8 +68,8 @@ public:
 
     void SetTransform(Transform* value) { transform = value; }
 
-    // スキル使用時に速度を付与。
-    void ApplyRollingImpulse(const Vector3& impulse);
+    // 上昇気流を使用時に速度を付与。
+    void ApplyImpulse(const Vector3& impulse);
 
     // CharacterBaseが持つパラセール状態を一度だけ登録する（所有しない）
     void SetParaseiledSource(const bool* value) { paraseiledSource = value; }
@@ -89,17 +92,20 @@ private:
     // 通常移動の最大速度
     float moveSpeed = 5.0f;
 
+    // 後退するときの速度
+    float backSpeed = 1.4f;
+
     // 空中の加速度
     float airAcceleration = 0.12f;
 
     // 滑空中の重力
-    float glideGravity = 0.15f;
+    float glideGravity = 0.01f;
 
     // 落下速度の上限
-    float maxFallSpeed = 3.0f;
+    float maxFallSpeed = 0.5f;
 
     // 高速移動中の方向修正倍率
-    float momentumSteering = 0.05f;
+    float momentumSteering = 0.0001f;
 
     // 高速移動と判定する速度
     float momentumThreshold = 10.0f;
@@ -108,12 +114,15 @@ private:
     float airDrag = 0.08f;
 
     // 体の向きを変える速さ
-    float turnRate = Deg2Rad(3.0f);
+    float turnRate = Deg2Rad(0.5f);
 
 #pragma endregion
 
 
     // 現在の向き(角速度の保持のため)
     float yaw = 0.0f;
+
+    // 指定方向へ向きを回す
+    void RotateTowards(const Vector3& direction, float timeScale);
 
 };

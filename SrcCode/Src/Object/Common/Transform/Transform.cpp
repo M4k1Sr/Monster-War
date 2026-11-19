@@ -41,6 +41,11 @@ Vector3 Transform::VTrans(const VECTOR& v) const
 	return VTrans(Vector3(v));
 }
 
+Vector3 Transform::GetForward(void) const
+{
+	return VTrans(Vector3::Zonly(1.0f));
+}
+
 #pragma region âÒì]ê›íË
 
 void Transform::SetRotation(const Quaternion& rotation)

@@ -6,13 +6,13 @@
 #include "../../../Manager/Camera/CurrentCamera.h"
 
 #include "../../Common/ActorBase/ActorBase.h"
-#include "../../Common/MotionController/GroundMotionController.h"
+#include "../../Common/MotionController/ParaseilMotionController.h"
 
 PlayerParaseilMoveState::PlayerParaseilMoveState(
 	const float ACCEL_MAX,
 	const float PARASEIL_OPEN_HEIGHT,
 
-	GroundMotionController& motion,
+	ParaseilMotionController& motion,
 
 	const float& footHeight,
 
@@ -27,7 +27,12 @@ PlayerParaseilMoveState::PlayerParaseilMoveState(
 
 	std::function<void(bool)> setParaseilDraw,
 
-	std::function<void(void)> changeStateIdle
+	std::function<void(void)> changeStateIdle,
+
+	std::function<void(void)> activateParaseilMotion,
+	std::function<void(void)> activateGroundMotion,
+
+	std::function<void(bool)> setGravityEnabled
 ) :
 	ACCEL_MAX(ACCEL_MAX),
 	PARASEIL_OPEN_HEIGHT(PARASEIL_OPEN_HEIGHT),
@@ -48,6 +53,11 @@ PlayerParaseilMoveState::PlayerParaseilMoveState(
 	setParaseilDraw(setParaseilDraw),
 
 	changeStateIdle(changeStateIdle),
+
+	activateParaseilMotion(activateParaseilMotion),
+	activateGroundMotion(activateGroundMotion),
+
+	setGravityEnabled(setGravityEnabled),
 
 	isJustEntered(false),
 
@@ -73,14 +83,19 @@ void PlayerParaseilMoveState::Enter(void)
 	step = STEP::Glide;
 	isJustEntered = true;
 	isOpenParaseil = true;
+
+	// 移動制御をパラセールに切り替え、物理の重力を切る
+	activateParaseilMotion();
+
+	// 落下を止めて、向きを初期化
+	motion.OnOpen();
+
 	setParaseilDraw(true);
 	playAnimeHang();
 }
 
 void PlayerParaseilMoveState::Update(void)
 {
-	// 落下速度を毎フレーム0にして、重力による緩やかな降下だけにする
-	motion.SetVerticalVelocity(0.0f);
 
 	switch (step) {
 
@@ -92,6 +107,7 @@ void PlayerParaseilMoveState::Update(void)
 
 		// 移動量の最大値を更新する
 		motion.SetMoveSpeed(ACCEL_MAX * inputVec.Length());
+		motion.SetBackSpeed(ACCEL_MAX * 0.7f * inputVec.Length());
 
 		// 最終的に入力があれば加速度に加算する
 		if (inputVec != 0.0f) {
@@ -111,6 +127,7 @@ void PlayerParaseilMoveState::Update(void)
 		}
 		else if (Input::GetIns().GetInfo(KEY_TYPE::PlayerJump).down) {
 			changeStateIdle();
+			break;
 		}
 
 		// 着地
@@ -121,6 +138,9 @@ void PlayerParaseilMoveState::Update(void)
 
 			// 着地のアニメーションを再生
 			playAnimeJumpEnd();
+
+			// グラウンドモーションにする
+			activateGroundMotion();
 
 			// パラセールを閉じる
 			isOpenParaseil = false;
@@ -154,6 +174,8 @@ void PlayerParaseilMoveState::Exit(void)
 	motion.SetMoveSpeed(ACCEL_MAX);
 	isOpenParaseil = false;
 	setParaseilDraw(false);
+
+	activateGroundMotion();
 }
 
 void PlayerParaseilMoveState::AlwaysUpdate(void)

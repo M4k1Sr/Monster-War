@@ -56,11 +56,10 @@ void GobKing::Load(void)
 	// 着地時に跳ね返らないようにする
 	GetPhysicsBody()->SetRestitution(0.5f);
 
-	// 移動制御を生成
+	// 移動・ジャンプ・攻撃などで共有する移動制御を生成
 	GroundMotionController* groundMotionController = new GroundMotionController();
 
-	// アクターにMotionControllerを登録
-	AddMotionController(groundMotionController);
+	AddMotionController((int)MOTION::Ground, groundMotionController);
 
 	// モデル制御情報を設定
 	groundMotionController->SetTransform(&trans);

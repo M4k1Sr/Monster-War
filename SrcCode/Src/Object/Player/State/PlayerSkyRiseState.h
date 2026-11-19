@@ -5,7 +5,7 @@
 struct Transform;
 
 struct Vector3;
-class GroundMotionController;
+class ParaseilMotionController;
 
 class PlayerSkyRiseState : public CharacterStateBase
 {
@@ -13,12 +13,11 @@ public:
 
 	PlayerSkyRiseState(
 		float UP_POWER,
+		const float MAX_SKYRISE_HEIGHT,
 
 		const bool& isCrouchHold,
 
-		GroundMotionController& motion,
-
-		bool& isGravity,
+		ParaseilMotionController& motion,
 
 		const bool& isGround,
 
@@ -31,7 +30,7 @@ public:
 
 		std::function<void(bool)> setParaseilDraw,
 
-		std::function<void(void)> setGravityFlg,
+		std::function<void(bool)> setGravityEnabled,
 
 		std::function<void(void)> changeStateIdle,
 		std::function<void(void)> changeStateParaseilMove
@@ -61,6 +60,9 @@ private:
 	// 上昇力
 	float UP_POWER;
 
+	// 最大上昇値
+	const float MAX_SKYRISE_HEIGHT;
+
 #pragma endregion
 
 #pragma region 受け取る参照変数・関数
@@ -69,10 +71,7 @@ private:
 	const bool& isCrouchHold;
 
 	// 移動制御（上下方向の速度を設定する）
-	GroundMotionController& motion;
-
-	// 重力のかかり
-	bool& isGravity;
+	ParaseilMotionController& motion;
 
 	// 地面と設置しているか
 	const bool& isGround;
@@ -92,7 +91,7 @@ private:
 	std::function<void(bool)> setParaseilDraw;
 
 	// 重力の設定関数のポインタ
-	const std::function<void(void)> setGravityFlg;
+	const std::function<void(bool)> setGravityEnabled;
 
 	// 待機状態に戻る関数のポインタ
 	const std::function<void(void)> changeStateIdle;
@@ -109,9 +108,6 @@ private:
 
 		// 上昇
 		Rise,
-
-		// 停止
-		Stop,
 	};
 
 	// 現在のスキルステップ
@@ -123,6 +119,9 @@ private:
 	// チャージ完了フラグ
 	bool chargeCompleteFlg;
 
-	// 上昇更新処理
-	void SkyRiseMove(void);
+	// 上昇値
+	float riseStartY;
+
+
+
 };

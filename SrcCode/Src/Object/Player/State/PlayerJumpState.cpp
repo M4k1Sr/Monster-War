@@ -11,7 +11,7 @@ PlayerJumpState::PlayerJumpState(
 	float JUMP_POWER,
 
 	GroundMotionController& motion,
-
+	
 	std::function<void(void)> playAnimeJumpStart,
 	std::function<void(void)> playAnimeJumping,
 	std::function<void(void)> playAnimeJumpEnd,

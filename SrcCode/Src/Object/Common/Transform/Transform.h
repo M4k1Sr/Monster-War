@@ -93,6 +93,7 @@ struct Transform
 	/// </summary>
 	Vector3 VTrans(const VECTOR& v) const;
 
+	Vector3 GetForward(void) const;
 
 #pragma region ‰ñ“]İ’è
 

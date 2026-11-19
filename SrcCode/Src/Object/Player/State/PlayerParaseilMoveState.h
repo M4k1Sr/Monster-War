@@ -5,7 +5,7 @@
 struct Transform;
 
 struct Vector3;
-class GroundMotionController;
+class ParaseilMotionController;
 
 class PlayerParaseilMoveState : public CharacterStateBase
 {
@@ -14,7 +14,7 @@ public:
 	PlayerParaseilMoveState(
 		const float ACCEL_MAX,
 		const float PARASEIL_OPEN_HEIGHT,
-		GroundMotionController& motion,
+		ParaseilMotionController& motion,
 		const float& footHeight,
 		const bool& isGround,
 		bool& isOpenParaseil,
@@ -22,7 +22,10 @@ public:
 		std::function<void(void)> playAnimeJumpEnd,
 		std::function<bool(void)> isAnimeEnd,
 		std::function<void(bool)> setParaseilDraw,
-		std::function<void(void)> changeStateIdle
+		std::function<void(void)> changeStateIdle,
+		std::function<void(void)> activateParaseilMotion,
+		std::function<void(void)> activateGroundMotion,
+		std::function<void(bool)> setGravityEnabled
 	);
 
 	~PlayerParaseilMoveState()override = default;
@@ -55,7 +58,7 @@ private:
 #pragma region 受け取る参照変数・関数
 
 	// 移動制御（速度・向き・最大移動速度を管理する）
-	GroundMotionController& motion;
+	ParaseilMotionController& motion;
 
 	// 足元の高さ
 	const float& footHeight;
@@ -79,6 +82,13 @@ private:
 
 	// 待機状態に戻る関数のポインタ
 	const std::function<void(void)> changeStateIdle;
+
+	// 移動制御の切り替え
+	const std::function<void(void)> activateParaseilMotion;
+	const std::function<void(void)> activateGroundMotion;
+
+	// 物理の重力の切り替え
+	const std::function<void(bool)> setGravityEnabled;
 
 #pragma endregion
 

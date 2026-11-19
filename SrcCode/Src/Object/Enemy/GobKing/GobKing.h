@@ -47,6 +47,9 @@ private:
 
 #pragma endregion
 
+	// モーション定義
+	enum class MOTION { Ground };
+
 	// 状態定義
 	enum class STATE
 	{

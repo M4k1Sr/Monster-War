@@ -16,7 +16,8 @@ CharacterBase::CharacterBase() :
 	state(-1),
 	stateMap(),
 
-	motionController(nullptr),
+	motionMap(),
+	activeMotion(-1),
 
 	anime(nullptr)
 {
@@ -28,7 +29,8 @@ CharacterBase::CharacterBase(const std::string& parameterPath) :
 	state(0),
 	stateMap(),
 
-	motionController(nullptr),
+	motionMap(),
+	activeMotion(-1),
 
 	anime(nullptr)
 {
@@ -45,8 +47,9 @@ void CharacterBase::BaseUpdate(void)
 
 	// ステートによる入力反映後、PhysicsBody::Stepの前に共通減速を適用する。
 	// このアクターの時間倍率（グループ込み）を渡す。
-	if (motionController != nullptr) {
-		motionController->Update(GetTimeScale());
+	// 有効なモーションだけ更新
+	if (motionMap.contains(activeMotion)) {
+		motionMap.at(activeMotion)->Update(GetTimeScale());
 	}
 
 	// アニメーション更新
@@ -59,8 +62,8 @@ void CharacterBase::BaseUpdate(void)
 void CharacterBase::BaseRelease(void)
 {
 	// ActorBaseがPhysicsBodyを解放する前にControllerを破棄する。
-	delete motionController;
-	motionController = nullptr;
+	for (auto& m : motionMap) { delete m.second; }
+	motionMap.clear();
 
 	// ステート管理用マップの解放
 	for (auto& s : stateMap) {
@@ -117,23 +120,25 @@ CharacterStateBase& CharacterBase::GetStateIns(int state)
 #pragma endregion
 
 
-void CharacterBase::AddMotionController(MotionControllerBase* controller)
+#pragma region アニメーションコントローラー
+
+void CharacterBase::AddMotionController(int key, MotionControllerBase* controller)
 {
-	// 同一ポインタの再登録では何もしない。
-	if (controller == motionController) return;
+	// 二重登録禁止
+	if (!controller || motionMap.contains(key))return;
 
-	// Controllerの所有権をCharacterBaseに移す。
-	delete motionController;
-	motionController = controller;
+	controller->Init(GetPhysicsBody());
+	controller->SetTimeScaleSource([this]() { return GetTimeScale(); });
+	motionMap.emplace(key, controller);
 
-	if (motionController) {
-		motionController->Init(GetPhysicsBody());
-		// 持ち主のタイムスケール（グループ込み）を参照させる
-		motionController->SetTimeScaleSource([this]() { return GetTimeScale(); });
-	}
+	// 最初に登録したものを有効にする
+	if (activeMotion == -1) { activeMotion = key; }
 }
 
-#pragma region アニメーションコントローラー
+void CharacterBase::ChangeMotionController(int key)
+{
+	if (motionMap.contains(key)) { activeMotion = key; }
+}
 
 void CharacterBase::CreateAnimationController(void) { if (anime == nullptr) anime = new AnimationController(trans.model); }
 

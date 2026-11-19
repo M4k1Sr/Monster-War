@@ -10,6 +10,7 @@
 
 #include "../Common/PhysicsBody/PhysicsBody.h"
 #include "../Common/MotionController/GroundMotionController.h"
+#include "../Common/MotionController/ParaseilMotionController.h"
 
 #include "../Common/Shader/DefaultShader.h"
 #include "../Common/Shader/RimLightShader.h"
@@ -95,9 +96,11 @@ void Player::Load(void)
 
 	// 移動・ジャンプ・攻撃などで共有する移動制御を生成
 	GroundMotionController* groundMotionController = new GroundMotionController();
+	// パラセールなどで共有する移動制御を生成
+	ParaseilMotionController* paraseilMotionController = new ParaseilMotionController();
 
-	// アクターにMotionControllerを登録
-	AddMotionController(groundMotionController);
+	AddMotionController((int)MOTION::Ground, groundMotionController);
+	AddMotionController((int)MOTION::Paraseil, paraseilMotionController);
 
 	// モデル制御情報を設定
 	groundMotionController->SetTransform(&trans);
@@ -116,6 +119,27 @@ void Player::Load(void)
 	// 空中での減速（大きいほど空中ですぐ止まる）
 	groundMotionController->SetAirDrag(0.08f);
 
+	// モデル制御情報を設定
+	paraseilMotionController->SetTransform(&trans);
+	// パラセール展開状態の参照先を設定
+	paraseilMotionController->SetParaseiledSource(&isOpenParaseil);
+	// 滑空中の最大速度
+	paraseilMotionController->SetMoveSpeed(15.0f);
+	// 滑空中の加速度
+	paraseilMotionController->SetAirAcceleration(0.9f);
+	// 慣性操作の強さ
+	paraseilMotionController->SetMomentumSteering(0.35f);
+	// 慣性操作が効く速度の閾値
+	paraseilMotionController->SetMomentumThreshold(25.0f);
+	// 空中での減速
+	paraseilMotionController->SetAirDrag(0.2f);
+	// 滑空中の重力
+	paraseilMotionController->SetGlideGravity(0.75f);
+	// 落下速度の上限
+	paraseilMotionController->SetMaxFallSpeed(1.75f);
+	// 体の向きを変える速さ
+	paraseilMotionController->SetTurnRate(Deg2Rad(0.75f));
+	
 #pragma endregion
 
 
@@ -227,13 +251,16 @@ void Player::Load(void)
 		new PlayerParaseilMoveState(
 			10.0f,
 			300.0f,
-			*groundMotionController,
-			footHeight, isGround,isOpenParaseil,
-			[&]() {AnimePlay(ANIME_TYPE::Hang); },
-			[&]() {AnimePlay(ANIME_TYPE::JumpEnd); },
-			[&]() {return IsAnimeEnd(); },
+			*paraseilMotionController,
+			footHeight, isGround, isOpenParaseil,
+			[&]() { AnimePlay(ANIME_TYPE::Hang); },
+			[&]() { AnimePlay(ANIME_TYPE::JumpEnd); },
+			[&]() { return IsAnimeEnd(); },
 			[&](bool draw) { paraseil->SetIsDraw(draw); },
-			[&]() { ChangeState(STATE::Idle); }
+			[&]() { ChangeState(STATE::Idle); },
+			[this]() { ChangeMotionController((int)MOTION::Paraseil); },
+			[this]() { ChangeMotionController((int)MOTION::Ground); },
+			[this](bool flg) { isGravity = flg; GetPhysicsBody()->SetGravityEnabled(flg); }
 		)
 	);
 
@@ -254,15 +281,17 @@ void Player::Load(void)
 	AddState(
 		STATE::SkyRise,
 		new PlayerSkyRiseState(
-			10.0f,
-			isCrouchHold, *groundMotionController,
-			isGravity,isGround,
+			100.0f,
+			1000.0f,
+			isCrouchHold,
+			* paraseilMotionController,
+			isGround,
 			trans,
 			[&]() { AnimePlay(ANIME_TYPE::Crouch); },
-			[&]() {AnimePlay(ANIME_TYPE::Hang); },
+			[&]() { AnimePlay(ANIME_TYPE::Hang); },
 			std::bind(&Player::IsAnimeEnd, this),
 			[&](bool draw) { paraseil->SetIsDraw(draw); },
-			[&]() { GetPhysicsBody()->SetGravityEnabled(isGravity); },
+			[this](bool flg) { isGravity = flg; GetPhysicsBody()->SetGravityEnabled(flg); },
 			[&]() { ChangeState(STATE::Idle); },
 			[&]() { ChangeState(STATE::ParaseilMove); }
 		)

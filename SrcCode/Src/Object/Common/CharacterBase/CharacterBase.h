@@ -30,8 +30,11 @@ private:
 	// ステート管理用マップ（キー：ステート番号、値：状態クラスのポインタ）
 	std::map<int, CharacterStateBase*> stateMap;
 
-	// モーションコントローラーのインスタンス
-	MotionControllerBase* motionController; // CharacterBaseが所有し、解放する
+	// モーション管理用マップ(キー：モーションコントローラー番号、値：状態クラスのポインタ)
+	std::map<int, MotionControllerBase*> motionMap;
+
+	// 現在有効なモーション
+	int activeMotion = -1;
 
 	// ステートの追加
 	void AddState(int stateNum, CharacterStateBase* stateIns);
@@ -78,11 +81,11 @@ protected:
 
 #pragma region モーションコントローラー
 
-	// モーションコントローラーを生成
-	void AddMotionController(MotionControllerBase* controller);
+	// コントローラーの登録
+	void AddMotionController(int key, MotionControllerBase* controller);
 
-	// モーションコントローラー取得
-	MotionControllerBase* GetMotionController(void)const { return motionController; }
+	// 有効なコントローラーの切り替え
+	void ChangeMotionController(int key);
 
 #pragma endregion
 

@@ -29,6 +29,9 @@ public:
 
 private:
 	
+	// モーション定義
+	enum class MOTION { Ground, Paraseil };
+
 	// 状態定義
 	enum class STATE
 	{
@@ -184,7 +187,9 @@ private:
 
 		true,	// Hang
 	};
+
 #pragma endregion
+
 
 #pragma region 真下までのレイ情報などの変数や定数
 

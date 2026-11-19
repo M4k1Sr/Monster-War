@@ -6,16 +6,15 @@
 #include "../../../Manager/Camera/CurrentCamera.h"
 
 #include "../../Common/ActorBase/ActorBase.h"
-#include "../../Common/MotionController/GroundMotionController.h"
+#include "../../Common/MotionController/ParaseilMotionController.h"
 
 PlayerSkyRiseState::PlayerSkyRiseState(
 	float UP_POWER,
+	float MAX_SKYRISE_HEIGHT,
 
 	const bool& isCrouchHold,
 
-	GroundMotionController& motion,
-
-	bool& isGravity,
+	ParaseilMotionController& motion,
 
 	const bool& isGround,
 
@@ -28,43 +27,35 @@ PlayerSkyRiseState::PlayerSkyRiseState(
 
 	std::function<void(bool)> setParaseilDraw,
 
-	std::function<void(void)> setGravityFlg,
+	std::function<void(bool)> setGravityEnabled,
 
 	std::function<void(void)> changeStateIdle,
 	std::function<void(void)> changeStateParaseilMove
 ) :
 	UP_POWER(UP_POWER),
+	MAX_SKYRISE_HEIGHT(MAX_SKYRISE_HEIGHT),
 
 	HOLD_FRAME(60),
 	CHARGE_COMPLETE_FRAME(120),
 
 	isCrouchHold(isCrouchHold),
-
 	motion(motion),
-
-	isGravity(isGravity),
-
 	isGround(isGround),
-
 	playerTrans(playerTrans),
 
 	playAnimeCrouch(playAnimeCrouch),
 	playAnimeHang(playAnimeHang),
-
 	isAnimeEnd(isAnimeEnd),
-
 	setParaseilDraw(setParaseilDraw),
-
-	setGravityFlg(setGravityFlg),
+	setGravityEnabled(setGravityEnabled),
 
 	changeStateIdle(changeStateIdle),
 	changeStateParaseilMove(changeStateParaseilMove),
 
 	step(STEP::Crouch),
-
 	chargeCompleteFlg(false),
-
-	chargeFrame(0.0f)
+	chargeFrame(0.0f),
+	riseStartY(0.0f)
 {
 }
 
@@ -114,12 +105,15 @@ void PlayerSkyRiseState::Update(void)
 				// ステップを上昇へ
 				step = STEP::Rise;
 
+				// 開始位置を開始位置に渡す
+				riseStartY = playerTrans.pos.y;
+
 				// 重力付与×
-				isGravity = false;
-				setGravityFlg();
+				setGravityEnabled(false);
 
 				// 上昇値加算
 				motion.SetVerticalVelocity(UP_POWER);
+				motion.ApplyImpulse(2.0f);
 
 				// 描画判定をtrue
 				setParaseilDraw(true);
@@ -139,27 +133,22 @@ void PlayerSkyRiseState::Update(void)
 	case PlayerSkyRiseState::STEP::Rise: {
 		// 上昇
 
-		// 上昇マックス
-		if (playerTrans.pos.y > 1000.0f) {
+		// 移動値
+		const bool moveTop = playerTrans.pos.y - riseStartY >= MAX_SKYRISE_HEIGHT;
+		// ボタンが押されたか
+		const bool pressButton = Input::GetIns().GetInfo(KEY_TYPE::PlayerJump).down;
 
-			// 重力付与〇
-			isGravity = true;
-			setGravityFlg();
 
-			// 次のステップへ
-			step = STEP::Stop;
+		// 発動位置から最大上昇値まで上がったら止めてパラセールへ
+		if (moveTop || pressButton) {
+
+			// 上昇を止める
+			// ふわっとさせたいので少し上昇させる
+			motion.SetVerticalVelocity(UP_POWER * 0.5f);
+
+			// パラセール移動状態へ（重力は Exit で戻り、ParaseilMove の Enter で切れる）
+			changeStateParaseilMove();
 		}
-
-		break;
-	}
-
-	case PlayerSkyRiseState::STEP::Stop: {
-		// 上昇停止
-		motion.SetVerticalVelocity(0.0f);
-
-		// パラセール移動状態に遷移し終了
-		changeStateParaseilMove();
-
 		break;
 	}
 
@@ -170,9 +159,7 @@ void PlayerSkyRiseState::Exit(void)
 {
 	setParaseilDraw(false);
 
-	// 重力を必ず付与
-	if (!isGravity) {
-		isGravity = true;
-		setGravityFlg();
-	}
+	// どの抜け方でも重力を必ず戻す
+	setGravityEnabled(true);
+
 }
