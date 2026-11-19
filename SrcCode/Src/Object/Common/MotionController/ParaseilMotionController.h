@@ -4,6 +4,8 @@
 
 #include "../Transform/Transform.h"
 
+#include "../../../Utility/Utility.h"
+
 // キャラクター移動(空中)制御
 class ParaseilMotionController : public MotionControllerBase
 {
@@ -23,11 +25,17 @@ public:
     // 高速移動と判定する速度を設定
     void SetMomentumThreshold(float value) { momentumThreshold = value; }
 
-    // 高速移動中、入力を離した際の空中減速度（速度/フレーム）
-    void SetMomentumReleaseDeceleration(float value) { momentumReleaseDeceleration = value > 0.0f ? value : 0.0f; }
-
     // 空中の水平減速度（速度/フレーム）
     void SetAirDrag(float value) { airDrag = value > 0.0f ? value : 0.0f; }
+
+    // 滑空中の重力
+    void SetGlideGravity(float value) { glideGravity = value > 0.0f ? value : 0.0f; }
+
+    // 落下速度の上限
+    void SetMaxFallSpeed(float value) { maxFallSpeed = value > 0.0f ? value : 0.0f; }
+   
+    // 体の向きを変える速さ
+    void SetTurnRate(float value) { turnRate = value > 0.0f ? value : 0.0f; }
 
 #pragma endregion
 
@@ -60,9 +68,12 @@ public:
     // スキル使用時に速度を付与。
     void ApplyRollingImpulse(const Vector3& impulse);
 
-    // CharacterBaseが持つ接地状態を一度だけ登録する（所有しない）
+    // CharacterBaseが持つパラセール状態を一度だけ登録する（所有しない）
     void SetParaseiledSource(const bool* value) { paraseiledSource = value; }
     bool IsParaseiled() const { return paraseiledSource && *paraseiledSource; }
+
+    // パラセールを開いた瞬間に呼ぶ
+    void OnOpen(void);
 
 #pragma endregion
 
@@ -81,17 +92,28 @@ private:
     // 空中の加速度
     float airAcceleration = 0.12f;
 
+    // 滑空中の重力
+    float glideGravity = 0.15f;
+
+    // 落下速度の上限
+    float maxFallSpeed = 3.0f;
+
     // 高速移動中の方向修正倍率
     float momentumSteering = 0.05f;
 
     // 高速移動と判定する速度
     float momentumThreshold = 10.0f;
 
-    // 勢いを残しつつ、入力を離したときにゆっくり停止できるようにする
-    float momentumReleaseDeceleration = 0.05f;
-
     // 旧ActorBaseの減速度を維持する。
     float airDrag = 0.08f;
 
+    // 体の向きを変える速さ
+    float turnRate = Deg2Rad(3.0f);
+
 #pragma endregion
+
+
+    // 現在の向き(角速度の保持のため)
+    float yaw = 0.0f;
+
 };
