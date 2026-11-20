@@ -76,6 +76,7 @@ private:
 		None = -1,
 
 		Idle,
+		Tired,
 
 		Walk,
 		Run,
@@ -116,14 +117,15 @@ private:
 	float ANIME_SPEED_TABLE[(int)ANIME_TYPE::Max] =
 	{
 		0.65f,	// Idle
+		0.65f,	// Tired
 
 		0.65f,	// Walk
 		0.65f,	// Run
 		0.65f,	// FastRun
 
-		0.65f,	// Jump
+		2.0f,	// Jump
 		0.65f,	// Jumping
-		0.65f,	// JumpEnd
+		0.75f,	// JumpEnd
 
 		0.65f,	// Slash_Down
 		0.65f,	// Slash_Up
@@ -154,6 +156,7 @@ private:
 	const bool ANIME_LOOP_TABLE[(int)ANIME_TYPE::Max] =
 	{
 		true,	// Idle
+		true,	// Tired
 
 		true,	// Walk
 		true,	// Run
@@ -252,6 +255,8 @@ private:
 	void SubDraw(void)override;
 
 	bool isOpenParaseil;
+
+	bool isTired;
 
 #pragma region ダメージ関係変数・関数
 

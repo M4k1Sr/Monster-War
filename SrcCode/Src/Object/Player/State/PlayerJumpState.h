@@ -20,7 +20,8 @@ public:
 
 		std::function<bool(void)> isAnimeEnd,
 
-		std::function<void(void)> changeStateIdle
+		std::function<void(void)> changeStateIdle,
+		std::function<void(void)> changeStateMove
 	);
 
 	~PlayerJumpState()override = default;
@@ -60,6 +61,9 @@ private:
 	// 待機状態に戻る関数のポインタ
 	const std::function<void(void)> changeStateIdle;
 
+	// 移動状態に戻る関数のポインタ
+	const std::function<void(void)> changeStateMove;
+
 #pragma endregion
 
 	// ステップ
@@ -77,4 +81,8 @@ private:
 
 	// 現在ステップ
 	STEP step;
+
+	// 移動方向入力取得
+	Vector3 InputVec(void)const;
+
 };

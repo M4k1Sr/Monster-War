@@ -17,8 +17,9 @@ void ParaseilMotionController::Update(float timeScale)
     Vector3 velocity = physicsBody->GetVelocity();
 
     //  水平方向でゆっくり減速 airDrag＊時間によりマイナスされる。
+    // 入力が決まっているとき
     const float speed = std::sqrt(velocity.x * velocity.x + velocity.z * velocity.z);
-    if (speed > 0.0f) {
+    if (speed > 0.0f && !hasInput) {
         const float remaining = speed - airDrag * timeScale;
         const float ratio = remaining > 0.0f ? remaining / speed : 0.0f;
 
@@ -31,6 +32,9 @@ void ParaseilMotionController::Update(float timeScale)
     if (velocity.y < -maxFallSpeed) { velocity.y = -maxFallSpeed; }
 
     physicsBody->SetVelocity(velocity);
+
+    // 入力フレームは使い切り
+    hasInput = false;
 }
 void ParaseilMotionController::ApplyInput(const Vector3& inputDirection)
 {
@@ -44,32 +48,14 @@ void ParaseilMotionController::ApplyInput(const Vector3& inputDirection)
     // 物理停止中・時間停止中は処理しない
     if (body.IsFrozen() || timeScale <= 0.0f) return;
 
+    // 入力を受け付け
     Vector3 input(inputDirection);
+    input.y = 0.0f;
 
-    // キャラの前方向と右方向
-    Vector3 forward = transform->GetForward();
-    forward.y = 0.0f;
-    forward.Normalize();
-    Vector3 right = Vector3(forward.z, 0.0f, -forward.x);
-
-    // 入力キャラ基準の前後、左右に分ける
-    float inputFwd = input.Dot(forward);
-    float inputSide = input.Dot(right);
-
-    // 向きは左右成分だけで旋回する(真後ろ入力は振り向かない→原作がそうです。)
-    yaw += inputSide * turnRate * timeScale;
-    if (yaw > DX_PI_F) yaw -= DX_TWO_PI_F;
-    if (yaw < -DX_PI_F) yaw += DX_TWO_PI_F;
-    transform->SetRotation(Quaternion::FromRotationY(yaw));
-
-    // 旋回したのちの前方向で進む
-    forward = Vector3(sinf(yaw), 0.0f, cosf(yaw));
-
-    // 速度 前は加速、後ろは減速しながらゆっくり進行
-    float targetSpeed = (inputFwd >= 0.0f)
-        ? moveSpeed * inputFwd
-        : backSpeed * inputFwd;
-
+    // 入力の判定
+    hasInput = input.LengthSq() > 0.0001f;
+    
+    // 現在の速度を取得
     Vector3 v = body.GetVelocity();
     Vector3 horizontal(v.x, 0.0f, v.z);
 
@@ -79,15 +65,12 @@ void ParaseilMotionController::ApplyInput(const Vector3& inputDirection)
     // 高速移動中か判定
     const bool highSpeed = speed > momentumThreshold;
 
-    // 高速移動中は方向修正倍率を適用
-    const float steering =
-        highSpeed ? momentumSteering : 1.0f;
-
     // パラセール状態の加速度を計算
     const float accel =
-        airAcceleration * steering * timeScale;
+        airAcceleration * (highSpeed ? momentumSteering : 1.0f) * timeScale;
 
     // 高速移動中の場合
+    // 勢いを保ったまま少し曲げる
     if (highSpeed)
     {
         // 入力がある場合のみ弱い加速度を加算
@@ -104,11 +87,10 @@ void ParaseilMotionController::ApplyInput(const Vector3& inputDirection)
         }
     }
     // 通常移動中の場合 
-    // キャラの前方向に目標速度進む
+    // 入力方向に進む。
     else
     {
-        // 入力方向から目標速度を計算
-        const Vector3 target = forward * targetSpeed;
+        const Vector3 target = input * moveSpeed;
 
         // 現在速度から目標速度への差を計算
         Vector3 delta = target - horizontal;
@@ -126,8 +108,10 @@ void ParaseilMotionController::ApplyInput(const Vector3& inputDirection)
         horizontal += delta;
     }
 
-    //// 入力方向へキャラクターの向きを回す
-    //RotateTowards(input, timeScale);
+    // 入力方向へ近い回り方へ回す
+    if (hasInput) {
+        RotateTowards(input, timeScale);
+    }
 
     // 水平方向の速度を反映
     v.x = horizontal.x;

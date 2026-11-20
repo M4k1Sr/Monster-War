@@ -18,7 +18,8 @@ PlayerJumpState::PlayerJumpState(
 
 	std::function<bool(void)> isAnimeEnd,
 
-	std::function<void(void)> changeStateIdle
+	std::function<void(void)> changeStateIdle,
+	std::function<void(void)> changeStateMove
 ):
 	JUMP_POWER(JUMP_POWER),
 
@@ -31,6 +32,7 @@ PlayerJumpState::PlayerJumpState(
 	isAnimeEnd(isAnimeEnd),
 
 	changeStateIdle(changeStateIdle),
+	changeStateMove(changeStateMove),
 
 	step(STEP::Start)
 {
@@ -56,6 +58,9 @@ void PlayerJumpState::Enter(void)
 
 void PlayerJumpState::Update(void)
 {
+	// 移動方向入力を取得
+	Vector3 inputVec = InputVec();
+
 	switch (step) {
 
 	case PlayerJumpState::STEP::Start: {
@@ -80,8 +85,27 @@ void PlayerJumpState::Update(void)
 	case PlayerJumpState::STEP::Jumping: {
 		// 滞空
 
+		// 移動量の最大値を更新する
+		motion.SetMoveSpeed(10.0f *  inputVec.Length());
+
+		// 最終的に入力があれば加速度に加算する
+		if (inputVec != 0.0f) {
+
+			// 移動方向をカメラで回転させる
+			inputVec.TransMatOwn(MGetRotY(CurrentCamera::Get().GetAngle().y));
+
+			// 移動
+			motion.ApplyInput(inputVec);
+		}
+
 		// 着地
 		if (motion.IsGrounded()) {
+
+			// 入力があれば着地アニメを待たずに移動へ
+			if (InputVec() != 0.0f) {
+				changeStateMove();
+				break;
+			}
 
 			// 着地のアニメーションを再生
 			playAnimeJumpEnd();
@@ -105,9 +129,29 @@ void PlayerJumpState::Update(void)
 			// 待機状態に戻り終了
 			changeStateIdle();
 		}
-
+		
 		break;
 	}
 
 	}
+}
+
+Vector3 PlayerJumpState::InputVec(void) const
+{
+	// 返却用一時変数
+	Vector3 vec = Vector3();
+
+	// コントローラーの入力を取得
+	vec = Input::GetIns().GetLeftStickVec(false).ToVector3XZInvertY();
+
+	// 入力がなければ次にキーボードの入力を取得
+	if (vec == 0.0f) {
+		if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveRight).now) { vec.x++; }
+		if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveLeft).now) { vec.x--; }
+		if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveFront).now) { vec.z++; }
+		if (Input::GetIns().GetInfo(KEY_TYPE::PlayerMoveBack).now) { vec.z--; }
+		vec.Normalize();
+	}
+
+	return vec;
 }

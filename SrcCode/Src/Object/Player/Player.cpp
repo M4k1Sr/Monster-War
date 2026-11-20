@@ -56,7 +56,8 @@ Player::Player()
 	isJustDodge(false),
 	justPhase(JUST_PHASE::None),
 	king_Sword(nullptr),
-	paraseil(nullptr)
+	paraseil(nullptr),
+	isTired(false)
 {
 	hp = 1000;
 	invincibleFrame = 60.0f;
@@ -132,13 +133,13 @@ void Player::Load(void)
 	// 慣性操作が効く速度の閾値
 	paraseilMotionController->SetMomentumThreshold(25.0f);
 	// 空中での減速
-	paraseilMotionController->SetAirDrag(0.2f);
+	paraseilMotionController->SetAirDrag(0.35f);
 	// 滑空中の重力
 	paraseilMotionController->SetGlideGravity(0.75f);
 	// 落下速度の上限
-	paraseilMotionController->SetMaxFallSpeed(1.75f);
+	paraseilMotionController->SetMaxFallSpeed(1.5f);
 	// 体の向きを変える速さ
-	paraseilMotionController->SetTurnRate(Deg2Rad(0.75f));
+	paraseilMotionController->SetTurnRate(Deg2Rad(0.30f));
 	
 #pragma endregion
 
@@ -230,14 +231,19 @@ void Player::Load(void)
 	// 待機状態
 	AddState(
 		STATE::Idle,
-		new PlayerIdleState([&]() { AnimePlay(ANIME_TYPE::Idle); })
+		new PlayerIdleState(
+			isTired,
+			[&]() { AnimePlay(ANIME_TYPE::Idle); },
+			[&]() { AnimePlay(ANIME_TYPE::Walk); }
+		)
 	);
 
 	// 移動状態
 	AddState(
 		STATE::Move,
 		new PlayerMoveState(
-			10.0f,1.0f, 1.5f, 300,
+			10.0f, 1.0f, 1.5f, 300,
+			isTired,
 			*groundMotionController,
 			[&]() { AnimePlay(ANIME_TYPE::Walk); },
 			[&]() { AnimePlay(ANIME_TYPE::Run); },
@@ -258,6 +264,7 @@ void Player::Load(void)
 			[&]() { return IsAnimeEnd(); },
 			[&](bool draw) { paraseil->SetIsDraw(draw); },
 			[&]() { ChangeState(STATE::Idle); },
+			[&]() { ChangeState(STATE::Move); },
 			[this]() { ChangeMotionController((int)MOTION::Paraseil); },
 			[this]() { ChangeMotionController((int)MOTION::Ground); },
 			[this](bool flg) { isGravity = flg; GetPhysicsBody()->SetGravityEnabled(flg); }
@@ -273,7 +280,9 @@ void Player::Load(void)
 			[&]() { AnimePlay(ANIME_TYPE::Jumping); },
 			[&]() { AnimePlay(ANIME_TYPE::JumpEnd); },
 			std::bind(&Player::IsAnimeEnd, this),
-			[&]() { ChangeState(STATE::Idle); }
+			[&]() { ChangeState(STATE::Idle); },
+			[&]() { ChangeState(STATE::Move); }
+
 		)
 	);
 	
@@ -281,8 +290,8 @@ void Player::Load(void)
 	AddState(
 		STATE::SkyRise,
 		new PlayerSkyRiseState(
-			100.0f,
-			1000.0f,
+			20.0f,
+			2000.0f,
 			isCrouchHold,
 			* paraseilMotionController,
 			isGround,
@@ -563,8 +572,8 @@ void Player::SubDraw(void)
 			const Vector3 v = body->GetVelocity();
 			const float speedXZ = std::sqrt(v.x * v.x + v.z * v.z);
 
-			DrawFormatString(300, 40, 0xffffff, "速度XZ %.2f  縦速度 %.2f", speedXZ, v.y);
-			DrawFormatString(300, 60, 0xffffff, "接地 %s  タイムスケール %.2f", isGround ? "ON" : "OFF", GetTimeScale());
+			//DrawFormatString(300, 40, 0xffffff, "速度XZ %.2f  縦速度 %.2f", speedXZ, v.y);
+			//DrawFormatString(300, 60, 0xffffff, "接地 %s  タイムスケール %.2f", isGround ? "ON" : "OFF", GetTimeScale());
 
 			// 速度ベクトルを線で表示（見やすいように10倍）
 			const Vector3 velEnd = trans.pos + v * 10.0f;
@@ -572,9 +581,9 @@ void Player::SubDraw(void)
 		}
 	}
 
-	DrawFormatString(300, 0, 0xffffff, "PlayerHP %d", hp);
+	//DrawFormatString(300, 0, 0xffffff, "PlayerHP %d", hp);
 
-	DrawFormatString(800, 150, 0xffffff, "posX:%.3f posY:%.3f posZ:%.3f", trans.pos.x, trans.pos.y, trans.pos.z);
+	//DrawFormatString(800, 150, 0xffffff, "posX:%.3f posY:%.3f posZ:%.3f", trans.pos.x, trans.pos.y, trans.pos.z);
 //	const float global = TimeScale::Get();
 //	const float gPlayer = TimeScale::GetTimeScale(TimeScale::GROUP::Player);
 //	const float gEnemy = TimeScale::GetTimeScale(TimeScale::GROUP::Enemy);

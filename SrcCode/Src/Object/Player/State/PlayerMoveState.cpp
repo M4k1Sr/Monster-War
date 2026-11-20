@@ -12,6 +12,8 @@ PlayerMoveState::PlayerMoveState(
 	float UNDASH_SPEED_RATE, float DASH_SPEED_RATE,
 	short DASH_STAMINA_MAX,
 
+	bool& isTired,
+
 	GroundMotionController& motion,
 
 	std::function<void(void)> playAnimeWalk,
@@ -22,6 +24,8 @@ PlayerMoveState::PlayerMoveState(
 	UNDASH_SPEED_RATE(UNDASH_SPEED_RATE),DASH_SPEED_RATE(DASH_SPEED_RATE),
 	DASH_STAMINA_MAX(DASH_STAMINA_MAX),
 
+	isTired(isTired),
+
 	motion(motion),
 
 	playAnimeWalk(playAnimeWalk),
@@ -29,9 +33,9 @@ PlayerMoveState::PlayerMoveState(
 	playAnimeFastRun(playAnimeFastRun),
 
 	isFastDash(false),
-	dashStamina(DASH_STAMINA_MAX),
-	isTired(false)
+	dashStamina(DASH_STAMINA_MAX)
 {
+	isTired = false;
 	// í èÌà⁄ìÆÇÃç≈ëÂë¨ìxÇê›íË
 	motion.SetMoveSpeed(ACCEL_MAX);
 }

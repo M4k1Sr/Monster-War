@@ -6,7 +6,12 @@ class PlayerIdleState : public CharacterStateBase
 {
 public:
 
-	PlayerIdleState(std::function<void(void)> playAnimeIdle);
+	PlayerIdleState(
+		bool& isTired,
+
+		std::function<void(void)> playAnimeIdle,
+		std::function<void(void)> playAnimeTired
+		);
 
 	~PlayerIdleState()override = default;
 
@@ -20,4 +25,11 @@ private:
 
 	// 待機アニメーションの再生関数のポインタ
 	const std::function<void(void)> playAnimeIdle;
+
+	// 疲れているアニメーションの再生関数のポインタ
+	const std::function<void(void)> playAnimeTired;
+
+	// 披露しているか
+	bool& isTired;
+
 };

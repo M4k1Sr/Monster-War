@@ -28,6 +28,7 @@ PlayerParaseilMoveState::PlayerParaseilMoveState(
 	std::function<void(bool)> setParaseilDraw,
 
 	std::function<void(void)> changeStateIdle,
+	std::function<void(void)> changeStateMove,
 
 	std::function<void(void)> activateParaseilMotion,
 	std::function<void(void)> activateGroundMotion,
@@ -53,6 +54,7 @@ PlayerParaseilMoveState::PlayerParaseilMoveState(
 	setParaseilDraw(setParaseilDraw),
 
 	changeStateIdle(changeStateIdle),
+	changeStateMove(changeStateMove),
 
 	activateParaseilMotion(activateParaseilMotion),
 	activateGroundMotion(activateGroundMotion),
@@ -132,6 +134,12 @@ void PlayerParaseilMoveState::Update(void)
 
 		// 着地
 		if (isGround) {
+
+			// 入力があれば着地アニメを待たずに移動へ
+			if (InputVec() != 0.0f) {
+				changeStateMove();
+				break;
+			}
 
 			// パラセールを描画しない
 			setParaseilDraw(false);

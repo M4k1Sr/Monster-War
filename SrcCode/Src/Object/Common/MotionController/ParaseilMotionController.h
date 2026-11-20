@@ -93,7 +93,7 @@ private:
     float moveSpeed = 5.0f;
 
     // Œã‘Þ‚·‚é‚Æ‚«‚Ì‘¬“x
-    float backSpeed = 1.4f;
+    float backSpeed = 0.0f;
 
     // ‹ó’†‚Ì‰Á‘¬“x
     float airAcceleration = 0.12f;
@@ -115,6 +115,9 @@ private:
 
     // ‘Ì‚ÌŒü‚«‚ð•Ï‚¦‚é‘¬‚³
     float turnRate = Deg2Rad(0.5f);
+
+    // “ü—Í‚³‚ê‚Ä‚¢‚é‚©
+    bool hasInput = false;
 
 #pragma endregion
 

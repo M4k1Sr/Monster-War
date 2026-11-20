@@ -33,8 +33,6 @@
 
 #include "../../Object/Stage/Stage.h"
 
-#include "../../Object/Stage/Wind/WindMill.h"
-
 #include "../../Object/Water.h"
 
 GameScene::GameScene() : SceneBase()
@@ -81,20 +79,6 @@ void GameScene::SubPostLoad(void)
 	);
 
 	AddActor(new Stage);
-
-	// プロペラの配置
-	const WindMillParam windMills[] = {
-
-		{Vector3{-2500.0f,-610.0f,-2200.0f},Vector3{},0.15f,1500.0f,300.0f },
-		{Vector3{3100.0f,-610.0f,1700.0f},Vector3{},0.15f,1500.0f,300.0f },
-		{Vector3{-2500.0f,-610.0f,1700.0f},Vector3{},0.15f,1500.0f,300.0f },
-		{Vector3{3100.0f,-610.0f,-2200.0f},Vector3{},0.15f,1500.0f,300.0f },
-
-	};
-
-	for (const auto& p : windMills) {
-		AddActor(new WindMill(p));
-	}
 
 //
 //#ifdef _DEBUG

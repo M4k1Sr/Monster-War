@@ -13,6 +13,7 @@ public:
 		float ACCEL_MAX, 
 		float UNDASH_SPEED_RATE,float DASH_SPEED_RATE,
 		short DASH_STAMINA_MAX,
+		bool& isTired,
 		GroundMotionController& motion,
 		std::function<void(void)> playAnimeWalk,
 		std::function<void(void)> playAnimeRun,
@@ -62,7 +63,7 @@ private:
 	// 移動制御（速度・向き・最大移動速度を管理する）
 	GroundMotionController& motion;
 
-	// 歩きアニメーションの再生関数のポインタ
+	// 疲れ歩きアニメーションの再生関数のポインタ
 	const std::function<void(void)> playAnimeWalk;
 	// 走りアニメーションの再生関数のポインタ
 	const std::function<void(void)> playAnimeRun;
@@ -78,7 +79,7 @@ private:
 	short dashStamina;
 
 	// 息切れ(1度スタミナが0になったかどうか)
-	bool isTired;
+	bool& isTired;
 
 	// 移動方向入力取得
 	Vector3 InputVec(void)const;

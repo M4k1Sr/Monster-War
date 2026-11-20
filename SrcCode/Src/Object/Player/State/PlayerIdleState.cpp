@@ -4,8 +4,15 @@
 
 #include "../../../Manager/Input/InputManager.h"
 
-PlayerIdleState::PlayerIdleState(std::function<void(void)> playAnimeIdle):
-	playAnimeIdle(playAnimeIdle)
+PlayerIdleState::PlayerIdleState(
+	bool& isTired,
+	std::function<void(void)> playAnimeIdle,
+	std::function<void(void)> playAnimeTired
+):
+	isTired(isTired),
+
+	playAnimeIdle(playAnimeIdle),
+	playAnimeTired(playAnimeTired)
 {
 }
 
@@ -30,5 +37,5 @@ void PlayerIdleState::OwnStateConditionUpdate(void)
 
 void PlayerIdleState::Enter(void)
 {
-	playAnimeIdle();
+	isTired ? playAnimeTired() : playAnimeIdle();
 }
