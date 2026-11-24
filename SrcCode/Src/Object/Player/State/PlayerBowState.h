@@ -93,13 +93,13 @@ private:
 	const float AIM_RAY_LENGTH = 10000.0f;
 
 	// 空中スロー時の世界の速度
-	const float AIR_SLOW_SCALE = 0.2f;
+	const float AIR_SLOW_SCALE = 0.005f;
 	// 空中スローのイージングフレーム
 	const int AIR_SLOW_EASE = 10;
 	// 滞空中の重力（通常重力を切って、代わりに毎フレームこれを足す）
-	const float AIR_GRAVITY = -0.15f;
+	const float AIR_GRAVITY = -0.50f;
 	// 滞空中の落下速度上限
-	const float AIR_FALL_MAX = -3.0f;
+	const float AIR_FALL_MAX = -1.0f;
 
 	// 空中スロー中に1フレームで減るスタミナ量
 	const float AIR_SLOW_STAMINA_COST = 1.0f;

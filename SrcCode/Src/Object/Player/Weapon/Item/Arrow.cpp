@@ -48,13 +48,13 @@ void Arrow::Load(void)
 	trans.LoadModel("Weapon/Arrow");
 
 	// モデルのスケール設定
-	trans.scale = 1.0f;
+	trans.scale = 3.0f;
 
 	// モデルの中心点のズレの補正
 	trans.centerDiff = Vector3(0.0f, 0.0f, 0.0f) * trans.scale;
 
-	// モデルの角度のズレの補正（矢先が +Z を向くように調整する）
-	trans.SetLocalRotation(Quaternion::FromRotationY(Deg2Rad(-90.0f)));
+	// モデルの角度のズレの補正
+	trans.SetLocalRotation(Quaternion::FromRotationX(Deg2Rad(-90.0f)));
 
 #pragma endregion
 

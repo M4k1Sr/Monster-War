@@ -330,6 +330,11 @@ void GobKing::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const 
 		if (!IsDead()) { hitReact = true; }
 	}
 
+	// ƒvƒŒƒCƒ„[‚Ì‹|UŒ‚
+	if (other.GetTag() == COLLIDER_TAG::PlayerBow) {
+		Damage(10);
+	}
+
 }
 
 void GobKing::SubUpdate(void)
