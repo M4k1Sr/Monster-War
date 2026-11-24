@@ -24,6 +24,7 @@ Arrow::Arrow(
 
 void Arrow::Load(void)
 {
+
 #pragma region オブジェクト設定
 
 	// 動的オブジェクトとしての処理を有効にする
@@ -31,13 +32,6 @@ void Arrow::Load(void)
 
 	// 押し出しは無効（刺さる・すり抜けるだけ）
 	SetContactResponseEnabled(false);
-
-	// ※ActorBase側の重力は使わず、SubUpdateで自前の重力をかける
-	//   （今のActorBaseで重力を切る関数を呼んでおく）
-
-	// 世界と一緒にスローさせたい場合はコメントを外す
-	// （AddChildActorでPlayerグループが引き継がれるので、何もしなければスロー中も等速で飛ぶ）
-	// SetTimeGroup(TimeScale::GROUP::Other);
 
 #pragma endregion
 
@@ -77,7 +71,7 @@ void Arrow::Load(void)
 	Deactivate();
 }
 
-void Arrow::Fire(const Vector3& pos, const Vector3& dir, float power)
+void Arrow::Fire(const Vector3& pos, const Vector3& dir, float power,float dist)
 {
 	this->power = power;
 

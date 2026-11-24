@@ -26,7 +26,7 @@ public:
 	/// <param name="pos">発射位置</param>
 	/// <param name="dir">向き（正規化済み）</param>
 	/// <param name="power">引き絞り値 0.0〜1.0</param>
-	void Fire(const Vector3& pos, const Vector3& dir, float power);
+	void Fire(const Vector3& pos, const Vector3& dir, float power,float dist);
 
 	// 飛んでいるか（プールで空いてる矢を探す用）
 	bool IsActive(void)const { return isActive; }

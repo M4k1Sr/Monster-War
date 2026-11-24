@@ -48,8 +48,8 @@
 #include "State/PlayerFlyingState.h"
 #include "State/PlayerDieState.h"
 
-Player::Player() 
-	: 
+Player::Player()
+	:
 	CharacterBase("Data/Parameter/Player/"),
 	isOpenParaseil(false),
 	isGravity(true),
@@ -143,7 +143,7 @@ void Player::Load(void)
 	paraseilMotionController->SetMaxFallSpeed(1.5f);
 	// 体の向きを変える速さ
 	paraseilMotionController->SetTurnRate(Deg2Rad(0.30f));
-	
+
 #pragma endregion
 
 
@@ -196,7 +196,7 @@ void Player::Load(void)
 
 	// 攻撃当たり判定管理クラス
 	PlayerAttackSlashCollOperator* attackSlashCollOperator =
-		new PlayerAttackSlashCollOperator(100.0f, Vector3(0, 0, 100), isRush,trans);
+		new PlayerAttackSlashCollOperator(100.0f, Vector3(0, 0, 100), isRush, trans);
 
 	AddChildActor(attackSlashCollOperator);
 
@@ -208,7 +208,7 @@ void Player::Load(void)
 
 	// 回避当たり判定管理クラス
 	PlayerBackFlipCollOperator* backFlipCollOperator =
-		new PlayerBackFlipCollOperator(100.0f, Vector3(0, 0, 0), trans,isJustDodge);
+		new PlayerBackFlipCollOperator(100.0f, Vector3(0, 0, 0), trans, isJustDodge);
 
 	AddChildActor(backFlipCollOperator);
 
@@ -230,7 +230,7 @@ void Player::Load(void)
 	for (int i = 0; i < ARROW_MAX; i++) {
 
 		// 最高速度, 最低速度, 消えるまでのフレーム, 重力
-		arrows[i] = new Arrow(80.0f, 30.0f, 180, -0.3f);
+		arrows[i] = new Arrow(80.0f, 30.0f, 90, -0.8f);
 
 		AddChildActor(arrows[i]);
 	}
@@ -301,7 +301,7 @@ void Player::Load(void)
 
 		)
 	);
-	
+
 	// スカイライズ状態
 	AddState(
 		STATE::SkyRise,
@@ -309,7 +309,7 @@ void Player::Load(void)
 			20.0f,
 			2000.0f,
 			isCrouchHold,
-			* paraseilMotionController,
+			*paraseilMotionController,
 			isGround,
 			trans,
 			[&]() { AnimePlay(ANIME_TYPE::Crouch); },
@@ -361,13 +361,15 @@ void Player::Load(void)
 			*groundMotionController,
 			isGround,
 			[&](float cost) { return UseStamina(cost); },
+			bowCharge,
+			chargeRatio,
 			[&]() { return Vector3(MV1GetFramePosition(trans.model, BOW_HAND_FRAME)); },
 			[&](const Vector3& dir) { trans.rotation = Quaternion::FromRotationY(atan2f(dir.x, dir.z)); },
 			[this](bool flg) { isGravity = flg; GetPhysicsBody()->SetGravityEnabled(flg); },
 			[&](const Vector3& v) { GetPhysicsBody()->AddVelocity(v); },
 			[&]() { return GetPhysicsBody()->GetVelocity(); },
-			nullptr,
-			[&](const Vector3& pos, const Vector3& dir, float power) { SpawnArrow(pos, dir, power); },
+			[&](const Vector3& s, const Vector3& e, Vector3& hit) { return AimRaycast(s, e, hit); },
+			[&](const Vector3& pos, const Vector3& dir, float power, float dist) { SpawnArrow(pos, dir, power, dist); },
 			[&]() { AnimePlay(ANIME_TYPE::BowStart); },
 			[&]() { AnimePlay(ANIME_TYPE::BowAiming); },
 			[&]() { AnimePlay(ANIME_TYPE::BowEnd); },
@@ -382,7 +384,7 @@ void Player::Load(void)
 		STATE::BackFlip,
 		new PlayerBackFlipState(
 			0.05f, 0.3f,
-			6.0f,12.0f, *groundMotionController, isGround,
+			6.0f, 12.0f, *groundMotionController, isGround,
 			[&]() {return trans.VTrans(Vector3::Zonly(-1.0f)); },
 			*backFlipCollOperator,
 			lockOnTarget,
@@ -408,7 +410,7 @@ void Player::Load(void)
 	AddState(
 		STATE::Flying,
 		new PlayerFlyingState(
-			isImpact, 
+			isImpact,
 			isFlyEnd,
 			[&]() { return trans.rotation.Rotate(Vector3(0.0f, 0.0f, 1.0f)); },   // 前方向
 			[&](const Vector3& v) {GetPhysicsBody()->AddVelocity(v); },
@@ -548,16 +550,80 @@ void Player::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const C
 	}
 }
 
-void Player::SpawnArrow(const Vector3& pos, const Vector3& dir, float power)
+void Player::SpawnArrow(const Vector3& pos, const Vector3& dir, float power, float straightDist)
 {
 	// 空いている矢を優先して使う
 	for (Arrow* a : arrows) {
-		if (!a->IsActive()) { a->Fire(pos, dir, power); return; }
+		if (!a->IsActive()) { a->Fire(pos, dir, power, straightDist); return; }
 	}
 
 	// 全部飛んでいたら古い矢を使い回す
-	arrows[oldestArrow]->Fire(pos, dir, power);
+	arrows[oldestArrow]->Fire(pos, dir, power, straightDist);
 	oldestArrow = (oldestArrow + 1) % ARROW_MAX;
+}
+
+bool Player::AimRaycast(const Vector3& start, const Vector3& end, Vector3& hitPos) const
+{
+	if (enemyManager == nullptr) { return false; }
+
+	// 一番近い敵
+	const Vector3* enemy = enemyManager->GetNearestEnemyPos(trans.pos, AIM_ENEMY_SEARCH);
+	if (enemy == nullptr) { return false; }
+
+	// レイの向き
+	Vector3 dir = end - start;
+	const float len = dir.Length();
+	if (len <= 0.0001f) { return false; }
+	dir = dir / len;
+
+	// 敵の中心（座標が足元なので高さを足す）
+	const Vector3 center = *enemy + Vector3::Yonly(AIM_ENEMY_HEIGHT);
+
+	// レイの向きに沿った敵までの距離（敵の体の大きさに関係なく求まる）
+	const float dist = (center - start).Dot(dir);
+
+	// 敵が後ろ側なら使わない
+	if (dist <= 0.0f) { return false; }
+
+	// レティクルの方向に、敵と同じ距離だけ進んだ点を狙う
+	hitPos = start + dir * dist;
+	return true;
+}
+
+void Player::DrawReticle(float chargeRatio)
+{
+	// エイム中だけ表示
+	if (!CurrentCamera::Get().IsAim()) { return; }
+
+	const float cx = (float)Application::SCREEN_SIZE_X_HALF;
+	const float cy = (float)Application::SCREEN_SIZE_Y_HALF;
+
+	// 引き絞るほど線が中心に寄る
+	const float GAP_MAX = 24.0f;   // 引き始めの隙間
+	const float GAP_MIN = 6.0f;    // 引き切りの隙間
+	const float LEN = 10.0f;       // 線の長さ
+	const float gap = GAP_MAX - (GAP_MAX - GAP_MIN) * chargeRatio;
+
+	// 引き切ったら色を変える
+	const unsigned int color = (chargeRatio >= 1.0f) ? GetColor(255, 210, 80) : GetColor(255, 255, 255);
+
+	// 中心の点
+	DrawCircleAA(cx, cy, 2.0f, 16, color, TRUE);
+
+	// 下・右上・左上の3本（120°ずつ。画面座標はYが下向き）
+	const float DIRS[3][2] = {
+		{  0.0f,    1.0f },   // 下
+		{  0.866f, -0.5f },   // 右上
+		{ -0.866f, -0.5f },   // 左上
+	};
+
+	for (const auto& d : DIRS) {
+		DrawLineAA(
+			cx + d[0] * gap, cy + d[1] * gap,
+			cx + d[0] * (gap + LEN), cy + d[1] * (gap + LEN),
+			color, 2.0f
+		);
+	}
 }
 
 bool Player::UseStamina(float cost)
@@ -603,37 +669,37 @@ void Player::SubUpdate(void)
 	// ジャスト回避
 	UpdateJustDodge();
 
-//#pragma region ジャスト回避
-//
-//	// ジャスト回避が成功したとき
-//	if (isJustDodge) {
-//		isJustDodge = false;
-//		if (!isSlowSuccess) { isSlowSuccess = true; JustDodgeSuccess(); }
-//	}
-//
-//	if (isRushWait) {
-//		// プレイヤーグループなのでスローしない→実フレームで数える
-//		rushWaitCounter--;
-//
-//		if (InputManager::GetIns().GetInfo(KEY_TYPE::PlayerAttackSlash).down) {
-//			// ラッシュ発動（今は仮：通常の斬撃へ）
-//			JustDodgeEnd();
-//			ChangeState(STATE::AttackSlash);
-//		}
-//		else if (rushWaitCounter <= 0) {
-//			// 猶予切れ。敵は TimeScale 側がイージングで戻すので倍率はいじらない
-//			isRushWait = false;
-//			isSlowSuccess = false;
-//		}
-//	}
-//
-//#pragma endregion
+	//#pragma region ジャスト回避
+	//
+	//	// ジャスト回避が成功したとき
+	//	if (isJustDodge) {
+	//		isJustDodge = false;
+	//		if (!isSlowSuccess) { isSlowSuccess = true; JustDodgeSuccess(); }
+	//	}
+	//
+	//	if (isRushWait) {
+	//		// プレイヤーグループなのでスローしない→実フレームで数える
+	//		rushWaitCounter--;
+	//
+	//		if (InputManager::GetIns().GetInfo(KEY_TYPE::PlayerAttackSlash).down) {
+	//			// ラッシュ発動（今は仮：通常の斬撃へ）
+	//			JustDodgeEnd();
+	//			ChangeState(STATE::AttackSlash);
+	//		}
+	//		else if (rushWaitCounter <= 0) {
+	//			// 猶予切れ。敵は TimeScale 側がイージングで戻すので倍率はいじらない
+	//			isRushWait = false;
+	//			isSlowSuccess = false;
+	//		}
+	//	}
+	//
+	//#pragma endregion
 
 
-	if (invincibleFrame > 0 && GetTimeScale() > 0.0f) { 
-		invincibleFrame--; 
+	if (invincibleFrame > 0 && GetTimeScale() > 0.0f) {
+		invincibleFrame--;
 	}
-	
+
 	if (InputManager::GetIns().GetInfo(KEY_TYPE::LockOn).now) {
 
 		// 対象が未決定なら、一番近い敵を探す
@@ -655,6 +721,9 @@ void Player::SubUpdate(void)
 
 void Player::SubDraw(void)
 {
+	// レティクル
+	DrawReticle(chargeRatio);
+
 	if (App::GetIns().IsDrawDebug()) {
 		const unsigned int color = groundInfo.hit ? 0x00ff00 : 0xff0000;
 		const Vector3 to = groundInfo.hit ? groundInfo.point : trans.pos + Vector3::Yonly(-GROUND_RAY_LENGTH);
@@ -708,8 +777,8 @@ void Player::Damage(int damage) {
 
 	invincibleFrame = 60;
 
-	if (IsDead() || IsInvincible()) { return; } 
-	
+	if (IsDead() || IsInvincible()) { return; }
+
 	if (IsDead()) { OnDeath(); }
 }
 
@@ -745,7 +814,7 @@ void Player::UpdateJustDodge(void)
 	// ジャスト成立の検知(CollOperatorが立てたフラグ)
 	if (isJustDodge) {
 		isJustDodge = false;
-		if (justPhase == JUST_PHASE::None) { 
+		if (justPhase == JUST_PHASE::None) {
 			StartJustDodgeSlow();
 			TimeScale::GetIns().SetGroupScale(TimeScale::GROUP::Player, PLAYER_ACCEL, HOLD_LONG, 0);
 		}

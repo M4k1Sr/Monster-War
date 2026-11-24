@@ -14,13 +14,16 @@ PlayerBowState::PlayerBowState(
 	const bool& isGround,
 	std::function<bool(float)> useStamina,
 
+	float& chargeFrame,
+	float& chargeRatio,
+
 	std::function<Vector3(void)> getBowPos,
 	std::function<void(const Vector3&)> setFaceDir,
 	std::function<void(bool)> setGravityEnabled,
 	std::function<void(const Vector3&)> addVelocity,
 	std::function<Vector3(void)> getVelocity,
 	std::function<bool(const Vector3&, const Vector3&, Vector3&)> raycast,
-	std::function<void(const Vector3&, const Vector3&, float)> spawnArrow,
+	std::function<void(const Vector3&, const Vector3&, float, float)> spawnArrow,
 
 	std::function<void(void)> playAnimeBowStart,
 	std::function<void(void)> playAnimeAiming,
@@ -34,7 +37,8 @@ PlayerBowState::PlayerBowState(
 	motion(motion),
 	isGround(isGround),
 	useStamina(useStamina),
-
+	chargeFrame(chargeFrame),
+	chargeRatio(chargeRatio),
 	getBowPos(getBowPos),
 	setFaceDir(setFaceDir),
 	setGravityEnabled(setGravityEnabled),
@@ -53,7 +57,6 @@ PlayerBowState::PlayerBowState(
 	changeStateFall(changeStateFall),
 
 	step(STEP::BowStart),
-	chargeFrame(0.0f),
 	isAirSlow(false)
 {
 }
@@ -87,6 +90,9 @@ void PlayerBowState::Enter(void)
 
 void PlayerBowState::Update(void)
 {
+	// チャージ率の計算
+	chargeRatio = (std::min)(chargeFrame / CHARGE_MAX, 1.0f);
+
 	// 空中スローの管理（ゲージ消費・着地で解除・落下制御）
 	UpdateAirSlow();
 
@@ -99,17 +105,27 @@ void PlayerBowState::Update(void)
 		FaceToAim();
 		chargeFrame++;
 
-		// 引き切る前に離したら弱い矢
-		if (!isHold) { Shoot(); break; }
+		// 離されたとき
+		if (!isHold) {
+
+			// すぐに離されたら撃たずに終了
+			if (chargeRatio < 0.7) {
+				if (isGround) { changeStateIdle(); }
+				else { changeStateFall(); }
+				break;
+			}
+
+			Shoot();
+			break;
+		}
 
 		// 構えアニメが終わったらエイム中へ
 		if (getAnimeRatio() >= 1.0f) {
 			step = STEP::Aiming;
 			playAnimeAiming();
 		}
-		break;
 	}
-
+	break;
 	case STEP::Aiming: {
 		FaceToAim();
 
@@ -133,13 +149,18 @@ void PlayerBowState::Update(void)
 		}
 		break;
 	}
+
 	}
+	
 }
 
 void PlayerBowState::Exit(void)
 {
 	// 被弾・回避キャンセルなど、どこから抜けても必ずスローを解除する
 	EndAirSlow();
+
+	// チャージ率を0にする
+	chargeRatio = 0.0f;
 
 	// エイムモード切替
 	CurrentCamera::Get().SetAimMode(false);
@@ -159,8 +180,14 @@ void PlayerBowState::Shoot(void)
 	const float power = MIN_POWER + (1.0f - MIN_POWER) * ratio;
 
 	// 矢の生成
-	const Vector3 dir = CalcAimDir();
-	spawnArrow(getBowPos(), dir, power);
+	// 狙った点までの距離も受け取る（矢はこの距離まではまっすぐ飛ぶ）
+	float aimDist = 0.0f;
+	const Vector3 dir = CalcAimDir(aimDist);
+	spawnArrow(getBowPos(), dir, power, aimDist);
+
+	printfDx("aimDist:%.0f  bowPos(%.0f,%.0f,%.0f)  camPos(%.0f,%.0f,%.0f)\n",
+		aimDist, getBowPos().x, getBowPos().y, getBowPos().z,
+		CurrentCamera::Get().GetPos().x, CurrentCamera::Get().GetPos().y, CurrentCamera::Get().GetPos().z);
 
 	// 反動：照準と逆方向（XZ）へ少し下がる。強い矢ほど大きく
 	// 減速は GroundMotionController の Drag に任せる
@@ -187,23 +214,27 @@ Vector3 PlayerBowState::GetCameraForward(void) const
 	);
 }
 
-Vector3 PlayerBowState::CalcAimDir(void) const
+Vector3 PlayerBowState::CalcAimDir(float& outDist) const
 {
 	const Vector3 camPos = CurrentCamera::Get().GetPos();
 	const Vector3 camFwd = GetCameraForward();
 
-	// 画面中央から飛ばしたレイの先を aimPoint にする
-	const Vector3 rayEnd = camPos + camFwd * AIM_RAY_LENGTH;
-	Vector3 aimPoint = rayEnd;
+	// 敵に当たらなかったときは、決まった距離の点を狙う
+	Vector3 aimPoint = camPos + camFwd * AIM_DEFAULT_DIST;
 
+	// 画面中央から飛ばしたレイが敵に当たったら、その点を狙う
 	Vector3 hitPos;
-	if (raycast && raycast(camPos, rayEnd, hitPos)) { aimPoint = hitPos; }
+	if (raycast && raycast(camPos, camPos + camFwd * AIM_RAY_LENGTH, hitPos)) { aimPoint = hitPos; }
 
-	// 発射位置 → aimPoint の方向（肩越しカメラの視差を消す）
+	// 発射位置 → aimPoint（肩越しカメラの視差を消す）
 	Vector3 dir = aimPoint - getBowPos();
-	if (dir.LengthSq() <= 0.0001f) { return camFwd; }
 
-	dir.Normalize();
+	// ベクトルの長さ = 狙った点までの距離
+	outDist = dir.Length();
+	if (outDist <= 0.0001f) { outDist = 0.0f; return camFwd; }
+
+	// 長さ1にして向きにする
+	dir = dir / outDist;
 	return dir;
 }
 

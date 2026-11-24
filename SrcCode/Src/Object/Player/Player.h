@@ -232,11 +232,29 @@ private:
 	// 矢のプール
 	Arrow* arrows[ARROW_MAX] = {};
 
+	// チャージフレーム数
+	float bowCharge = 0;
+
+	// チャージ率
+	float chargeRatio = 0.0f;
+
 	// 全部飛んでいたときに次に使い回す矢の番号
 	int oldestArrow = 0;
 
 	// 矢を発射する（PlayerBowState から呼ばれる）
-	void SpawnArrow(const Vector3& pos, const Vector3& dir, float power);
+	void SpawnArrow(const Vector3& pos, const Vector3& dir, float power, float straightDist);
+
+	// 照準レイと敵の判定（当たったらtrue、hitPosに当たった座標）
+	bool AimRaycast(const Vector3& start, const Vector3& end, Vector3& hitPos) const;
+
+	// 照準判定用：敵を球とみなしたときの半径と、足元からの高さ
+	const float AIM_ENEMY_RADIUS = 150.0f;
+	const float AIM_ENEMY_HEIGHT = 150.0f;
+	// 照準判定する敵を探す範囲
+	const float AIM_ENEMY_SEARCH = 5000.0f;
+
+	// レティクル
+	void DrawReticle(float chargeRatio);
 
 #pragma endregion
 

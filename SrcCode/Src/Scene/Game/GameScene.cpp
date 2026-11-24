@@ -46,11 +46,14 @@ void GameScene::SubPostLoad(void)
 	//AddActor(new BoxDebugObject(Vector3(20000, 0, 20000), Vector3::Yonly(-500), false));
 
 	//AddActor(new CapsuleDebugObject(Vector3(50, 0, 0), Vector3(-50, 0, 0), 50.0f, Vector3(), true, true, true, 50, true));
-	operatorObject = new Player();
-	AddActor(operatorObject);
 
 	// 敵の生成
 	AddActor(new EnemyManager);
+
+	// プレイヤー
+	operatorObject = new Player();
+	AddActor(operatorObject);
+
 	// プレイヤー座標渡し
 	ActorSerch<EnemyManager>(actors)->SetPlayerPos(&operatorObject->GetTrans().pos);
 

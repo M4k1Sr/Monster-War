@@ -22,7 +22,7 @@ public:
 	/// <param name="addVelocity">速度を加算する関数（PhysicsBody）</param>
 	/// <param name="getVelocity">現在の速度を取得する関数（PhysicsBody）</param>
 	/// <param name="raycast">ステージとのレイ判定（当たったらtrue、hitPosに座標）。nullptr可</param>
-	/// <param name="spawnArrow">矢を生成する関数（位置, 向き, 威力0.0〜1.0）</param>
+	/// <param name="spawnArrow">矢を生成する関数（位置, 向き, 威力0.0〜1.0, まっすぐ飛ぶ距離）</param>
 	/// <param name="playAnimeBowStart">構えアニメ再生</param>
 	/// <param name="playAnimeAiming">エイム中アニメ再生（ループ）</param>
 	/// <param name="playAnimeBowEnd">発射アニメ再生</param>
@@ -34,13 +34,16 @@ public:
 		const bool& isGround,
 		std::function<bool(float)> useStamina,
 
+		float& chargeFrame,
+		float& chargeRatio,
+
 		std::function<Vector3(void)> getBowPos,
 		std::function<void(const Vector3&)> setFaceDir,
 		std::function<void(bool)> setGravityEnabled,
 		std::function<void(const Vector3&)> addVelocity,
 		std::function<Vector3(void)> getVelocity,
 		std::function<bool(const Vector3&, const Vector3&, Vector3&)> raycast,
-		std::function<void(const Vector3&, const Vector3&, float)> spawnArrow,
+		std::function<void(const Vector3&, const Vector3&, float, float)> spawnArrow,
 
 		std::function<void(void)> playAnimeBowStart,
 		std::function<void(void)> playAnimeAiming,
@@ -92,6 +95,9 @@ private:
 	// 照準レイの最大距離
 	const float AIM_RAY_LENGTH = 10000.0f;
 
+	// 敵に当たらなかったときに狙う距離（ここを過ぎたら矢が落ち始める）
+	const float AIM_DEFAULT_DIST = 1500.0f;
+
 	// 空中スロー時の世界の速度
 	const float AIR_SLOW_SCALE = 0.005f;
 	// 空中スローのイージングフレーム
@@ -118,6 +124,11 @@ private:
 	// スタミナ消費
 	const std::function<bool(float)> useStamina;
 
+	// チャージフレーム数
+	float& chargeFrame;
+	// 引き絞り具合の書き込み先（0.0〜1.0）
+	float& chargeRatio;
+
 	// 矢の発射位置
 	const std::function<Vector3(void)> getBowPos;
 	// 向き変更
@@ -131,7 +142,7 @@ private:
 	// ステージとのレイ判定
 	const std::function<bool(const Vector3&, const Vector3&, Vector3&)> raycast;
 	// 矢の生成
-	const std::function<void(const Vector3&, const Vector3&, float)> spawnArrow;
+	const std::function<void(const Vector3&, const Vector3&, float, float)> spawnArrow;
 
 	// 弓矢を撃つ一連のアニメーションの再生関数のポインタ
 	const std::function<void(void)> playAnimeBowStart;
@@ -150,9 +161,6 @@ private:
 	// 弓ステップ
 	STEP step;
 
-	// チャージフレーム数
-	float chargeFrame;
-
 	// 空中スロー中か
 	bool isAirSlow;
 
@@ -163,7 +171,8 @@ private:
 	void Shoot(void);
 
 	// 矢が飛んでいく方向（画面中央レイ → aimPoint → 発射位置からの方向）
-	Vector3 CalcAimDir(void) const;
+	// outDist に発射位置から狙った点までの距離を入れる
+	Vector3 CalcAimDir(float& outDist) const;
 
 	// カメラの前方向
 	Vector3 GetCameraForward(void) const;
