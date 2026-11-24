@@ -105,6 +105,15 @@ public:
 
 #pragma endregion
 
+#pragma region 弓エイムモード関数
+
+	// エイムモードの切り替え
+	virtual void SetAimMode(bool flg) {}
+	// エイム中か
+	virtual bool IsAim(void) const { return false; }
+
+#pragma endregion
+
 protected:
 
 	// 座標

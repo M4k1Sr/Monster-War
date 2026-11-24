@@ -76,8 +76,8 @@ void PlayerBowState::Enter(void)
 	// パラセール等から来たとき重力が切れている場合があるので、一度通常に戻す
 	setGravityEnabled(true);
 
-	// TODO：FollowActionCamera に AIM モードを追加して切り替える
-	// CurrentCamera::Get().SetAimMode(true);
+	// エイムモード切替
+	 CurrentCamera::Get().SetAimMode(true);
 
 	// 空中で構えて、スタミナが残っていればスロー開始
 	if (!isGround && useStamina(AIR_SLOW_STAMINA_COST)) { StartAirSlow(); }
@@ -141,7 +141,8 @@ void PlayerBowState::Exit(void)
 	// 被弾・回避キャンセルなど、どこから抜けても必ずスローを解除する
 	EndAirSlow();
 
-	// CurrentCamera::Get().SetAimMode(false);
+	// エイムモード切替
+	CurrentCamera::Get().SetAimMode(false);
 }
 
 void PlayerBowState::StartDraw(void)
@@ -175,7 +176,7 @@ void PlayerBowState::Shoot(void)
 
 Vector3 PlayerBowState::GetCameraForward(void) const
 {
-	// CameraBase::CalcCameraAngle の逆変換（angle.x = ピッチ, angle.y = ヨー）
+	// CameraBase::CalcCameraAngle の逆変換
 	const Vector3& angle = CurrentCamera::Get().GetAngle();
 	const float cp = cosf(angle.x);
 
