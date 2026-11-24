@@ -152,6 +152,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Src\Object\Common\MotionController\ParaseilMotionController.cpp" />
+    <ClCompile Include="Src\Object\Player\State\PlayerBowState.cpp" />
     <ClCompile Include="Src\Object\Player\State\PlayerFlyingState.cpp" />
     <ClCompile Include="Src\Manager\Collision\ContactSolver.cpp" />
     <ClCompile Include="Src\Manager\Collision\CurrentCollisionManager.cpp" />
@@ -249,6 +250,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Object\Common\MotionController\ParaseilMotionController.h" />
+    <ClInclude Include="Src\Object\Player\State\PlayerBowState.h" />
     <ClInclude Include="Src\Object\Player\State\PlayerFlyingState.h" />
     <ClInclude Include="Src\Manager\Collision\ContactSolver.h" />
     <ClInclude Include="Src\Manager\Collision\CurrentCollisionManager.h" />

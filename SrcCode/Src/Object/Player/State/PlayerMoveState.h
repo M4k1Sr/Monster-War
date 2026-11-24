@@ -15,6 +15,7 @@ public:
 		short DASH_STAMINA_MAX,
 		bool& isTired,
 		GroundMotionController& motion,
+		std::function<bool(float)> useStamina,
 		std::function<void(void)> playAnimeWalk,
 		std::function<void(void)> playAnimeRun,
 		std::function<void(void)> playAnimeFastRun
@@ -35,8 +36,6 @@ public:
 	// 状態関係なく呼び出す処理
 	void AlwaysUpdate(void)override;
 
-	// スタミナを返す関数
-	const short& GetDashStamina(void)const { return dashStamina; }
 	// 息切れかどうかを返す関数
 	bool IsTired(void)const { return isTired; }
 
@@ -63,6 +62,9 @@ private:
 	// 移動制御（速度・向き・最大移動速度を管理する）
 	GroundMotionController& motion;
 
+	// スタミナを利用したか
+	const std::function<bool(float)> useStamina;
+
 	// 疲れ歩きアニメーションの再生関数のポインタ
 	const std::function<void(void)> playAnimeWalk;
 	// 走りアニメーションの再生関数のポインタ
@@ -74,9 +76,6 @@ private:
 
 	// 全力疾走しているかどうか
 	bool isFastDash;
-
-	// ダッシュスタミナ
-	short dashStamina;
 
 	// 息切れ(1度スタミナが0になったかどうか)
 	bool& isTired;

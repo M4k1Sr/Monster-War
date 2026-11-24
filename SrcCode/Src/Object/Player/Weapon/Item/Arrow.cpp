@@ -1,129 +1,151 @@
-#include "Arrow.h"
+ï»¿#include "Arrow.h"
 
-#include "../../../Common/Collider/CapsuleCollider.h"
-
-#include "../../../Common/Shader/DefaultShader.h"
-#include "../../../Common/Shader/RimLightShader.h"
-#include "../../../Common/Shader/WaterShader.h"
+#include "../../../Common/Collider/LineCollider.h"
 
 #include "../../../../Utility/Utility.h"
 
 Arrow::Arrow(
-	const Transform& playerTrans
+	float MAX_SPEED,
+	float MIN_SPEED,
+	int LIFE_FRAME,
+	float ARROW_GRAVITY
 ) :
-	playerTrans(playerTrans)
+	MAX_SPEED(MAX_SPEED),
+	MIN_SPEED(MIN_SPEED),
+	LIFE_FRAME(LIFE_FRAME),
+	ARROW_GRAVITY(ARROW_GRAVITY),
+
+	moveVec(),
+	power(0.0f),
+	lifeCounter(0),
+	isActive(false)
 {
 }
 
 void Arrow::Load(void)
 {
-#pragma region ƒIƒuƒWƒFƒNƒgİ’è
+#pragma region ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆè¨­å®š
 
-	// “®“IƒIƒuƒWƒFƒNƒg‚Æ‚µ‚Ä‚Ìˆ—‚ğ—LŒø‚É‚·‚é
+	// å‹•çš„ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¨ã—ã¦ã®å‡¦ç†ã‚’æœ‰åŠ¹ã«ã™ã‚‹
 	SetColliderMobility(COLLIDER_MOBILITY::Movable);
 
-	// “–‚½‚è”»’è‚É‚æ‚é‰Ÿ‚µo‚µ‚ğ—LŒø‚É‚·‚é
+	// æŠ¼ã—å‡ºã—ã¯ç„¡åŠ¹ï¼ˆåˆºã•ã‚‹ãƒ»ã™ã‚ŠæŠœã‘ã‚‹ã ã‘ï¼‰
 	SetContactResponseEnabled(false);
 
+	// â€»ActorBaseå´ã®é‡åŠ›ã¯ä½¿ã‚ãšã€SubUpdateã§è‡ªå‰ã®é‡åŠ›ã‚’ã‹ã‘ã‚‹
+	//   ï¼ˆä»Šã®ActorBaseã§é‡åŠ›ã‚’åˆ‡ã‚‹é–¢æ•°ã‚’å‘¼ã‚“ã§ãŠãï¼‰
+
+	// ä¸–ç•Œã¨ä¸€ç·’ã«ã‚¹ãƒ­ãƒ¼ã•ã›ãŸã„å ´åˆã¯ã‚³ãƒ¡ãƒ³ãƒˆã‚’å¤–ã™
+	// ï¼ˆAddChildActorã§Playerã‚°ãƒ«ãƒ¼ãƒ—ãŒå¼•ãç¶™ãŒã‚Œã‚‹ã®ã§ã€ä½•ã‚‚ã—ãªã‘ã‚Œã°ã‚¹ãƒ­ãƒ¼ä¸­ã‚‚ç­‰é€Ÿã§é£›ã¶ï¼‰
+	// SetTimeGroup(TimeScale::GROUP::Other);
+
 #pragma endregion
 
 
-#pragma region ƒ‚ƒfƒ‹İ’è
+#pragma region ãƒ¢ãƒ‡ãƒ«è¨­å®š
 
-	// ƒ‚ƒfƒ‹‚Ì“Ç‚İ‚İ
+	// ãƒ¢ãƒ‡ãƒ«ã®èª­ã¿è¾¼ã¿
 	trans.LoadModel("Weapon/Arrow");
 
-	// ‰Šúƒ[ƒJƒ‹À•WEŠp“x
-	arrowLocalPos = Vector3(0.0f, 0.0f, 0.0f);
-	arrowLocalRot = Vector3(Deg2Rad(0.0f), Deg2Rad(-90.0f), Deg2Rad(0.0f));
-
-	// ƒ‚ƒfƒ‹‚ÌƒXƒP[ƒ‹İ’è
+	// ãƒ¢ãƒ‡ãƒ«ã®ã‚¹ã‚±ãƒ¼ãƒ«è¨­å®š
 	trans.scale = 1.0f;
 
-	// ƒ‚ƒfƒ‹‚Ì’†S“_‚ÌƒYƒŒ‚Ì•â³
+	// ãƒ¢ãƒ‡ãƒ«ã®ä¸­å¿ƒç‚¹ã®ã‚ºãƒ¬ã®è£œæ­£
 	trans.centerDiff = Vector3(0.0f, 0.0f, 0.0f) * trans.scale;
 
-	// ƒ‚ƒfƒ‹‚ÌŠp“x‚ÌƒYƒŒ‚Ì•â³
-	trans.SetLocalRotation(Quaternion::FromRotationY(Deg2Rad(0.0f)));
-
-	trans.pos = MV1GetFramePosition(trans.model, 21);
+	// ãƒ¢ãƒ‡ãƒ«ã®è§’åº¦ã®ã‚ºãƒ¬ã®è£œæ­£ï¼ˆçŸ¢å…ˆãŒ +Z ã‚’å‘ãã‚ˆã†ã«èª¿æ•´ã™ã‚‹ï¼‰
+	trans.SetLocalRotation(Quaternion::FromRotationY(Deg2Rad(-90.0f)));
 
 #pragma endregion
 
-#pragma region ƒRƒ‰ƒCƒ_[‚Ì¶¬(maybe•s—v)
 
+#pragma region ã‚³ãƒ©ã‚¤ãƒ€ãƒ¼ã®ç”Ÿæˆ
+
+	// ã™ã‚ŠæŠœã‘å¯¾ç­–ï¼šçŸ¢å…ˆã‹ã‚‰ã€Œæœ€é«˜é€Ÿåº¦ã¶ã‚“å¾Œã‚ã€ã¾ã§ä¼¸ã³ã‚‹ç·šåˆ†
+	// â†’ 1ãƒ•ãƒ¬ãƒ¼ãƒ ã§é€²ã‚€è·é›¢ã‚’å¿…ãšã‚«ãƒãƒ¼ã™ã‚‹ã®ã§ã€é€Ÿãã¦ã‚‚æ•µã‚’è²«é€šã—ãªã„
 	AddCollider(
-		new CapsuleCollider(
-			COLLIDER_TAG::PlayerWeaponItem,
-			Vector3::Yonly(30.0f) * trans.scale,
-			Vector3::Yonly(-55.0f) * trans.scale,
-			10.0f * trans.scale.MaxElementF()
+		new LineCollider(
+			COLLIDER_TAG::PlayerBow,
+			Vector3(0.0f, 0.0f, ARROW_TIP),
+			Vector3(0.0f, 0.0f, -MAX_SPEED)
 		)
 	);
 
 #pragma endregion
 
+	// ç™ºå°„ã•ã‚Œã‚‹ã¾ã§ã¯å¾…æ©Ÿï¼ˆéè¡¨ç¤ºãƒ»åˆ¤å®šãªã—ï¼‰
+	Deactivate();
+}
+
+void Arrow::Fire(const Vector3& pos, const Vector3& dir, float power)
+{
+	this->power = power;
+
+	// å¼•ãçµã‚Šå€¤ã§é€Ÿåº¦ã‚’æ±ºã‚ã‚‹
+	const float speed = MIN_SPEED + (MAX_SPEED - MIN_SPEED) * power;
+	moveVec = dir * speed;
+
+	trans.pos = pos;
+	LookToMoveVec();
+
+	lifeCounter = LIFE_FRAME;
+	isActive = true;
+
+	SetIsDraw(true);
+	SetJudgeFlg(true);
 }
 
 void Arrow::SubUpdate(void)
 {
-#ifdef _DEBUG
-	//// ˆ¬‚èˆÊ’u‚Ì’²®—pi’²®‚ªI‚í‚Á‚½‚ç–³Œø‰»‚µ‚ÄOKj
-	//const float MOVE = 0.5f;
-	//const float ROT = Deg2Rad(1.0f);
+	if (!isActive) { return; }
 
-	//if (CheckHitKey(KEY_INPUT_LSHIFT)) {
-	//	// Shift‰Ÿ‚µ‚È‚ª‚ç ¨ ‰ñ“]
-	//	if (CheckHitKey(KEY_INPUT_I)) swordLocalRot.x += ROT;
-	//	if (CheckHitKey(KEY_INPUT_K)) swordLocalRot.x -= ROT;
-	//	if (CheckHitKey(KEY_INPUT_J)) swordLocalRot.y += ROT;
-	//	if (CheckHitKey(KEY_INPUT_L)) swordLocalRot.y -= ROT;
-	//	if (CheckHitKey(KEY_INPUT_U)) swordLocalRot.z += ROT;
-	//	if (CheckHitKey(KEY_INPUT_O)) swordLocalRot.z -= ROT;
-	//}
-	//else {
-	//	// ‰½‚à‰Ÿ‚³‚È‚¢ ¨ ˆÊ’u
-	//	if (CheckHitKey(KEY_INPUT_I)) swordLocalPos.x += MOVE;
-	//	if (CheckHitKey(KEY_INPUT_K)) swordLocalPos.x -= MOVE;
-	//	if (CheckHitKey(KEY_INPUT_J)) swordLocalPos.y += MOVE;
-	//	if (CheckHitKey(KEY_INPUT_L)) swordLocalPos.y -= MOVE;
-	//	if (CheckHitKey(KEY_INPUT_U)) swordLocalPos.z += MOVE;
-	//	if (CheckHitKey(KEY_INPUT_O)) swordLocalPos.z -= MOVE;
-	//}
-#endif
+	const float scale = GetTimeScale();
 
-	// ÅV‚ÌˆÊ’uAŒü‚«‚È‚Ç‚ğƒZƒbƒg
-	MV1SetMatrix(playerTrans.model, playerTrans.GetWorldMatrix());
+	// è‡ªå‰ã®é‡åŠ›ï¼ˆå¼±ã„çŸ¢ã»ã©é…ã„ã®ã§ã€ç›¸å¯¾çš„ã«æ—©ãè½ã¡ã¦è¦‹ãˆã‚‹ï¼‰
+	moveVec.y += ARROW_GRAVITY * scale;
 
-	// è‚Ìƒ[ƒ‹ƒhs—ñ‚ğæ“¾
-	const MATRIX handMat = MV1GetFrameLocalWorldMatrix(playerTrans.model, 21);
+	// ç§»å‹•
+	trans.pos += moveVec * scale;
 
-	// –î‚Ìƒ[ƒJƒ‹s—ñ
-	MATRIX localMat = MGetScale(trans.scale.ToVECTOR());
-	localMat = MMult(localMat, MatrixAllMultXYZ({ arrowLocalRot }));
-	localMat = MMult(localMat, MGetTranslate(arrowLocalPos.ToVECTOR()));
+	// æ”¾ç‰©ç·šã«åˆã‚ã›ã¦çŸ¢å…ˆã‚’ä¸‹ã’ã‚‹
+	LookToMoveVec();
 
-	// è‚Æ–î‚Ìs—ñ‚ğ‡¬
-	const MATRIX mat = MMult(localMat, handMat);
-
-	// •`‰æ—p
-	trans.useMatrix = true;
-	trans.matrix = mat;
-	trans.pos = Vector3(mat.m[3][0], mat.m[3][1], mat.m[3][2]);
-
-	// Œü‚«
-	MATRIX rotOnly = MGetIdent();
-	for (int i = 0; i < 3; i++) {
-		const Vector3 row = Vector3(mat.m[i][0], mat.m[i][1], mat.m[i][2]).Normalized();
-		rotOnly.m[i][0] = row.x;
-		rotOnly.m[i][1] = row.y;
-		rotOnly.m[i][2] = row.z;
-	}
-	trans.rotation = Quaternion::FromMatrix(rotOnly);	trans.pos = VTransform(VGet(0, 0, 0), mat);
+	// æ™‚é–“åˆ‡ã‚Œ
+	if (scale > 0.0f && --lifeCounter <= 0) { Deactivate(); }
 }
 
-void Arrow::SubDraw(void)
+void Arrow::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
 {
-	//DrawFormatString(300, 330, 0xffffff, "Pos(%.1f, %.1f, %.1f)", swordLocalPos.x, swordLocalPos.y, swordLocalPos.z);
-	//DrawFormatString(300, 300, 0xffffff, "Rot(%.1f, %.1f, %.1f)", Rad2Deg(swordLocalRot.x), Rad2Deg(swordLocalRot.y), Rad2Deg(swordLocalRot.z));
+	if (!isActive) { return; }
+
+	// æ•µã‹ã‚¹ãƒ†ãƒ¼ã‚¸ã«å½“ãŸã£ãŸã‚‰æ¶ˆã™
+	// ï¼ˆãƒ€ãƒ¡ãƒ¼ã‚¸ã¯æ•µå´ã® OnCollision ã§ PlayerArrow ã‚¿ã‚°ã‚’è¦‹ã¦å‡¦ç†ã™ã‚‹ï¼‰
+	// TODOï¼šè‡ªåˆ†ã®ã‚¿ã‚°ã«åˆã‚ã›ã¦èª¿æ•´
+	if (other.GetTag() == COLLIDER_TAG::Enemy ||
+		other.GetTag() == COLLIDER_TAG::Stage) {
+
+		// ãƒ’ãƒƒãƒˆã‚¨ãƒ•ã‚§ã‚¯ãƒˆãƒ»SEã¯ã“ã“ã§
+		Deactivate();
+	}
+}
+
+void Arrow::LookToMoveVec(void)
+{
+	if (moveVec.LengthSq() <= 0.0001f) { return; }
+
+	Vector3 dir = moveVec;
+	dir.Normalize();
+
+	// +Z ã‚’ dir ã«å‘ã‘ã‚‹å›è»¢
+	const MATRIX rotMat = MGetRotVec2(VGet(0.0f, 0.0f, 1.0f), dir.ToVECTOR());
+	trans.rotation = Quaternion::FromMatrix(rotMat);
+}
+
+void Arrow::Deactivate(void)
+{
+	isActive = false;
+	moveVec = Vector3();
+
+	SetIsDraw(false);
+	SetJudgeFlg(false);
 }

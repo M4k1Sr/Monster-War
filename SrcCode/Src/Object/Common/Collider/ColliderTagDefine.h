@@ -28,6 +28,7 @@ enum class COLLIDER_TAG
 	PlayerKickDownAttack,
 	Playerdodge,
 
+	PlayerBow,
 	PlayerWeaponItem,
 
 	Enemy,

@@ -65,6 +65,9 @@ public:
 		// スカイライズ
 		PlayerSkyRise,
 
+		// 弓操作
+		PlayerBow,
+
 #pragma endregion
 
 #pragma region カメラ操作

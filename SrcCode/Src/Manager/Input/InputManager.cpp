@@ -67,6 +67,10 @@ void InputManager::Init(void)
 	SET_KEYBOARD(KEY_TYPE::PlayerSkyRise, KEY_INPUT_R);
 	SET_C_BUTTON(KEY_TYPE::PlayerSkyRise, XINPUT_BUTTON_X);
 
+	// 弓操作
+	SET_KEYBOARD(KEY_TYPE::PlayerBow, KEY_INPUT_E);
+	SET_C_OTHERS(KEY_TYPE::PlayerBow, CONTROLLER_OTHERS::RightTrigger);
+
 #pragma endregion
 
 #pragma region カメラ操作

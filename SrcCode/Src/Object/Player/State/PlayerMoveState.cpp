@@ -16,6 +16,8 @@ PlayerMoveState::PlayerMoveState(
 
 	GroundMotionController& motion,
 
+	std::function<bool(float)> useStamina,
+
 	std::function<void(void)> playAnimeWalk,
 	std::function<void(void)> playAnimeRun,
 	std::function<void(void)> playAnimeFastRun
@@ -28,12 +30,13 @@ PlayerMoveState::PlayerMoveState(
 
 	motion(motion),
 
+	useStamina(useStamina),
+
 	playAnimeWalk(playAnimeWalk),
 	playAnimeRun(playAnimeRun),
 	playAnimeFastRun(playAnimeFastRun),
 
-	isFastDash(false),
-	dashStamina(DASH_STAMINA_MAX)
+	isFastDash(false)
 {
 	isTired = false;
 	// 通常移動の最大速度を設定
@@ -93,15 +96,6 @@ void PlayerMoveState::Exit(void)
 
 void PlayerMoveState::AlwaysUpdate(void)
 {
-	// 全力ダッシュしていないときはスタミナを回復させる
-	if (!isFastDash) {
-		if (++dashStamina > DASH_STAMINA_MAX) {
-			dashStamina = DASH_STAMINA_MAX;
-
-			// 息切れ回復
-			isTired = false;
-		}
-	}
 }
 
 Vector3 PlayerMoveState::InputVec(void) const
@@ -130,12 +124,12 @@ void PlayerMoveState::UpdateMove(void)
 	if (isFastDash) {
 
 		// 全力ダッシュしているときはスタミナを減らす
-		if (--dashStamina < 0) {
-			dashStamina = 0;
-
-			// 息切れ
-			isTired = true;
-		}
+		// 足りなければ全力ダッシュをやめる（息切れはPlayer側のUseStaminaで設定される）
+		if (!useStamina(1.0f)) {
+			isFastDash = false;
+			playAnimeWalk();
+			return;
+		}		
 
 		// 全力ダッシュしているときは全力ダッシュアニメーションにする
 		playAnimeFastRun();

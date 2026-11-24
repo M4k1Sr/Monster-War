@@ -48,6 +48,8 @@ private:
 		AttackSlash,
 		AttackRollingSlash,
 
+		Bow,
+
 		BackFlip,
 
 		React,
@@ -217,8 +219,46 @@ private:
 	// パラセール
 	Paraseil* paraseil;
 
-	// 矢
-	Arrow* arrow;
+#pragma endregion
+
+#pragma region 弓矢
+
+	// 弓を持つ手のフレーム番号（21は剣の手。MV1SearchFrameで要確認）
+	int BOW_HAND_FRAME = 0;
+
+	// 同時に飛べる矢の本数
+	static constexpr int ARROW_MAX = 5;
+
+	// 矢のプール
+	Arrow* arrows[ARROW_MAX] = {};
+
+	// 全部飛んでいたときに次に使い回す矢の番号
+	int oldestArrow = 0;
+
+	// 矢を発射する（PlayerBowState から呼ばれる）
+	void SpawnArrow(const Vector3& pos, const Vector3& dir, float power);
+
+#pragma endregion
+
+#pragma region スタミナ
+
+	// スタミナ最大値
+	static constexpr float STAMINA_MAX = 300.0f;
+
+	// 消費後、回復が始まるまでのフレーム
+	static constexpr int STAMINA_REGEN_DELAY = 30;
+
+	// スタミナ
+	float stamina = STAMINA_MAX;
+
+	// 回復待ちフレーム
+	int staminaRegenDelay = 0;
+
+	// スタミナ消費（足りなければ消費せず false）
+	bool UseStamina(float cost);
+
+	// スタミナ回復（SubUpdateで呼ぶ）
+	void UpdateStamina(void);
 
 #pragma endregion
 

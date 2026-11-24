@@ -1,5 +1,6 @@
 #include "Player.h"
 
+
 #include "../../Application/Application.h"
 
 #include "../../Utility/Utility.h"
@@ -40,6 +41,7 @@
 #include "State/PlayerSkyRiseState.h"
 #include "State/PlayerAttackSlashState.h"
 #include "State/PlayerRollingSlashState.h"
+#include "State/PlayerBowState.h"
 #include "State/PlayerKickDownAttackState.h"
 #include "State/PlayerBackFlipState.h"
 #include "State/PlayerReactState.h"
@@ -58,7 +60,6 @@ Player::Player()
 	justPhase(JUST_PHASE::None),
 	king_Sword(nullptr),
 	paraseil(nullptr),
-	arrow(nullptr),
 	isTired(false)
 {
 	hp = 1000;
@@ -226,9 +227,16 @@ void Player::Load(void)
 	AddChildActor(paraseil);
 
 	// ñÓÉNÉâÉX
-	arrow = new Arrow(trans);
+	for (int i = 0; i < ARROW_MAX; i++) {
 
-	AddChildActor(arrow);
+		// ç≈çÇë¨ìx, ç≈í·ë¨ìx, è¡Ç¶ÇÈÇ‹Ç≈ÇÃÉtÉåÅ[ÉÄ, èdóÕ
+		arrows[i] = new Arrow(80.0f, 30.0f, 180, -0.3f);
+
+		AddChildActor(arrows[i]);
+	}
+
+	// ñÓÇéùÇ¬ÉtÉåÅ[ÉÄ
+	BOW_HAND_FRAME = MV1SearchFrame(trans.model, "mixamorig:LeftHand");
 
 #pragma endregion
 
@@ -252,6 +260,7 @@ void Player::Load(void)
 			10.0f, 1.0f, 1.5f, 300,
 			isTired,
 			*groundMotionController,
+			[&](float cost) { return UseStamina(cost); },
 			[&]() { AnimePlay(ANIME_TYPE::Walk); },
 			[&]() { AnimePlay(ANIME_TYPE::Run); },
 			[&]() { AnimePlay(ANIME_TYPE::FastRun); }
@@ -343,6 +352,28 @@ void Player::Load(void)
 			[&]() {return GetAnimeRatio(); },
 			[&]() {return IsAnimeEnd(); },
 			[&]() {ChangeState(STATE::Idle); }
+		)
+	);
+
+	AddState(
+		STATE::Bow,
+		new PlayerBowState(
+			*groundMotionController,
+			isGround,
+			[&](float cost) { return UseStamina(cost); },
+			[&]() { return Vector3(MV1GetFramePosition(trans.model, BOW_HAND_FRAME)); },
+			[&](const Vector3& dir) { trans.rotation = Quaternion::FromRotationY(atan2f(dir.x, dir.z)); },
+			[this](bool flg) { isGravity = flg; GetPhysicsBody()->SetGravityEnabled(flg); },
+			[&](const Vector3& v) { GetPhysicsBody()->AddVelocity(v); },
+			[&]() { return GetPhysicsBody()->GetVelocity(); },
+			nullptr,
+			[&](const Vector3& pos, const Vector3& dir, float power) { SpawnArrow(pos, dir, power); },
+			[&]() { AnimePlay(ANIME_TYPE::BowStart); },
+			[&]() { AnimePlay(ANIME_TYPE::BowAiming); },
+			[&]() { AnimePlay(ANIME_TYPE::BowEnd); },
+			[&]() { return GetAnimeRatio(); },
+			[&]() { ChangeState(STATE::Idle); },
+			[&]() { ChangeState(STATE::ParaseilMove); }   // ãÛíÜÇ≈åÇÇøèIÇÌÇ¡ÇΩÇÁääãÛÇ÷ÅióvìÆçÏämîFÅj
 		)
 	);
 
@@ -439,6 +470,19 @@ void Player::Load(void)
 	// ÅuçUåÇÅiéaåÇÅjèÛë‘Åv->ÅuâÒì]çUåÇèÛë‘ÅvÇÃé©ìÆëJà⁄ìoò^
 	RegisterStateTransition(STATE::AttackSlash, STATE::AttackRollingSlash);
 
+	// Åuë“ã@èÛë‘Åv->Åuã|ñÓçUåÇèÛë‘ÅvÇÃé©ìÆëJà⁄ìoò^
+	RegisterStateTransition(STATE::Idle, STATE::Bow);
+	// Åuà⁄ìÆèÛë‘Åv->Åuã|ñÓçUåÇèÛë‘ÅvÇÃé©ìÆëJà⁄ìoò^
+	RegisterStateTransition(STATE::Move, STATE::Bow);
+	// ÅuÉWÉÉÉìÉvèÛë‘Åv->Åuã|ñÓçUåÇèÛë‘ÅvÇÃé©ìÆëJà⁄ìoò^
+	RegisterStateTransition(STATE::Jump, STATE::Bow);
+	// ÅuÉpÉâÉZÅ[Éãà⁄ìÆèÛë‘Åv->Åuã|ñÓçUåÇèÛë‘ÅvÇÃé©ìÆëJà⁄ìoò^
+	RegisterStateTransition(STATE::ParaseilMove, STATE::Bow);
+
+	// Åuã|ñÓçUåÇèÛë‘Åv->ÅuâÒîèÛë‘ÅvÇÃé©ìÆëJà⁄ìoò^
+	RegisterStateTransition(STATE::Bow, STATE::BackFlip);
+	// Åuã|ñÓçUåÇèÛë‘Åv->ÅuêÅÇ¡îÚÇ—èÛë‘ÅvÇÃé©ìÆëJà⁄ìoò^
+	RegisterStateTransition(STATE::Bow, STATE::Flying);
 	// Åuë“ã@èÛë‘Åv->ÅuâÒîèÛë‘ÅvÇÃé©ìÆëJà⁄ìoò^
 	RegisterStateTransition(STATE::Idle, STATE::BackFlip);
 	// Åuà⁄ìÆèÛë‘Åv->ÅuâÒîèÛë‘ÅvÇÃé©ìÆëJà⁄ìoò^
@@ -504,8 +548,52 @@ void Player::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const C
 	}
 }
 
+void Player::SpawnArrow(const Vector3& pos, const Vector3& dir, float power)
+{
+	// ãÛÇ¢ÇƒÇ¢ÇÈñÓÇóDêÊÇµÇƒégÇ§
+	for (Arrow* a : arrows) {
+		if (!a->IsActive()) { a->Fire(pos, dir, power); return; }
+	}
+
+	// ëSïîîÚÇÒÇ≈Ç¢ÇΩÇÁå√Ç¢ñÓÇégÇ¢âÒÇ∑
+	arrows[oldestArrow]->Fire(pos, dir, power);
+	oldestArrow = (oldestArrow + 1) % ARROW_MAX;
+}
+
+bool Player::UseStamina(float cost)
+{
+	if (stamina < cost) { return false; }
+
+	stamina -= cost;
+
+	// égÇ¡ÇΩÇÁè≠ÇµÇÃä‘âÒïúÇµÇ»Ç¢
+	staminaRegenDelay = STAMINA_REGEN_DELAY;
+
+	// 0Ç…Ç»Ç¡ÇΩÇÁëßêÿÇÍ
+	if (stamina <= 0.0f) { stamina = 0.0f; isTired = true; }
+
+	return true;
+}
+
+void Player::UpdateStamina(void)
+{
+	// è¡îÔíºå„ÇÕâÒïúÇµÇ»Ç¢
+	if (staminaRegenDelay > 0) { staminaRegenDelay--; return; }
+
+	// ãÛíÜÇ≈ÇÕâÒïúÇµÇ»Ç¢
+	if (!isGround) { return; }
+
+	stamina = (std::min)(stamina + 1.0f, STAMINA_MAX);
+
+	// ëSâÒïúÇ≈ëßêÿÇÍâèú
+	if (stamina >= STAMINA_MAX) { isTired = false; }
+}
+
 void Player::SubUpdate(void)
 {
+	// ÉXÉ^É~ÉiâÒïú
+	UpdateStamina();
+
 	// ê^â∫Ç÷ÇÃÉåÉCåvéZ
 	if (groundRay) {
 		groundInfo = groundRay(trans.pos, GROUND_RAY_LENGTH);
