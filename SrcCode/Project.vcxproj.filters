@@ -98,6 +98,7 @@
     <ClCompile Include="Src\Object\Common\MotionController\GroundMotionController.cpp" />
     <ClCompile Include="Src\Object\Player\State\PlayerFlyingState.cpp" />
     <ClCompile Include="Src\Object\Common\MotionController\ParaseilMotionController.cpp" />
+    <ClCompile Include="Src\Object\Player\Weapon\Item\Arrow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\resource.h" />
@@ -224,6 +225,7 @@
     <ClInclude Include="Src\Object\Common\MotionController\MotionControllerBase.h" />
     <ClInclude Include="Src\Object\Player\State\PlayerFlyingState.h" />
     <ClInclude Include="Src\Object\Common\MotionController\ParaseilMotionController.h" />
+    <ClInclude Include="Src\Object\Player\Weapon\Item\Arrow.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Shader\Common\Pixel\ModelFog.hlsli" />

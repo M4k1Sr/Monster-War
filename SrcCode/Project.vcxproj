@@ -183,6 +183,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClCompile Include="Src\Object\Player\Weapon\CollOperator\PlayerAttackSlashCollOperator.cpp" />
     <ClCompile Include="Src\Object\Player\Weapon\CollOperator\PlayerKickDownAttackCollOperator.cpp" />
     <ClCompile Include="Src\Object\Player\Weapon\CollOperator\PlayerRollingSlashCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Player\Weapon\Item\Arrow.cpp" />
     <ClCompile Include="Src\Object\Player\Weapon\Item\King_Sword.cpp" />
     <ClCompile Include="Src\Object\Player\State\PlayerRollingSlashState.cpp" />
     <ClCompile Include="Src\Object\Player\State\PlayerAttackSlashState.cpp" />
@@ -282,6 +283,7 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
     <ClInclude Include="Src\Object\Player\Weapon\CollOperator\PlayerAttackSlashCollOperator.h" />
     <ClInclude Include="Src\Object\Player\Weapon\CollOperator\PlayerKickDownAttackCollOperator.h" />
     <ClInclude Include="Src\Object\Player\Weapon\CollOperator\PlayerRollingSlashCollOperator.h" />
+    <ClInclude Include="Src\Object\Player\Weapon\Item\Arrow.h" />
     <ClInclude Include="Src\Object\Player\Weapon\Item\King_Sword.h" />
     <ClInclude Include="Src\Object\Player\State\PlayerRollingSlashState.h" />
     <ClInclude Include="Src\Object\Player\State\PlayerAttackSlashState.h" />

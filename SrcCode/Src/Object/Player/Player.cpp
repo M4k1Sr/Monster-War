@@ -31,6 +31,7 @@
 
 #include "Weapon/Item/King_Sword.h"
 #include "Weapon/Item/Paraseil.h"
+#include "Weapon/Item/Arrow.h"
 
 #include "State/PlayerIdleState.h"
 #include "State/PlayerMoveState.h"
@@ -57,6 +58,7 @@ Player::Player()
 	justPhase(JUST_PHASE::None),
 	king_Sword(nullptr),
 	paraseil(nullptr),
+	arrow(nullptr),
 	isTired(false)
 {
 	hp = 1000;
@@ -214,14 +216,19 @@ void Player::Load(void)
 #pragma region 下位アクターの生成(武器)
 
 	// 武器クラス
-	king_Sword = new King_Sword(-20.0f, trans);
+	king_Sword = new King_Sword(trans);
 
 	AddChildActor(king_Sword);
 
-	// 翼クラス
+	// パラセールクラス
 	paraseil = new Paraseil(trans);
 
 	AddChildActor(paraseil);
+
+	// 矢クラス
+	arrow = new Arrow(trans);
+
+	AddChildActor(arrow);
 
 #pragma endregion
 

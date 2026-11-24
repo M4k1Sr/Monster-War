@@ -9,11 +9,8 @@
 #include "../../../../Utility/Utility.h"
 
 King_Sword::King_Sword(
-	const Vector3& COLL_LOCAL_POS,
 	const Transform& playerTrans
 ):
-	COLL_LOCAL_POS(COLL_LOCAL_POS),
-
 	playerTrans(playerTrans)
 {
 }

@@ -9,6 +9,7 @@ class EnemyManager;
 
 class Paraseil;
 class King_Sword;
+class Arrow;
 
 class Player : public CharacterBase
 {
@@ -215,6 +216,9 @@ private:
 
 	// ƒpƒ‰ƒZ[ƒ‹
 	Paraseil* paraseil;
+
+	// –î
+	Arrow* arrow;
 
 #pragma endregion
 
