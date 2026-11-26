@@ -152,6 +152,17 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Src\Object\Common\MotionController\ParaseilMotionController.cpp" />
+    <ClCompile Include="Src\Object\Enemy\MasterDragon\GobKing.cpp" />
+    <ClCompile Include="Src\Object\Enemy\MasterDragon\State\GobKingDieState.cpp" />
+    <ClCompile Include="Src\Object\Enemy\MasterDragon\State\GobKIngIdleState.cpp" />
+    <ClCompile Include="Src\Object\Enemy\MasterDragon\State\GobKingMoveState.cpp" />
+    <ClCompile Include="Src\Object\Enemy\MasterDragon\State\GobKingReactState.cpp" />
+    <ClCompile Include="Src\Object\Enemy\MasterDragon\State\GobKingRoarState.cpp" />
+    <ClCompile Include="Src\Object\Enemy\MasterDragon\State\GobKingSwingState.cpp" />
+    <ClCompile Include="Src\Object\Enemy\MasterDragon\State\GobKingThrowState.cpp" />
+    <ClCompile Include="Src\Object\Enemy\MasterDragon\Weapon\CollOperator\GobSwingCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Enemy\MasterDragon\Weapon\CollOperator\GobThrowCollOperator.cpp" />
+    <ClCompile Include="Src\Object\Enemy\MasterDragon\Weapon\Item\Gob_Sword.cpp" />
     <ClCompile Include="Src\Object\Player\State\PlayerBowState.cpp" />
     <ClCompile Include="Src\Object\Player\State\PlayerFlyingState.cpp" />
     <ClCompile Include="Src\Manager\Collision\ContactSolver.cpp" />
@@ -250,6 +261,17 @@ $(ProjectDir)Lib\Enet;</AdditionalLibraryDirectories>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Object\Common\MotionController\ParaseilMotionController.h" />
+    <ClInclude Include="Src\Object\Enemy\MasterDragon\GobKing.h" />
+    <ClInclude Include="Src\Object\Enemy\MasterDragon\State\GobKingDieState.h" />
+    <ClInclude Include="Src\Object\Enemy\MasterDragon\State\GobKIngIdleState.h" />
+    <ClInclude Include="Src\Object\Enemy\MasterDragon\State\GobKingMoveState.h" />
+    <ClInclude Include="Src\Object\Enemy\MasterDragon\State\GobKingReactState.h" />
+    <ClInclude Include="Src\Object\Enemy\MasterDragon\State\GobKingRoarState.h" />
+    <ClInclude Include="Src\Object\Enemy\MasterDragon\State\GobKingSwingState.h" />
+    <ClInclude Include="Src\Object\Enemy\MasterDragon\State\GobKingThrowState.h" />
+    <ClInclude Include="Src\Object\Enemy\MasterDragon\Weapon\CollOperator\GobSwingCollOperator.h" />
+    <ClInclude Include="Src\Object\Enemy\MasterDragon\Weapon\CollOperator\GobThrowCollOperator.h" />
+    <ClInclude Include="Src\Object\Enemy\MasterDragon\Weapon\Item\Gob_Sword.h" />
     <ClInclude Include="Src\Object\Player\State\PlayerBowState.h" />
     <ClInclude Include="Src\Object\Player\State\PlayerFlyingState.h" />
     <ClInclude Include="Src\Manager\Collision\ContactSolver.h" />
