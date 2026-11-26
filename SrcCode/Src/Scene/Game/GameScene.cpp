@@ -47,6 +47,8 @@ void GameScene::SubPostLoad(void)
 
 	//AddActor(new CapsuleDebugObject(Vector3(50, 0, 0), Vector3(-50, 0, 0), 50.0f, Vector3(), true, true, true, 50, true));
 
+	AddActor(new Stage);
+
 	// ìGÇÃê∂ê¨
 	AddActor(new EnemyManager);
 
@@ -81,7 +83,6 @@ void GameScene::SubPostLoad(void)
 		}
 	);
 
-	AddActor(new Stage);
 
 //
 //#ifdef _DEBUG

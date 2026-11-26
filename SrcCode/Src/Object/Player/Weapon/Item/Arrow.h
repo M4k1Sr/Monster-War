@@ -14,7 +14,7 @@ public:
 	/// <param name="MIN_SPEED">弱い矢の速度</param>
 	/// <param name="LIFE_FRAME">何にも当たらなかったときに消えるまでのフレーム</param>
 	/// <param name="ARROW_GRAVITY">1フレームごとの落下加速度（マイナス値）</param>
-	Arrow(float MAX_SPEED, float MIN_SPEED, int LIFE_FRAME, float ARROW_GRAVITY);
+	Arrow(float MAX_SPEED, float MIN_SPEED, int LIFE_FRAME, float ARROW_GRAVITY,int DEAD_FRAME);
 	~Arrow()override = default;
 
 	// 読み込み処理
@@ -46,9 +46,13 @@ private:
 	const float MIN_SPEED;
 	const int   LIFE_FRAME;
 	const float ARROW_GRAVITY;
+	const int DEAD_FRAME;
 
 	// 矢先の位置（モデル原点からの距離）
 	const float ARROW_TIP = 40.0f;
+
+	// まっすぐ飛ぶ距離
+	const float STRAIGHT_DIST = 1800.0f;
 
 #pragma endregion
 
@@ -57,6 +61,13 @@ private:
 	float   power;       // 引き絞り値
 	int     lifeCounter; // 残りフレーム
 	bool    isActive;    // 飛んでいるか
+	int deadCounter;	 // 死んでからのフレーム
+
+	// レティクルまでのまっすぐ飛ぶ残りの距離
+	float straightRemain = 0.0f;
+
+	// 当たったか判定
+	bool isHit;
 
 	// 矢の向きを moveVec に合わせる
 	void LookToMoveVec(void);

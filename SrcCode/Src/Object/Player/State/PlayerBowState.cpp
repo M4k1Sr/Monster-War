@@ -105,20 +105,6 @@ void PlayerBowState::Update(void)
 		FaceToAim();
 		chargeFrame++;
 
-		// 離されたとき
-		if (!isHold) {
-
-			// すぐに離されたら撃たずに終了
-			if (chargeRatio < 0.7) {
-				if (isGround) { changeStateIdle(); }
-				else { changeStateFall(); }
-				break;
-			}
-
-			Shoot();
-			break;
-		}
-
 		// 構えアニメが終わったらエイム中へ
 		if (getAnimeRatio() >= 1.0f) {
 			step = STEP::Aiming;
@@ -129,7 +115,7 @@ void PlayerBowState::Update(void)
 	case STEP::Aiming: {
 		FaceToAim();
 
-		// 引き切りで止める（ここで「キラッ」とエフェクトや音を出すと分かりやすい）
+		// 引き切りで止める
 		chargeFrame = (std::min)(chargeFrame + 1.0f, CHARGE_MAX);
 
 		// 離したら発射
@@ -144,8 +130,8 @@ void PlayerBowState::Update(void)
 			// まだ押されていたら連射
 			if (isHold) { StartDraw(); }
 			// 離されていたら終了（地上ならIdle、空中なら落下・滑空へ）
-			else if (isGround) { changeStateIdle(); }
-			else { changeStateFall(); }
+			else { changeStateIdle(); }
+		
 		}
 		break;
 	}
@@ -189,13 +175,13 @@ void PlayerBowState::Shoot(void)
 		aimDist, getBowPos().x, getBowPos().y, getBowPos().z,
 		CurrentCamera::Get().GetPos().x, CurrentCamera::Get().GetPos().y, CurrentCamera::Get().GetPos().z);
 
-	// 反動：照準と逆方向（XZ）へ少し下がる。強い矢ほど大きく
-	// 減速は GroundMotionController の Drag に任せる
-	Vector3 back = Vector3(-dir.x, 0.0f, -dir.z);
-	if (back.LengthSq() > 0.0001f) {
-		back.Normalize();
-		motion.SetHorizontalVelocity(back * (RECOIL_POWER * power));
-	}
+	//// 反動：照準と逆方向（XZ）へ少し下がる。強い矢ほど大きく
+	//// 減速は GroundMotionController の Drag に任せる
+	//Vector3 back = Vector3(-dir.x, 0.0f, -dir.z);
+	//if (back.LengthSq() > 0.0001f) {
+	//	back.Normalize();
+	//	motion.SetHorizontalVelocity(back * (RECOIL_POWER * power));
+	//}
 
 	step = STEP::BowEnd;
 	playAnimeBowEnd();

@@ -8,17 +8,21 @@ Arrow::Arrow(
 	float MAX_SPEED,
 	float MIN_SPEED,
 	int LIFE_FRAME,
-	float ARROW_GRAVITY
+	float ARROW_GRAVITY,
+	int DEAD_FRAME
 ) :
 	MAX_SPEED(MAX_SPEED),
 	MIN_SPEED(MIN_SPEED),
 	LIFE_FRAME(LIFE_FRAME),
 	ARROW_GRAVITY(ARROW_GRAVITY),
+	DEAD_FRAME(DEAD_FRAME),
 
 	moveVec(),
 	power(0.0f),
 	lifeCounter(0),
-	isActive(false)
+	deadCounter(0),
+	isActive(false),
+	isHit(false)
 {
 }
 
@@ -30,7 +34,7 @@ void Arrow::Load(void)
 	// 動的オブジェクトとしての処理を有効にする
 	SetColliderMobility(COLLIDER_MOBILITY::Movable);
 
-	// 押し出しは無効（刺さる・すり抜けるだけ）
+	// 押し出しは無効
 	SetContactResponseEnabled(false);
 
 #pragma endregion
@@ -42,7 +46,7 @@ void Arrow::Load(void)
 	trans.LoadModel("Weapon/Arrow");
 
 	// モデルのスケール設定
-	trans.scale = 3.0f;
+	trans.scale = 2.0f;
 
 	// モデルの中心点のズレの補正
 	trans.centerDiff = Vector3(0.0f, 0.0f, 0.0f) * trans.scale;
@@ -75,6 +79,9 @@ void Arrow::Fire(const Vector3& pos, const Vector3& dir, float power,float dist)
 {
 	this->power = power;
 
+	// 狙った点までの距離（ここまでは重力をかけない）
+	straightRemain = STRAIGHT_DIST;
+
 	// 引き絞り値で速度を決める
 	const float speed = MIN_SPEED + (MAX_SPEED - MIN_SPEED) * power;
 	moveVec = dir * speed;
@@ -84,6 +91,9 @@ void Arrow::Fire(const Vector3& pos, const Vector3& dir, float power,float dist)
 
 	lifeCounter = LIFE_FRAME;
 	isActive = true;
+
+	isHit = false;
+	deadCounter = 0;
 
 	SetIsDraw(true);
 	SetJudgeFlg(true);
@@ -95,22 +105,36 @@ void Arrow::SubUpdate(void)
 
 	const float scale = GetTimeScale();
 
-	// 自前の重力（弱い矢ほど遅いので、相対的に早く落ちて見える）
-	moveVec.y += ARROW_GRAVITY * scale;
+	// 刺さっている間は動かさず、時間が来たら消す
+	if (isHit) {
+		if (scale > 0.0f && ++deadCounter >= DEAD_FRAME) { Deactivate(); }
+		return;
+	}
+
+	// レティクルで狙った点に着くまでは重力をかけない
+	if (straightRemain <= 0.0f) { moveVec.y += ARROW_GRAVITY * scale; }
 
 	// 移動
-	trans.pos += moveVec * scale;
+	const Vector3 move = moveVec * scale;
+	trans.pos += move;
+
+	// 進んだ分だけ残りの距離を減らす
+	straightRemain -= move.Length();
 
 	// 放物線に合わせて矢先を下げる
 	LookToMoveVec();
 
 	// 時間切れ
 	if (scale > 0.0f && --lifeCounter <= 0) { Deactivate(); }
+
+	if (isHit) {
+		deadCounter++;
+	}
 }
 
 void Arrow::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const CollisionResult& result)
 {
-	if (!isActive) { return; }
+	if (!isActive || isHit) { return; }
 
 	// 敵かステージに当たったら消す
 	// （ダメージは敵側の OnCollision で PlayerArrow タグを見て処理する）
@@ -118,8 +142,13 @@ void Arrow::OnCollision(COLLIDER_TAG ownTag, const ColliderBase& other, const Co
 	if (other.GetTag() == COLLIDER_TAG::Enemy ||
 		other.GetTag() == COLLIDER_TAG::Stage) {
 
+		isHit = true;
+		deadCounter = 0;
+
+		// 当たり判定は切る（同じ敵に何度もダメージが入らないように）
+		SetJudgeFlg(false);
+
 		// ヒットエフェクト・SEはここで
-		Deactivate();
 	}
 }
 
@@ -138,6 +167,8 @@ void Arrow::LookToMoveVec(void)
 void Arrow::Deactivate(void)
 {
 	isActive = false;
+	isHit = false;
+	deadCounter = 0;
 	moveVec = Vector3();
 
 	SetIsDraw(false);

@@ -20,6 +20,8 @@ public:
 
 	// 状態遷移後1度行う初期化処理
 	void Enter(void)override;
+	// 更新処理
+	void Update(void)override;
 
 private:
 

@@ -248,10 +248,15 @@ private:
 	bool AimRaycast(const Vector3& start, const Vector3& end, Vector3& hitPos) const;
 
 	// 照準判定用：敵を球とみなしたときの半径と、足元からの高さ
-	const float AIM_ENEMY_RADIUS = 150.0f;
-	const float AIM_ENEMY_HEIGHT = 150.0f;
+	const float AIM_ENEMY_RADIUS = 5000.0f;
+	const float AIM_ENEMY_HEIGHT = 5000.0f;
 	// 照準判定する敵を探す範囲
 	const float AIM_ENEMY_SEARCH = 5000.0f;
+
+	// レイがボスの中心からこの距離以内を通ったら「ボスを狙っている」とみなす
+	const float AIM_ENEMY_ASSIST = 400.0f;
+	// これより近い点は狙わない（カメラと手の間の点を狙うと変な方向に飛ぶため）
+	const float AIM_MIN_DIST = 300.0f;
 
 	// レティクル
 	void DrawReticle(float chargeRatio);

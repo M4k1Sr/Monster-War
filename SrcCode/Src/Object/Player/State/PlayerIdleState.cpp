@@ -39,3 +39,8 @@ void PlayerIdleState::Enter(void)
 {
 	isTired ? playAnimeTired() : playAnimeIdle();
 }
+
+void PlayerIdleState::Update(void)
+{
+	isTired ? playAnimeTired() : playAnimeIdle();
+}

@@ -230,7 +230,7 @@ void Player::Load(void)
 	for (int i = 0; i < ARROW_MAX; i++) {
 
 		// Å‚‘¬“x, Å’á‘¬“x, Á‚¦‚é‚Ü‚Å‚ÌƒtƒŒ[ƒ€, d—Í
-		arrows[i] = new Arrow(80.0f, 30.0f, 90, -0.8f);
+		arrows[i] = new Arrow(80.0f, 30.0f, 360, -0.9f, 180);
 
 		AddChildActor(arrows[i]);
 	}
@@ -249,7 +249,7 @@ void Player::Load(void)
 		new PlayerIdleState(
 			isTired,
 			[&]() { AnimePlay(ANIME_TYPE::Idle); },
-			[&]() { AnimePlay(ANIME_TYPE::Walk); }
+			[&]() { AnimePlay(ANIME_TYPE::Tired); }
 		)
 	);
 
@@ -582,11 +582,16 @@ bool Player::AimRaycast(const Vector3& start, const Vector3& end, Vector3& hitPo
 	// ƒŒƒC‚ÌŒü‚«‚É‰ˆ‚Á‚½“G‚Ü‚Å‚Ì‹——£i“G‚Ì‘Ì‚Ì‘å‚«‚³‚ÉŠÖŒW‚È‚­‹‚Ü‚éj
 	const float dist = (center - start).Dot(dir);
 
-	// “G‚ªŒã‚ë‘¤‚È‚çŽg‚í‚È‚¢
-	if (dist <= 0.0f) { return false; }
+	// ‹ß‚·‚¬‚é“_‚ÍŽg‚í‚È‚¢i“G‚ªŒã‚ë‘¤‚Ì‚Æ‚«‚à‚±‚±‚Å’e‚©‚ê‚éj
+	if (dist < AIM_MIN_DIST) { return false; }
 
-	// ƒŒƒeƒBƒNƒ‹‚Ì•ûŒü‚ÉA“G‚Æ“¯‚¶‹——£‚¾‚¯i‚ñ‚¾“_‚ð‘_‚¤
-	hitPos = start + dir * dist;
+	// ƒŒƒC‚Ìã‚Åˆê”Ô“G‚É‹ß‚¢“_
+	const Vector3 closest = start + dir * dist;
+
+	// ƒŒƒC‚ª“G‚©‚ç—£‚ê‚·‚¬‚Ä‚¢‚½‚çA“G‚ð‘_‚Á‚Ä‚¢‚È‚¢‚Æ‚Ý‚È‚·
+	if ((center - closest).LengthSq() > AIM_ENEMY_ASSIST * AIM_ENEMY_ASSIST) { return false; }
+
+	hitPos = closest;
 	return true;
 }
 
