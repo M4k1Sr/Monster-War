@@ -3,6 +3,7 @@
 #include "EnemyBase.h"
 
 #include "GobKing/GobKing.h"
+#include "IceGeira/IceGeira.h"
 
 EnemyManager::EnemyManager() :
 	ActorBase("Data/Parameter/Enemy/")
@@ -12,28 +13,49 @@ EnemyManager::EnemyManager() :
 
 void EnemyManager::Load(void)
 {
-	// ゴブリンキング生成
+	//// ゴブリンキング生成
+	//for (int i = 1; ; i++) {
+	//	// その回のパラメーター名
+	//	std::string parameterName = "GobPos" + std::to_string(i);
+
+	//	// そのパラメータが存在するかどうか
+	//	if (!IsParameterExist("InitPos", parameterName)) { break; }
+
+	//	// その回のパラメーター名
+	//	std::string parameterHp = "GobHp";
+	//	// そのパラメータが存在するかどうか
+	//	if (!IsParameterExist("Status", parameterHp)) { break; }
+
+	//	// その回のパラメーター名
+	//	std::string parameterPower = "GobPower";
+	//	// そのパラメータが存在するかどうか
+	//	if (!IsParameterExist("Status", parameterPower)) { break; }
+
+	//	// 存在するならば、その座標にその敵を生成
+	//	AddChildActor(new GobKing(GetParameterToVector3("InitPos", parameterName), GetParameterToInt("Status", parameterHp)));
+	//}
+
+	// アイスゲイラ生成
 	for (int i = 1; ; i++) {
 		// その回のパラメーター名
-		std::string parameterName = "GobPos" + std::to_string(i);
+		std::string parameterName = "IcePos" + std::to_string(i);
 
 		// そのパラメータが存在するかどうか
 		if (!IsParameterExist("InitPos", parameterName)) { break; }
 
 		// その回のパラメーター名
-		std::string parameterHp = "GobHp";
+		std::string parameterHp = "IceHp";
 		// そのパラメータが存在するかどうか
 		if (!IsParameterExist("Status", parameterHp)) { break; }
 
 		// その回のパラメーター名
-		std::string parameterPower = "GobPower";
+		std::string parameterPower = "IcePower";
 		// そのパラメータが存在するかどうか
 		if (!IsParameterExist("Status", parameterPower)) { break; }
 
 		// 存在するならば、その座標にその敵を生成
-		AddChildActor(new GobKing(GetParameterToVector3("InitPos", parameterName), GetParameterToInt("Status", parameterHp)));
+		AddChildActor(new IceGeira(GetParameterToVector3("InitPos", parameterName), GetParameterToInt("Status", parameterHp)));
 	}
-
 
 
 }
@@ -48,23 +70,13 @@ void EnemyManager::SetPlayerPos(const Vector3* pos)
 			continue;
 		}
 
-		// 随時追加
-		// ダイアー・タウロス
-		//if (DireTaurus* direTaurus = dynamic_cast<DireTaurus*>(child)) {
+		// アイスゲイラ
+		if (IceGeira* iceGeira = dynamic_cast<IceGeira*>(child)) {
 
-		//	direTaurus->SetPlayerPos(pos);
+			iceGeira->SetPlayerPos(pos);
 
-		//	continue;
-		//}
-
-
-		// クリムゾン・アイズ
-		//if (CrimsonEyes* crimsonEyes = dynamic_cast<CrimsonEyes*>(child)) {
-
-		//	crimsonEyes->SetPlayerPos(pos);
-
-		//	continue;
-		//}
+			continue;
+		}
 	}
 }
 

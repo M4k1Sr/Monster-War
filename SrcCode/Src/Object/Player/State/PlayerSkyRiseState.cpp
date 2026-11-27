@@ -113,7 +113,7 @@ void PlayerSkyRiseState::Update(void)
 
 				// 上昇値加算
 				motion.SetVerticalVelocity(UP_POWER);
-				motion.ApplyImpulse(2.0f);
+				//motion.ApplyImpulse(2.0f);
 
 				// 描画判定をtrue
 				setParaseilDraw(true);
@@ -144,7 +144,7 @@ void PlayerSkyRiseState::Update(void)
 
 			// 上昇を止める
 			// ふわっとさせたいので少し上昇させる
-			motion.SetVerticalVelocity(UP_POWER * 0.5f);
+			motion.SetVerticalVelocity(UP_POWER * 1.0f);
 
 			// パラセール移動状態へ（重力は Exit で戻り、ParaseilMove の Enter で切れる）
 			changeStateParaseilMove();
