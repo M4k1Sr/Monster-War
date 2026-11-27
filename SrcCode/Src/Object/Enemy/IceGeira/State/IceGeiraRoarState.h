@@ -2,25 +2,21 @@
 
 #include "../../../Common/CharacterBase/CharacterStateBase.h"
 
-// おたけび状態：初回発見時と第2フェーズ移行時に使う
-// 終わった後どこへ行くかは IceGeira 側が phase を見て決める
 class IceGeiraRoarState : public CharacterStateBase
 {
 public:
 
 	IceGeiraRoarState(
-		int ROAR_FRAME,
-
 		bool& isPhaseChange,
 
 		std::function<void(void)> playAnimeRoar,
-
-		std::function<void(void)> onRoarEnd
+		std::function<bool(void)> isAnimeEnd,
+		std::function<void(void)> changeStateMove
 	);
 
 	~IceGeiraRoarState()override = default;
 
-	// 自分の状態に遷移させる条件関数（第2フェーズ移行の割り込み）
+	// 自分の状態に遷移させる条件関数
 	void OwnStateConditionUpdate(void)override;
 
 	// 状態遷移後1度行う初期処理
@@ -33,10 +29,6 @@ public:
 private:
 
 #pragma region 定数
-
-	// おたけびの長さ（専用アニメがないのでフレームで管理）
-	const int ROAR_FRAME;
-
 #pragma endregion
 
 #pragma region 受け取る参照変数・関数
@@ -47,11 +39,11 @@ private:
 	// おたけびアニメーションの再生関数ポインタ
 	const std::function<void(void)> playAnimeRoar;
 
-	// おたけびが終わったときに呼ぶ関数ポインタ
-	const std::function<void(void)> onRoarEnd;
+	// アニメーション終了取得関数のポインタ
+	const std::function<bool(void)> isAnimeEnd;
+
+	// 移動状態に遷移する関数のポインタ
+	const std::function<void(void)> changeStateMove;
 
 #pragma endregion
-
-	// 経過フレーム
-	float roarTimer;
 };

@@ -2,6 +2,10 @@
 
 #include "../../Common/CharacterBase/CharacterBase.h"
 
+#include <vector>
+
+#include "State/IceGeiraMoveState.h"
+
 class IceGeira : public CharacterBase
 {
 public:
@@ -41,29 +45,24 @@ private:
 
 #pragma region 定数
 
-	// ----- 索敵 -----
-
 	// 索敵範囲
-	const float SEARCH_RANGE = 3000.0f;
-
-	// ----- ダメージ -----
+	const float SEARCH_RANGE = 6000.0f;
 
 	// ダメージを受けた際の無敵猶予フレーム
 	static constexpr int INVINCIBLE_FRAME_MAX = 30;
-
-	// ----- 移動 -----
 
 	// 移動速度
 	const float MOVE_SPEED = 10.0f;
 	// 目的地に到着したとみなす距離
 	const float ARRIVE_RANGE = 100.0f;
 
-	// 登場時の初期座標（奥） ※仮
+	// 登場時の初期座標
 	const Vector3 SPAWN_POS = Vector3(0.0f, 800.0f, -5000.0f);
-	// 登場時の目的地 ※仮
+	// 登場時の目的地
 	const Vector3 ENTRY_POS = Vector3(0.0f, 800.0f, -1500.0f);
 
-	// ----- ワープ -----
+	// プレイヤーを中心にポイントがどれだけ離れているか
+	const float PATROL_DISTANCE = 4500;
 
 	// プレイヤーから離れた位置に出現する距離
 	const float WARP_DISTANCE = 2000.0f;
@@ -71,13 +70,6 @@ private:
 	const float WARP_HEIGHT = 800.0f;
 	// 消えている時間
 	const int VANISH_FRAME = 60;
-
-	// ----- おたけび -----
-
-	// おたけびの長さ
-	const int ROAR_FRAME = 120;
-
-	// ----- 攻撃(氷柱) -----
 
 	// 1回の攻撃で撃つ氷柱の数
 	const int SHOT_NUM = 3;
@@ -88,9 +80,7 @@ private:
 	// 攻撃の後隙の長さ
 	const int ATTACK_RECOVERY_FRAME = 60;
 
-	// ----- 竜巻 -----
-
-	// 竜巻を発生させる定位置 ※仮
+	// 竜巻を発生させる定位置
 	const Vector3 TORNADO_POS = Vector3(0.0f, 1200.0f, 0.0f);
 	// 竜巻の溜めの長さ
 	const int TORNADO_CHARGE_FRAME = 90;
@@ -124,8 +114,6 @@ private:
 #pragma region アニメーション関係定義
 
 	// アニメーションタイプ定義
-	// ※AddInFbxAnimation は FBX 内のアニメ順に読み込むので、
-	//   この並びは FBX のアニメ番号と必ず一致させること
 	enum class ANIME_TYPE
 	{
 		None = -1,
@@ -135,6 +123,8 @@ private:
 		Death,
 
 		Idle,
+
+		Roar,
 
 		Swim,
 
@@ -148,6 +138,7 @@ private:
 		0.5f,	// Death
 		0.5f,	// Idle
 		0.5f,	// Swim
+		0.5f,	// Roar
 	};
 
 	// アニメーションループ再生フラグテーブル
@@ -155,6 +146,7 @@ private:
 	{
 		false,	// Damage
 		false,	// Death
+		false,	// Roar
 		true,	// Idle
 		true,	// Swim
 	};
@@ -169,7 +161,7 @@ private:
 		moveTarget = ENTRY_POS;
 		nextStateAfterMove = STATE::Idle;
 
-		ChangeState(STATE::Idle);
+		ChangeState(STATE::Move);
 	}
 
 	void SubUpdate(void)override;
@@ -204,6 +196,12 @@ private:
 	// 第2フェーズ移行リクエスト
 	bool isPhaseChange;
 
+	// ルートのポイント
+	std::vector<Vector3> routePoint[4];
+
+	// 今向かっているポイント
+	Vector3 routeIndex;
+
 	// 移動の目的地
 	Vector3 moveTarget;
 	// 移動後に遷移する状態
@@ -214,6 +212,9 @@ private:
 
 	// 表示するか
 	bool isVisible;
+
+	// 移動するルートの作成
+	void CreatePatrolRoute(void);
 
 #pragma endregion
 
@@ -228,6 +229,9 @@ private:
 #pragma endregion
 
 #pragma region ステートから呼ぶ関数
+
+	// 動きのパターン
+	IceGeiraMoveState::MOVE_PATTERN movePattern;
 
 	// 指定方向を向く
 	void LookDir(const Vector3& dir);
@@ -245,6 +249,7 @@ private:
 	void OnRoarEnd(void);
 	// Warp終了時：プレイヤー付近を目的地にしてMoveへ（着いたらAttack）
 	void OnWarpEnd(void);
-
+	// React終了時：ボスの向きから座標分離れた場所にワープホールに行く
+	void OnReactEnd(void);
 #pragma endregion
 };

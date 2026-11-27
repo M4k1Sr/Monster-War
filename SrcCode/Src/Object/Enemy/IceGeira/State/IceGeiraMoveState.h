@@ -4,11 +4,16 @@
 
 struct Vector3;
 
-// 移動状態：目的地(moveTarget)まで飛ぶだけ
-// 着いた後どこへ行くかは IceGeira 側(nextStateAfterMove)が決める
 class IceGeiraMoveState : public CharacterStateBase
 {
 public:
+
+	// 移動パターン
+	enum class MOVE_PATTERN
+	{
+		Horizontal,	// 平行移動
+		Vertical,	// 垂直移動
+	};
 
 	IceGeiraMoveState(
 		float MOVE_SPEED,
@@ -16,17 +21,20 @@ public:
 
 		Vector3& pos,
 		const Vector3& moveTarget,
+		const MOVE_PATTERN& movePattern,
 
 		std::function<void(const Vector3&)> lookDir,
 
 		std::function<void(void)> playAnimeSwim,
 
-		std::function<void(void)> onArrive
+		std::function<void(void)> onArrive,
+
+		std::function<float(void)> getTimeScale
 	);
 
 	~IceGeiraMoveState()override = default;
 
-	// 状態遷移後1度行う初期処理
+	// 状態遷移後1度行う初期化処理
 	void Enter(void)override;
 	// 更新処理
 	void Update(void)override;
@@ -53,6 +61,9 @@ private:
 	// 目的地
 	const Vector3& moveTarget;
 
+	// 移動パターン
+	const MOVE_PATTERN& movePattern;
+
 	// 指定方向へ向きを変える関数ポインタ
 	const std::function<void(const Vector3&)> lookDir;
 
@@ -62,8 +73,16 @@ private:
 	// 目的地に着いたときに呼ぶ関数ポインタ
 	const std::function<void(void)> onArrive;
 
+	// 時間倍率を呼ぶ関数ポインタ
+	const std::function<float(void)> getTimeScale;
+
 #pragma endregion
 
-	// 目的地に着いたか
+	// 平行移動の更新
+	void UpdateHorizontal(void);
+	// 垂直移動の更新
+	void UpdateVertical(void);
+
+	// 目的地に着いたか（移動パターンによって判定する軸を変える）
 	bool IsArrive(void)const;
 };

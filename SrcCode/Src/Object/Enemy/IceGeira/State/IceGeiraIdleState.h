@@ -4,7 +4,6 @@
 
 struct Vector3;
 
-// 待機状態：その場で浮遊しながらプレイヤーを探す（登場直後のみ使用）
 class IceGeiraIdleState : public CharacterStateBase
 {
 public:

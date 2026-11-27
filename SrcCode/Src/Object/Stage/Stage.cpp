@@ -31,8 +31,8 @@ void Stage::Load(void)
 	trans.LoadModel("Stage/Stage");
 
 	// モデルのスケール設定
-	trans.scale.x = 3.0f;
-	trans.scale.z = 3.0f;
+	trans.scale.x = 5.0f;
+	trans.scale.z = 5.0f;
 
 	// モデルの中心点のズレの補正
 	trans.centerDiff = Vector3(0.0f, -688.0f, 0.0f) * trans.scale;

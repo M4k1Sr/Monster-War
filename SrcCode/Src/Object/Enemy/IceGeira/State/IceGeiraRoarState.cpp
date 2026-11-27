@@ -1,35 +1,38 @@
 #include "IceGeiraRoarState.h"
 
 IceGeiraRoarState::IceGeiraRoarState(
-	int ROAR_FRAME,
 	bool& isPhaseChange,
+
 	std::function<void(void)> playAnimeRoar,
-	std::function<void(void)> onRoarEnd
+	std::function<bool(void)> isAnimeEnd,
+	std::function<void(void)> changeStateMove
 ) :
-	ROAR_FRAME(ROAR_FRAME),
 	isPhaseChange(isPhaseChange),
 	playAnimeRoar(playAnimeRoar),
-	onRoarEnd(onRoarEnd),
-	roarTimer(0.0f)
+	isAnimeEnd(isAnimeEnd),
+	changeStateMove(changeStateMove)
 {
 }
 
 void IceGeiraRoarState::OwnStateConditionUpdate(void)
 {
-	// TODO
+	if (isPhaseChange) {
+		OwnChangeState();
+	}
 }
 
 void IceGeiraRoarState::Enter(void)
 {
-	// TODO
+	playAnimeRoar();
 }
 
 void IceGeiraRoarState::Update(void)
 {
-	// TODO
+	if (isAnimeEnd) {
+		changeStateMove();
+	}
 }
 
 void IceGeiraRoarState::Exit(void)
 {
-	// TODO
 }

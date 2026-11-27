@@ -73,16 +73,13 @@ void IceGeira::Load(void)
 	trans.LoadModel("Enemy/IceGeira");
 
 	// モデルのスケール設定 
-	trans.scale = 2;
+	trans.scale = 3;
 
 	// モデルの中心点のズレの補正
 	trans.centerDiff = Vector3(0.0f, 0.0f, 0.0f) * trans.scale;
 
 	// モデルの角度のズレの補正
 	trans.SetLocalRotation(Quaternion::FromRotationY(Deg2Rad(180.0f)));
-
-	// 初期座標
-	trans.pos = Vector3(VGet(0.0f, 1500.0f, -1500.0f));
 
 #pragma endregion
 
@@ -126,19 +123,21 @@ void IceGeira::Load(void)
 		)
 	);
 
-	//// 移動状態
-	//AddState(
-	//	STATE::Move,
-	//	new IceGeiraMoveState(
-	//		MOVE_SPEED,
-	//		ARRIVE_RANGE,
-	//		trans.pos,
-	//		moveTarget,
-	//		[&](const Vector3& dir) { LookDir(dir); },
-	//		[&]() { AnimePlay(ANIME_TYPE::Swim); },
-	//		[&]() { OnMoveArrive(); }
-	//	)
-	//);
+	// 移動状態
+	AddState(
+		STATE::Move,
+		new IceGeiraMoveState(
+			MOVE_SPEED,
+			ARRIVE_RANGE,
+			trans.pos,
+			moveTarget,
+			movePattern,
+			[&](const Vector3& dir) { LookDir(dir); },
+			[&]() { AnimePlay(ANIME_TYPE::Swim); },
+			[&]() { OnMoveArrive(); },
+			[&]() { return GetTimeScale(); }
+		)
+	);
 
 	//// ワープ状態
 	//AddState(
@@ -159,9 +158,9 @@ void IceGeira::Load(void)
 	AddState(
 		STATE::Roar,
 		new IceGeiraRoarState(
-			ROAR_FRAME,
 			isPhaseChange,
-			[&]() { AnimePlay(ANIME_TYPE::Idle); },	// 専用アニメがないのでIdleで代用
+			[&]() { AnimePlay(ANIME_TYPE::Roar, false); },
+			std::bind(&IceGeira::IsAnimeEnd, this),
 			[&]() { OnRoarEnd(); }
 		)
 	);
